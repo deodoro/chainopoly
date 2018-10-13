@@ -1,6 +1,7 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from engine import fungible
 from engine.entities import *
-import pytest
 
 def test_balance():
     t = fungible.Fungible()

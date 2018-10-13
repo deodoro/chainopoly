@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from engine import fungible, nonfungible
+from engine.entities import *
 
 class Manager:
     PROPERTIES = [
@@ -41,40 +43,24 @@ class Manager:
     # Inicializando um jogo vazio
     # PS: conta 0 é do banco, e recebe o saldo máximo possível
     def __init__(self):
-        self.bank_account = Account(0)
-        self.bank_account.balance = Manager.MAX_BALANCE
-        self.accounts = {}
-        self.info = {}
-        self.properties = sorted(Manager.PROPERTIES, key = lambda i: i.position)
-        self.ownership = []
+        self.money = fungible.Fungible()
+        self.properties = nonfungible.NonFungible()
+        self.board = [None] * max([i.position + 1 for i in Manager.PROPERTIES])
+        for p in Manager.PROPERTIES:
+            self.properties.mint(p._id)
+            self.properties.set_uri(p._id, p.to_json())
+            self.board[p.position] = p
+        self.players = {}
         self.status = Manager.INIT
 
     # Um jogador se registra
-    def register_account(self, account)
-        if self.submit(Transaction(self.bank_account, account, Manager.INITIAL_BALANCE)):
-            self.accounts.update(account.number, {'account': account, position: 0})
-
-    # Processa uma transação
-    def submit(self, transaction):
-        if transaction.src.balance > transaction.value:
-            return True
-        else
-            return False
-
-    def commit(self, transaction):
-        transaction.src.balance -= transaction.value
-        transaction.dst.balance += transaction.value
-        return True
-
-    # Quem é dono dessa propriedade?
-    def who_owns(self, property):
-        item = first([i for i in self.ownership if i[0].name == property.name])
-        return item[1] if item else None
-
-    # Que propriedades esse jogador possui?
-    def what_owns(self, account):
-        return [i[0] for i in self.ownership if i[1].number == account.number]
+    def register_account(self, account):
+        if account._id not in players:
+            if self.money.transfer(self.money.account, account, Manager.INITIAL_BALANCE):
+                self.players[account._id] = {'account': account, position: 0}
+                return True
+        return False
 
     # Lista as propriedades (na ordem do tabuleiro)
     def list_properties(self):
-        return self.properties
+        return self.board

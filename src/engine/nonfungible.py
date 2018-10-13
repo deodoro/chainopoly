@@ -1,47 +1,52 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from entities import Account
-
-def first(array):
-    return array[0] if array else None
+from engine.entities import Account
 
 class NonFungible(object):
-    # Inicializando um jogo vazio
-    # PS: conta 0 é do banco, e recebe o saldo máximo possível
     def __init__(self):
         self.account = Account(0)
-        self.ownership = {}
+        self.ownership = {self.account._id: []}
         self.ownership_reverse = {}
         self.tokenUris = {}
+        self.pending = []
 
     def check_ownership_for_account(self, account):
-        if account.id not in self.ownership:
-            self.ownership[account.id] = []
+        if account._id not in self.ownership:
+            self.ownership[account._id] = []
 
     def mint(self, id):
-        self.ownership[self.account.id].append(id)
-        self.ownership_reverse[id] = self.account.id
+        self.ownership[self.account._id].append(id)
+        self.ownership_reverse[id] = self.account
 
-    def set_uri(self, id, uri)
+    def set_uri(self, id, uri):
         self.tokenUris[id] = uri
 
     def get_uri(self, id):
-        return self.tokenUris[id]
+        return self.tokenUris[id] if id in self.tokenUris else None
 
     # Transfere de um indivíduo para outro
-    def transfer(self,  _from, _to, id):
-        if id in self.ownership[_from.id]:
-            check_ownership_for_account(_to.id)
-            self.ownership[_from.id].remove(id)
-            self.ownership[_to.id].append(id)
+    def transfer(self, _to, id):
+        if id in self.ownership_reverse:
+            self.pending.append((self.ownership_reverse[id], _to,id))
             return True
         else:
             return False
 
+    def confirm(self, _to, id):
+        if id in self.ownership_reverse:
+            _from = self.ownership_reverse[id]
+            if (_from, _to, id) in self.pending:
+                self.check_ownership_for_account(_to)
+                self.ownership[_from._id].remove(id)
+                self.ownership[_to._id].append(id)
+                self.ownership_reverse[id] = _to
+                return True
+        return False
+
     # Quem é dono dessa propriedade?
     def who_owns(self, id):
-        return self.ownership_reverse[id]
+        return self.ownership_reverse[id] if id in self.ownership_reverse else None
 
     # Que propriedades esse jogador possui?
     def what_owns(self, account):
-        return self.ownership[account.id]
+        return self.ownership[account._id] if account._id in self.ownership else []
