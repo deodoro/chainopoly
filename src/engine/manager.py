@@ -2,8 +2,16 @@
 # -*- coding: utf-8 -*-
 from engine import fungible, nonfungible
 from engine.entities import *
+from enum import Enum
+from random import randint
 
-class Manager:
+class State(Enum):
+    INIT = 0
+    MOVE = 1
+    WAIT = 2
+    FINISHED = 3
+
+class Manager(object):
     PROPERTIES = [
         Property(name='Mediterranean Ave.', color='purple', price=60, rent=2, position=2),
         Property(name='Baltic Ave.', color='purple', price=60, rent=4, position=4),
@@ -36,31 +44,37 @@ class Manager:
     ]
     INITIAL_BALANCE = 1500
     MAX_BALANCE = 1000000000
-    INIT = 0
-    ONGOING = 1
-    FINISHED = 2
 
     # Inicializando um jogo vazio
-    # PS: conta 0 é do banco, e recebe o saldo máximo possível
     def __init__(self):
+        # Token fungível
         self.money = fungible.Fungible()
-        self.properties = nonfungible.NonFungible()
+        # As casas de um tabuleiro vazio
         self.board = [None] * max([i.position + 1 for i in Manager.PROPERTIES])
+        # Emitindo os tokens não fungíveis
+        self.properties = nonfungible.NonFungible()
         for p in Manager.PROPERTIES:
-            self.properties.mint(p._id)
-            self.properties.set_uri(p._id, p.to_json())
+            self.properties.mint(p._id, p.to_json())
             self.board[p.position] = p
-        self.players = {}
-        self.status = Manager.INIT
+        # Jogadores
+        self.players = []
+        # Estado inicial
+        self.status = State.INIT
+        self.cur_player = -1
 
-    # Um jogador se registra
+    # O jogador que se registra recebe INITIAL_BALANCE de créditos
     def register_account(self, account):
-        if account._id not in players:
-            if self.money.transfer(self.money.account, account, Manager.INITIAL_BALANCE):
-                self.players[account._id] = {'account': account, position: 0}
-                return True
+        if account._id not in players and self.money.transfer(self.money.account, account, Manager.INITIAL_BALANCE):
+            self.players.append({'account': account, position: 0})
+            return True
         return False
 
     # Lista as propriedades (na ordem do tabuleiro)
     def list_properties(self):
         return self.board
+
+    def roll(self):
+        if self.status < State.WAIT:
+            self.cur_player += 1
+            self.players[self.cur_player].position += randint(1,12)
+            self.status = State.WAIT

@@ -14,12 +14,18 @@ class NonFungible(object):
         if account._id not in self.ownership:
             self.ownership[account._id] = []
 
-    def mint(self, id):
-        self.ownership[self.account._id].append(id)
-        self.ownership_reverse[id] = self.account
+    def mint(self, id, uri = None):
+        if id not in self.ownership_reverse:
+            self.ownership[self.account._id].append(id)
+            self.ownership_reverse[id] = self.account
+            self.set_uri(id, uri)
+            return True
+        else:
+            return False
 
     def set_uri(self, id, uri):
-        self.tokenUris[id] = uri
+        if uri:
+            self.tokenUris[id] = uri
 
     def get_uri(self, id):
         return self.tokenUris[id] if id in self.tokenUris else None
