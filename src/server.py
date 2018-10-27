@@ -20,6 +20,21 @@ ch.setFormatter(formatter)
 logging.getLogger('').addHandler(ch)
 
 # Handlers
+class Player(tornado.web.RequestHandler):
+    def get(self):
+        self.set_header("Content-Type", "application/json")
+        self.write(json.dumps({"answer": "OK"}))
+
+class Asset(tornado.web.RequestHandler):
+    def get(self):
+        self.set_header("Content-Type", "application/json")
+        self.write(json.dumps({"answer": "OK"}))
+
+class Board(tornado.web.RequestHandler):
+    def get(self):
+        self.set_header("Content-Type", "application/json")
+        self.write(json.dumps({"answer": "OK"}))
+
 class Test(tornado.web.RequestHandler):
     def get(self):
         self.set_header("Content-Type", "application/json")
@@ -32,9 +47,9 @@ if __name__ == "__main__":
 
         urls = [
             (r"/api/test", Test),
-            (r"/api/players", Players),
-            (r"/api/assets", Assets),
-            (r"/api/board", Assets),
+            (r"/api/players", Player),
+            (r"/api/assets", Asset),
+            (r"/api/board", Board),
         ]
 
         # Iniciar servidor
