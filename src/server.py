@@ -31,7 +31,10 @@ if __name__ == "__main__":
         logger.info('Webserver boot')
 
         urls = [
-            (r"/api/test", Test)
+            (r"/api/test", Test),
+            (r"/api/players", Players),
+            (r"/api/assets", Assets),
+            (r"/api/board", Assets),
         ]
 
         # Iniciar servidor
