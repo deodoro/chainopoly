@@ -1,0 +1,22 @@
+div.board {
+    display: flex;
+    flex-flow: column wrap;
+    width: 100%;
+    padding: 2em;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+div.item {
+    padding: 0.2em;
+    width: 8.5vw;
+    height: 8vh;
+}
+
+div.column {
+    height: 80vh;
+    display: flex;
+    flex-flow: column;
+    width: 8.5vw;
+}
