@@ -1,1 +1,8 @@
-<div>PLAYER PANEL</div>
+<div>
+    ${{ balance }}
+</div>
+<div>
+    <div *ngFor="let property of properties">
+        {{ property.name }}
+    </div>
+</div>

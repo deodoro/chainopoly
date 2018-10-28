@@ -8,11 +8,13 @@ import { BoardService } from '../../components/services/board.service';
 })
 export class BoardComponent implements OnInit {
 
+    private properties;
     static parameters = [BoardService];
     constructor(private service: BoardService) {
     }
 
     ngOnInit() {
+        this.service.getProperties().subscribe(properties => this.properties = properties);
     }
 
 }

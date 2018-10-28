@@ -8,11 +8,13 @@ import { OpponentService } from '../../components/services/opponent.service';
 })
 export class OpponentComponent implements OnInit {
 
+    private players;
     static parameters = [OpponentService];
     constructor(private service: OpponentService) {
     }
 
     ngOnInit() {
+        this.service.getOpponents().subscribe(players => this.players = players);
     }
 
 }

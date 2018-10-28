@@ -1,1 +1,6 @@
-<div>OTHER PLAYERS PANEL</div>
+<div>
+    <div *ngFor="let player of players">
+        <div style="height: 1em; width: 1em; display: inline-block; margin-right: 1em" [ngStyle]="{'background': player.color}"></div>
+        {{ player.name }}
+    </div>
+</div>
