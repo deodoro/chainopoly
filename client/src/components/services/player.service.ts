@@ -5,6 +5,10 @@ import { of } from 'rxjs';
 @Injectable()
 export class PlayerService {
 
+    getMyColor() {
+        return of("orange");
+    }
+
     getBalance() {
         return of(1000);
     }

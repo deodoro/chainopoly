@@ -1,8 +1,13 @@
 <div>
-    ${{ balance }}
+    <div style="height: 1em; width: 1em; display: inline-block; margin-right: 1em" [ngStyle]="{'background': data.color}"></div>
+    {{ data.username }}
 </div>
 <div>
-    <div *ngFor="let property of properties">
-        {{ property.name }}
-    </div>
+    Seu saldo: ${{ balance }}
+</div>
+<div>
+    Suas propriedades:
+    <ul>
+        <li *ngFor="let property of properties"> {{ property.name }} </li>
+    </ul>
 </div>

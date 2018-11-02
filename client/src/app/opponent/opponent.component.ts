@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { OpponentService } from '../../components/services/opponent.service';
+import { GameService } from '../../components/services/game.service';
 
 @Component({
     selector: 'opponent',
@@ -9,12 +10,13 @@ import { OpponentService } from '../../components/services/opponent.service';
 export class OpponentComponent implements OnInit {
 
     private players;
-    static parameters = [OpponentService];
-    constructor(private service: OpponentService) {
+    static parameters = [OpponentService, GameService];
+    constructor(private service: OpponentService, private gameService: GameService) {
+        this.service.getOpponents().subscribe(players => this.players = players);
     }
 
-    ngOnInit() {
-        this.service.getOpponents().subscribe(players => this.players = players);
+    startGame() {
+        this.gameService.startGame();
     }
 
 }

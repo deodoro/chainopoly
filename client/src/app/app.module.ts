@@ -5,8 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { BoardModule } from './board/board.module';
-import { OpponentModule } from './opponent/opponent.module';
-import { PlayerModule } from './player/player.module';
+import { PanelModule } from './panel/panel.module';
+import { StartModule } from './start/start.module';
 
 @NgModule({
   declarations: [
@@ -16,8 +16,8 @@ import { PlayerModule } from './player/player.module';
     BrowserModule,
     AppRoutingModule,
     BoardModule,
-    OpponentModule,
-    PlayerModule
+    PanelModule,
+    StartModule
   ],
   providers: [],
   bootstrap: [AppComponent]
