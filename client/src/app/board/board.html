@@ -1,0 +1,20 @@
+<div class="board">
+    <div style="flex-flow: row wrap; width: 100%; display: flex; justify-content: space-evenly;">
+        <div class="column">
+            <div class="item" *ngFor="let n of rangeRight(31,41)">
+                <property [value]="squares[n]"></property>
+            </div>
+        </div>
+        <div class="item" *ngFor="let n of range(1,10)">
+            <property [value]="squares[n]"></property>
+        </div>
+        <div class="column">
+            <div class="item" *ngFor="let n of range(10,20)">
+                <property [value]="squares[n]"></property>
+            </div>
+        </div>
+        <div class="item" *ngFor="let n of rangeRight(20,31)">
+            <property [value]="squares[n]"></property>
+        </div>
+    </div>
+</div>
