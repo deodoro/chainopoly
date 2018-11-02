@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { GameService } from '../../components/services/game.service.ts';
+import { GameService } from '../../components/services/game.service';
 import _ from 'lodash';
 
 @Component({
@@ -7,10 +7,10 @@ import _ from 'lodash';
     templateUrl: './start.html',
     styleUrls: ['./start.scss'],
 })
-export class StartComponent implements OnInit {
+export class StartComponent {
 
     private data = {
-        username: '';
+        username: ''
     }
     private games: Array<any>;
     private isEmpty = _.isEmpty;

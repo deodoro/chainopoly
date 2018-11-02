@@ -6,7 +6,7 @@ import { PlayerModule } from '../player/player.module';
 import { RouterModule, Routes } from '@angular/router';
 
 export const ROUTES: Routes = [
-    { path: 'panel', component: PanelComponent },
+    { path: 'panel/:id', component: PanelComponent },
 ];
 
 @NgModule({

@@ -11,7 +11,7 @@ export class GameService {
                    { name: "do Marcus", color: "purple" }]);
     }
 
-    startGame() {
+    startGame(id) {
         console.log("start");
     }
 }

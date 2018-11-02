@@ -3,6 +3,7 @@
 import tornado.ioloop
 import tornado.web
 import tornado.autoreload
+import tornado.websocket
 import json
 import logging
 import os
@@ -19,7 +20,24 @@ formatter = logging.Formatter(log_format)
 ch.setFormatter(formatter)
 logging.getLogger('').addHandler(ch)
 
+ws = []
+
 # Handlers
+class WebSocket(tornado.websocket.WebSocketHandler):
+    def open(self, game_id):
+        logger.debug("WebSocket open for game_id %s" % game_id)
+        if not self in ws:
+            ws.append(self)
+        pass
+
+    def on_message(self, message):
+        logger.debug("message: %r" % message)
+
+    def on_close(self):
+        if self in ws:
+            ws.remove(ws)
+        logger.debug("WebSocket closed")
+
 class Player(tornado.web.RequestHandler):
     def get(self):
         self.set_header("Content-Type", "application/json")
@@ -50,15 +68,15 @@ if __name__ == "__main__":
             (r"/api/players", Player),
             (r"/api/assets", Asset),
             (r"/api/board", Board),
+            (r"/ws/(.+)", WebSocket),
         ]
 
         # Iniciar servidor
         webServerPort = os.getenv('PORT') or 8080
-        application = tornado.web.Application(urls)
+        application = tornado.web.Application(urls, autoreload=True)
         application.listen(webServerPort)
 
         # Iniciar loop de servidor
-        io_loop = tornado.ioloop.IOLoop.instance()
         logger.info('Webserver is listening to port %s' % webServerPort)
         ioloop = tornado.ioloop.IOLoop.instance()
         ioloop.start()
