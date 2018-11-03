@@ -9,7 +9,7 @@ class Fungible(object):
         self.account = Account(0)
         self.balances = { 0: MAX_BALANCE }
 
-    def balanceOf(self, account):
+    def balance_of(self, account):
         if account._id in self.balances:
             return self.balances[account._id]
         else:

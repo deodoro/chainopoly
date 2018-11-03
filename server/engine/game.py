@@ -18,7 +18,7 @@ class Game(object):
     MAX_PLAYERS = 6
 
     # Inicializando um jogo vazio
-    def __init__(self):
+    def __init__(self, game_id, ee = None):
         # Carregando propriedades
         with open('engine/properties.json') as data_file:
             items = json.load(data_file)
@@ -43,6 +43,8 @@ class Game(object):
         # Estado inicial
         self.status = State.INIT
         self.cur_player = -1
+        self._id = game_id
+        self.ee = ee
 
     # O jogador se registra no jogo
     def register_player(self, account_id, alias = 'anon'):
@@ -50,7 +52,10 @@ class Game(object):
             account = Account(account_id)
             self.accounts[account_id] = account
             self.money.transfer(self.money.account, account, Game.INITIAL_BALANCE)
-            self.players.append({'account': account_id, 'alias': alias, 'position': 0})
+            player = {'account': account_id, 'alias': alias, 'position': 0}
+            self.players.append(player)
+            if self.ee:
+                self.ee.emit('newplayer', game_id=self._id, player=player)
             return True
         else:
             return False

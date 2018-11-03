@@ -8,7 +8,8 @@ import json
 import logging
 import os
 import sys
-from engine.game import Game
+from pyee import EventEmitter
+from game_collection import GameCollection
 
 # Boilerplate - configurar um logger global para console e para arquivo
 log_format = '%(asctime)s %(levelname)s:%(name)s:%(message)s'
@@ -21,23 +22,25 @@ formatter = logging.Formatter(log_format)
 ch.setFormatter(formatter)
 logging.getLogger('').addHandler(ch)
 
-games = []
-ws = []
+ws = {}
+ee = None
 
 # Handlers
 class WebSocket(tornado.websocket.WebSocketHandler):
-    def open(self, game_id):
-        logger.debug('WebSocket open for game_id %s' % game_id)
-        if not self in ws:
-            ws.append(self)
-        pass
+    def open(self, id):
+        collection = GameCollection.instance()
+        game = collection.get(int(id))
+        if game:
+            logger.debug('WebSocket open for game_id %s' % game_id)
+            collection.add_socket(game._id, self)
+        else:
+            raise Exception('Game does not exist')
 
     def on_message(self, message):
         logger.debug('message: %r' % message)
 
     def on_close(self):
-        if self in ws:
-            ws.remove(ws)
+        GameCollection.instance().remove_socket(ws)
         logger.debug('WebSocket closed')
 
 class Asset(tornado.web.RequestHandler):
@@ -54,22 +57,28 @@ class GameHandler(tornado.web.RequestHandler):
     def post(self, id = None):
         try:
             args = json.loads(self.request.body)
-            new_game = Game()
-            games.append(new_game)
-            new_game.register_player(args['account'], args['username'])
+            new_game = GameCollection.instance().new("%s's game" % args['username'])
+            new_game['game'].register_player(args['account'], args['username'])
             self.set_header('Content-Type', 'application/json')
-            self.write(json.dumps({'id': len(games) - 1}))
+            self.write(json.dumps({'id': new_game['id'], 'title': new_game['title']}))
         except Exception as e:
-            logger.exception('Retrieving game #%s' % game_id)
+            logger.exception('Creating game')
             self.set_status(400)
             self.write('Registro inválido')
+
+    def get(self, id = None):
+        self.set_header('Content-Type', 'application/json')
+        if id:
+            self.write(json.dumps(GameCollection.instance().get(int(id))['title']))
+        else:
+            self.write(json.dumps([{'id': i['id'], 'title': i['title'], 'players': len(i['game'].list_players())} for i in GameCollection.instance().list()]))
 
 class PlayerHandler(tornado.web.RequestHandler):
     def get(self, id=-1):
         try:
-            game_id = int(id)
+            game = GameCollection.instance().get(int(id))
             self.set_header('Content-Type', 'application/json')
-            self.write(json.dumps(games[game_id].list_players()))
+            self.write(json.dumps(game.list_players()))
         except Exception as e:
             logger.exception('Retrieving players for game #%s' % id)
             self.set_status(400)
@@ -78,13 +87,19 @@ class PlayerHandler(tornado.web.RequestHandler):
     def post(self, id=-1):
         try:
             args = json.loads(self.request.body)
-            if games[int(id)].register_player(args['account'], args['username']):
-                self.set_header('Content-Type', 'application/json')
-                self.write({'result': 'Registered for game#%s' % id})
+            game = GameCollection.instance().get(int(id))
+            if game:
+                if game.register_player(args['account'], args['username']):
+                    self.set_header('Content-Type', 'application/json')
+                    self.write({'result': 'Registered for game#%s' % id})
+                else:
+                    self.set_status(400)
+                    self.set_header('Content-Type', 'application/json')
+                    self.write({'result': 'Ongoing game or already registered'})
             else:
                 self.set_status(400)
                 self.set_header('Content-Type', 'application/json')
-                self.write({'result': 'Ongoing game or already registered'})
+                self.write({'result': 'Game does not exist'})
         except Exception as e:
             logger.exception('Retrieving players for game #%s' % id)
             self.set_status(400)
@@ -110,7 +125,6 @@ if __name__ == '__main__':
 
         # Iniciar loop de servidor
         logger.info('Webserver is listening to port %s' % webServerPort)
-        ioloop = tornado.ioloop.IOLoop.instance()
-        ioloop.start()
+        tornado.ioloop.IOLoop.instance().start()
     except Exception as e:
         logger.exception('Webserver fatal error')
