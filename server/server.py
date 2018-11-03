@@ -20,6 +20,7 @@ formatter = logging.Formatter(log_format)
 ch.setFormatter(formatter)
 logging.getLogger('').addHandler(ch)
 
+game_number = 0
 ws = []
 
 # Handlers
@@ -53,10 +54,11 @@ class Board(tornado.web.RequestHandler):
         self.set_header("Content-Type", "application/json")
         self.write(json.dumps({"answer": "OK"}))
 
-class Test(tornado.web.RequestHandler):
-    def get(self):
+class Game(tornado.web.RequestHandler):
+    def post(self):
         self.set_header("Content-Type", "application/json")
-        self.write(json.dumps({"answer": "OK"}))
+        self.write(json.dumps({"id": str(game_number)}))
+        game_number += 1
 
 # Framework do servidor
 if __name__ == "__main__":
@@ -64,7 +66,7 @@ if __name__ == "__main__":
         logger.info('Webserver boot')
 
         urls = [
-            (r"/api/test", Test),
+            (r"/api/game", Game),
             (r"/api/players", Player),
             (r"/api/assets", Asset),
             (r"/api/board", Board),
