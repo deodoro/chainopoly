@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import { HttpModule } from '@angular/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
@@ -14,10 +14,11 @@ import { StartModule } from './start/start.module';
   ],
   imports: [
     BrowserModule,
+    HttpModule,
     AppRoutingModule,
     BoardModule,
     PanelModule,
-    StartModule
+    StartModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

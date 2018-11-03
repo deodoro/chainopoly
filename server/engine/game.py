@@ -16,6 +16,7 @@ class Game(object):
     INITIAL_BALANCE = 1500
     MAX_BALANCE = 1000000000
     MAX_PLAYERS = 6
+    COLORS = ["blue", "red", "purple", "green", "orange", "darkturquoise"]
 
     # Inicializando um jogo vazio
     def __init__(self, game_id, ee = None):
@@ -48,17 +49,25 @@ class Game(object):
 
     # O jogador se registra no jogo
     def register_player(self, account_id, alias = 'anon'):
-        if len([i for i in self.players if account_id == i['account']]) == 0:
+        if len([i for i in self.players if account_id == i['account']]) == 0 and len(self.players) < Game.MAX_PLAYERS:
             account = Account(account_id)
             self.accounts[account_id] = account
             self.money.transfer(self.money.account, account, Game.INITIAL_BALANCE)
-            player = {'account': account_id, 'alias': alias, 'position': 0}
+            player = {'account': account_id, 'alias': alias, 'position': 0, 'color': Game.COLORS[len(self.players)]}
             self.players.append(player)
             if self.ee:
                 self.ee.emit('newplayer', game_id=self._id, player=player)
             return True
         else:
             return False
+
+    # Lista de jogadores inscritos
+    def get_player(self, account_id):
+        player = [p for p in self.players if p['account'] == account_id]
+        if len(player):
+            return player[0]
+        else:
+            return None
 
     # Lista de jogadores inscritos
     def list_players(self):

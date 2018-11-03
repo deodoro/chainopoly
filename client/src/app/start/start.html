@@ -1,16 +1,20 @@
 <div class="row">
     <div class="form-group col-lg-12">
-        <input class="form-control" type="text" [(ngModel)]="data.username" placeholder="Preencha seu nome" (ngModelChange)="saveUsername()" autofocus>
+        <input class="form-control" type="text" [(ngModel)]="data.account" placeholder="Preencha sua conta" (ngModelChange)="saveAccount()" autofocus>
+    </div>
+    <div class="form-group col-lg-12">
+        <input class="form-control" type="text" [(ngModel)]="data.username" placeholder="Preencha seu nome" (ngModelChange)="saveUsername()">
     </div>
     <div class="form-group col-lg-12">
         <div>Escolha um jogo para participar:</div>
+        <div *ngIf="!games || games.length == 0" class="nogames">Não há jogos ativos</div>
         <ul>
             <li *ngFor="let game of games">
-                <a href="#" [routerLink]="['/panel/' + game.code]" [class.disabled]="isEmpty(data.username)" (click)="check($event)">{{game.name}}</a>
+                <a routerLink="" [class.disabled]="isEmpty(data.username) || isEmpty(data.account)" (click)="goToGame(game.id)">{{game.title}}</a> ({{game.players}} jogadores)
             </li>
         </ul>
         <div>
-            <a href="#" [routerLink]="['/panel']" [class.disabled]="isEmpty(data.username)">Ou crie o seu</a>
+            <a routerLink="" [class.disabled]="isEmpty(data.username) || isEmpty(data.account)" (click)="createGame()">Ou crie o seu</a>
         </div>
     </div>
 </div>

@@ -1,10 +1,14 @@
 <div>
     <div>Oponentes</div>
+
     <ul>
         <li *ngFor="let player of players">
             <div style="height: 1em; width: 1em; display: inline-block; margin-right: 1em" [ngStyle]="{'background': player.color}"></div>
-            {{ player.name }}
+            {{ player.alias }}
         </li>
     </ul>
-    <button class="btn btn-danger" [disabled]="players.length == 0" (click)="startGame()">Iniciar o jogo agora</button>
+    <button class="btn btn-danger" [disabled]="!players || players.length == 0" (click)="startGame()">
+        <span *ngIf="!players || players.length == 0">Aguardando oponentes</span>
+        <span *ngIf="players && players.length > 0">Iniciar jogo</span>
+    </button>
 </div>

@@ -2,14 +2,17 @@ import tornado.ioloop
 import logging
 from pyee import EventEmitter
 from engine.game import Game
+from websocket_handler import broadcast
 
 logger = logging.getLogger('game_collection')
 
 def broadcast_new_player(game_id, player):
     logger.debug('new player game=%d player=%r' % (game_id, player))
+    broadcast('new_player', payload={'player': player, 'game_id': game_id})
 
 def broadcast_new_game(game):
     logger.debug('new game game=%r' % game)
+    broadcast('new_game', payload={'id': game['id'], 'title': game['title']})
 
 class GameCollection:
     # Here will be the instance stored.
@@ -50,7 +53,7 @@ class GameCollection:
 
     def new(self, title):
         new_id = len(self.games)
-        game = {'id': new_id, 'title': self.deduplicate_title(title), 'game': Game(new_id, self.ee), 'sockets': []}
+        game = {'id': new_id, 'title': self.deduplicate_title(title), 'game': Game(new_id, self.ee)}
         self.games.append(game)
         self.ee.emit('newgame', game)
         return game
@@ -58,13 +61,17 @@ class GameCollection:
     def list(self):
         return self.games
 
-    def add_socket(self, game_id, ws):
-        if ws not in self.games[idx]['sockets']:
-            self.games[idx]['socket'].append(ws)
+    # def add_socket(self, game_id, player_id, ws):
+    #     if player_id not in self.games[game_id]['sockets']:
+    #         self.games[game_id]['sockets']['player_id'] = ws
+    #         return True
+    #     else:
+    #         return False
 
-    def remove_socket(self, game_id, ws):
-        for item in self.games:
-            if ws in item['sockets']:
-                item['sockets'].remove(ws)
-                return True
-        return False
+    # def remove_socket(self, ws):
+    #     for item in self.games:
+    #         for player, socket in item['sockets'].items():
+    #             if socket == ws:
+    #                 del(item['sockets']['player'])
+    #                 return True
+    #     return False

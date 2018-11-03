@@ -17,10 +17,11 @@ export class PlayerComponent {
     static parameters = [PlayerService, GameService, ActivatedRoute];
     constructor(private service: PlayerService, private gameService: GameService, private route: ActivatedRoute) {
         this.gameId = this.route.snapshot.paramMap.get('id');
-        this.service.getMyColor().subscribe(color => this.data = {
+        this.data = {
             username: localStorage.getItem("username"),
-            color: color
-        });
+            account: localStorage.getItem("account")
+        }
+        this.service.getMyColor(this.gameId, this.data.account).subscribe(player => this.data.color = player.color);
         this.service.getBalance().subscribe(balance => this.balance = balance);
         this.service.getProperties().subscribe(properties => this.properties = properties);
     }

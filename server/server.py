@@ -3,13 +3,13 @@
 import tornado.ioloop
 import tornado.web
 import tornado.autoreload
-import tornado.websocket
 import json
 import logging
 import os
 import sys
 from pyee import EventEmitter
 from game_collection import GameCollection
+from websocket_handler import WebSocketHandler
 
 # Boilerplate - configurar um logger global para console e para arquivo
 log_format = '%(asctime)s %(levelname)s:%(name)s:%(message)s'
@@ -21,27 +21,6 @@ ch.setLevel(logging.DEBUG)
 formatter = logging.Formatter(log_format)
 ch.setFormatter(formatter)
 logging.getLogger('').addHandler(ch)
-
-ws = {}
-ee = None
-
-# Handlers
-class WebSocket(tornado.websocket.WebSocketHandler):
-    def open(self, id):
-        collection = GameCollection.instance()
-        game = collection.get(int(id))
-        if game:
-            logger.debug('WebSocket open for game_id %s' % game_id)
-            collection.add_socket(game._id, self)
-        else:
-            raise Exception('Game does not exist')
-
-    def on_message(self, message):
-        logger.debug('message: %r' % message)
-
-    def on_close(self):
-        GameCollection.instance().remove_socket(ws)
-        logger.debug('WebSocket closed')
 
 class Asset(tornado.web.RequestHandler):
     def get(self):
@@ -105,6 +84,17 @@ class PlayerHandler(tornado.web.RequestHandler):
             self.set_status(400)
             self.write('Invalid game')
 
+class PlayerInfoHandler(tornado.web.RequestHandler):
+    def get(self, game_id=-1, player_id=-1):
+        try:
+            game = GameCollection.instance().get(int(game_id))
+            self.set_header('Content-Type', 'application/json')
+            self.write(json.dumps(game.get_player(player_id)))
+        except Exception as e:
+            logger.exception('Retrieving player %s for game #%s' % (player_id, game_id))
+            self.set_status(400)
+            self.write('Invalid game')
+
 # Framework do servidor
 if __name__ == '__main__':
     try:
@@ -113,9 +103,10 @@ if __name__ == '__main__':
         urls = [
             (r'/api/game(/.+)?', GameHandler),
             (r'/api/players/(\d+)', PlayerHandler),
+            (r'/api/player/(\d+)/(\d+)', PlayerInfoHandler),
             (r'/api/assets', Asset),
             (r'/api/board', Board),
-            (r'/ws/(.+)', WebSocket),
+            (r'/ws', WebSocketHandler),
         ]
 
         # Iniciar servidor
