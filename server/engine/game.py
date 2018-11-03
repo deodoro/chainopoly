@@ -15,6 +15,7 @@ class State(Enum):
 class Game(object):
     INITIAL_BALANCE = 1500
     MAX_BALANCE = 1000000000
+    MAX_PLAYERS = 6
 
     # Inicializando um jogo vazio
     def __init__(self):
@@ -38,16 +39,25 @@ class Game(object):
             self.board[p.position] = p
         # Jogadores
         self.players = []
+        self.accounts = {}
         # Estado inicial
         self.status = State.INIT
         self.cur_player = -1
 
-    # O jogador que se registra recebe INITIAL_BALANCE de créditos
-    def register_account(self, account):
-        if account._id not in players and self.money.transfer(self.money.account, account, Game.INITIAL_BALANCE):
-            self.players.append({'account': account, position: 0})
+    # O jogador se registra no jogo
+    def register_player(self, account_id, alias = 'anon'):
+        if len([i for i in self.players if account_id == i['account']]) == 0:
+            account = Account(account_id)
+            self.accounts[account_id] = account
+            self.money.transfer(self.money.account, account, Game.INITIAL_BALANCE)
+            self.players.append({'account': account_id, 'alias': alias, 'position': 0})
             return True
-        return False
+        else:
+            return False
+
+    # Lista de jogadores inscritos
+    def list_players(self):
+        return self.players
 
     # Lista as propriedades (na ordem do tabuleiro)
     def list_properties(self):
