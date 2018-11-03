@@ -1,7 +1,7 @@
-from engine import manager
+from engine import game
 
 def test_init():
-    m = manager.Manager()
+    m = game.Game()
     assert m.players == []
     assert len([p for p in m.list_properties() if p != None]) == 28
     for p in m.list_properties():

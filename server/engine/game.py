@@ -12,7 +12,7 @@ class State(Enum):
     WAIT = 2
     FINISHED = 3
 
-class Manager(object):
+class Game(object):
     INITIAL_BALANCE = 1500
     MAX_BALANCE = 1000000000
 
@@ -44,7 +44,7 @@ class Manager(object):
 
     # O jogador que se registra recebe INITIAL_BALANCE de créditos
     def register_account(self, account):
-        if account._id not in players and self.money.transfer(self.money.account, account, Manager.INITIAL_BALANCE):
+        if account._id not in players and self.money.transfer(self.money.account, account, Game.INITIAL_BALANCE):
             self.players.append({'account': account, position: 0})
             return True
         return False
