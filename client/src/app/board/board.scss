@@ -1,22 +1,27 @@
+$board-width: 100vw;
+$board-height: 100vh;
+$item-width: $board-width/11;
+$item-height: $board-height/11;
+
 div.board {
-    display: flex;
-    flex-flow: column wrap;
-    width: 100%;
-    padding: 2em;
     position: absolute;
     left: 0;
-    right: 0;
+    top: 0;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: stretch;
+    width: $board-width;
+    height: $board-height;
 }
 
 div.item {
-    padding: 0.2em;
-    width: 8.5vw;
-    height: 8vh;
+    padding: 0.05em;
+    width: $item-width;
+    height: $item-height;
 }
 
 div.column {
-    height: 80vh;
+    height: $item-height * 10;
     display: flex;
     flex-flow: column;
-    width: 8.5vw;
 }

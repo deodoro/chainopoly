@@ -1,8 +1,14 @@
-div.container {
+$vert-margin: 100vh / 11;
+$horz-margin: 100vw / 11;
+
+div.frame {
     position: absolute;
-    left: 9em;
-    top: 6.2em;
-    width: 77vw;
-    height: 71vh;
-    padding: 2em;
+    left: $horz-margin;
+    top: $vert-margin;
+    right: $horz-margin;
+    bottom: $vert-margin;
+    margin: 2em;
+}
+
+div.container {
 }

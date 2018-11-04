@@ -28,7 +28,7 @@ export class OpponentComponent {
     }
 
     startGame() {
-        this.socketClient.next({ author: 'a', message: 'b'});
+        // this.socketService.messages.next({ author: 'a', message: 'b'});
         // this.gameService.startGame(this.route.snapshot.paramMap.get('id'));
     }
 
