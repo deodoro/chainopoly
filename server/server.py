@@ -22,15 +22,11 @@ formatter = logging.Formatter(log_format)
 ch.setFormatter(formatter)
 logging.getLogger('').addHandler(ch)
 
-class Asset(tornado.web.RequestHandler):
+class BoardHandler(tornado.web.RequestHandler):
     def get(self):
-        self.set_header('Content-Type', 'application/json')
-        self.write(json.dumps({'answer': 'OK'}))
-
-class Board(tornado.web.RequestHandler):
-    def get(self):
-        self.set_header('Content-Type', 'application/json')
-        self.write(json.dumps({'answer': 'OK'}))
+        with open('engine/properties.json') as data_file:
+            self.set_header('Content-Type', 'application/json')
+            self.write(data_file.read())
 
 class GameHandler(tornado.web.RequestHandler):
     def post(self, id = None):
@@ -95,17 +91,34 @@ class PlayerInfoHandler(tornado.web.RequestHandler):
             self.set_status(400)
             self.write('Invalid game')
 
+class ControlHandler(tornado.web.RequestHandler):
+    def post(self, game_id=-1):
+        args = json.loads(self.request.body)
+        try:
+            game = GameCollection.instance().get(int(game_id))
+            self.set_header('Content-Type', 'application/json')
+            if args['action'] == 'roll':
+                game.roll()
+                self.write({'result': 'roll'})
+            elif args['action'] == 'commit':
+                game.commit()
+                self.write({'result': 'commit'})
+        except Exception as e:
+            logger.exception('Game control action %r' % args)
+            self.set_status(400)
+            self.write('Invalid game')
+
 # Framework do servidor
 if __name__ == '__main__':
     try:
         logger.info('Webserver boot')
 
         urls = [
+            (r'/api/game/control/(.+)', ControlHandler),
             (r'/api/game(/.+)?', GameHandler),
-            (r'/api/players/(\d+)', PlayerHandler),
-            (r'/api/player/(\d+)/(\d+)', PlayerInfoHandler),
-            (r'/api/assets', Asset),
-            (r'/api/board', Board),
+            (r'/api/players/(.+)', PlayerHandler),
+            (r'/api/player/(.+)/(.+)', PlayerInfoHandler),
+            (r'/api/board', BoardHandler),
             (r'/ws', WebSocketHandler),
         ]
 

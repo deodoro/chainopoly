@@ -47,6 +47,10 @@ class Game(object):
         self._id = game_id
         self.ee = ee
 
+    def emit(self, type, **kwargs):
+        if self.ee:
+            self.ee.emit(type, **kwargs)
+
     # O jogador se registra no jogo
     def register_player(self, account_id, alias = 'anon'):
         if len([i for i in self.players if account_id == i['account']]) == 0 and len(self.players) < Game.MAX_PLAYERS:
@@ -55,8 +59,7 @@ class Game(object):
             self.money.transfer(self.money.account, account, Game.INITIAL_BALANCE)
             player = {'account': account_id, 'alias': alias, 'position': 0, 'color': Game.COLORS[len(self.players)]}
             self.players.append(player)
-            if self.ee:
-                self.ee.emit('newplayer', game_id=self._id, player=player)
+            self.emit('newplayer', game_id=self._id, player=player)
             return True
         else:
             return False
@@ -78,7 +81,11 @@ class Game(object):
         return self.board
 
     def roll(self):
-        if self.status < State.WAIT:
-            self.cur_player += 1
-            self.players[self.cur_player].position += randint(1,12)
+        if self.status in [State.INIT, State.MOVE]:
+            self.cur_player = (self.cur_player + 1) % len(self.players)
+            self.players[self.cur_player]['position'] += randint(2,12)
             self.status = State.WAIT
+            self.emit('move', game_id=self._id, player=self.players[self.cur_player])
+
+    def commit(self):
+        self.status = State.MOVE

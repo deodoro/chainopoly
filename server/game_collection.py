@@ -8,11 +8,15 @@ logger = logging.getLogger('game_collection')
 
 def broadcast_new_player(game_id, player):
     logger.debug('new player game=%d player=%r' % (game_id, player))
-    broadcast('new_player', payload={'player': player, 'game_id': game_id})
+    broadcast('new_player', payload={'game_id': game_id, 'player': player})
 
 def broadcast_new_game(game):
     logger.debug('new game game=%r' % game)
-    broadcast('new_game', payload={'id': game['id'], 'title': game['title']})
+    broadcast('new_game', payload={'game_id': game['id'], 'game': {'id': game['id'], 'title': game['title']}})
+
+def broadcast_move(game_id, player):
+    logger.debug('move game=%s player=%r' % (game_id, player))
+    broadcast('move', payload={'game_id': game_id, 'player': player})
 
 class GameCollection:
     # Here will be the instance stored.
@@ -35,6 +39,7 @@ class GameCollection:
         self.ee = EventEmitter(tornado.ioloop.IOLoop.current().asyncio_loop)
         self.ee.on('newgame', broadcast_new_game)
         self.ee.on('newplayer', broadcast_new_player)
+        self.ee.on('move', broadcast_move)
 
     def get(self, idx):
         if idx < 0 or idx >= len(self.games):

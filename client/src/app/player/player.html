@@ -1,5 +1,5 @@
 <div>
-    <div style="height: 1em; width: 1em; display: inline-block; margin-right: 1em" [ngStyle]="{'background': data.color}"></div>
+    <div style="height: 1em; width: 1em; display: inline-block; margin-right: 1em" [ngStyle]="{'background': data.player.color}" *ngIf="data.player"></div>
     {{ data.username }}
 </div>
 <div>

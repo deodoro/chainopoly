@@ -27,15 +27,17 @@ export class StartComponent {
         });
         this.socketService.messages.subscribe(msg => {
             console.log("Response from websocket: " + JSON.stringify(msg));
-            if (msg.type == 'new_game') {
-                this.games.push(_.assign(msg.payload, {players: 0}));
-            }
-            if (msg.type == 'new_player') {
-                this.games.forEach(g => {
-                    if (g.id == msg.payload.game_id) {
-                        g.players++;
-                    }
-                })
+            switch(msg.type) {
+                case 'new_game':
+                    this.games.push(_.assign(msg.payload.game, {players: 0}));
+                    break;
+                case 'new_player':
+                    this.games.forEach(g => {
+                        if (g.id == msg.payload.game_id) {
+                            g.players++;
+                        }
+                    })
+                    break;
             }
         });
     }

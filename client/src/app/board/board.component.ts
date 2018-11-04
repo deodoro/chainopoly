@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ViewChildren, QueryList, Component, Renderer2 } from '@angular/core';
 import { BoardService } from '../../components/services/board.service';
 import _ from 'lodash';
 
@@ -11,32 +11,41 @@ class Square {
     templateUrl: './board.html',
     styleUrls: ['./board.scss'],
 })
-export class BoardComponent implements OnInit {
+export class BoardComponent {
 
     private properties;
     private squares: Array<any>;
-    static parameters = [BoardService];
+    private pieces = {};
+    private squareIndex = {};
     public range = _.range;
     public rangeRight = _.rangeRight;
-    constructor(private service: BoardService) {
-    }
+    @ViewChildren('square') squareDivs : QueryList<any>;
 
-    ngOnInit() {
+    static parameters = [BoardService, Renderer2];
+    constructor(private service: BoardService, private renderer: Renderer2) {
+        this.squares = _.fill(new Array(40), {name: ''});
         this.service.getProperties().subscribe(properties => {
-            this.properties = properties;
-            this.squares = new Array(41);
-            _.fill(this.squares, {name: ''});
             properties.forEach(p => {
                 this.squares[p.position - 1] = p;
             });
         });
+        this.service.Stream.subscribe(data => {
+            this.renderer.appendChild(this.squareIndex[data.position], this.getPiece(data.color))
+        })
     }
 
-    numbers(column) {
-        switch(column) {
-            case 0:
-                return _.range(0,10);
+    ngAfterViewInit() {
+        this.squareDivs.forEach(i => this.squareIndex[i.nativeElement.dataset.index] = i.nativeElement));
+    }
+
+    getPiece(color) {
+        if (!_.has(this.pieces, color)) {
+            let e = this.renderer.createElement('div');
+            this.renderer.addClass(e, 'piece');
+            this.renderer.setStyle(e, 'background-color', color);
+            this.pieces[color] = e;
         }
+        return this.pieces[color];
     }
 
 }
