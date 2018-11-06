@@ -13,12 +13,18 @@ body {
     font-size: 1.5vw;
     background-color: #333;
     color: #eee;
+    overflow: hidden;
 }
 
 input.form-control {
     color: #ddd;
     background-color: #777;
     border: 1px solid #555;
+
+    &::placeholder {
+        color: white;
+        opacity: 0.3;
+    }
 }
 
 a, a:hover {

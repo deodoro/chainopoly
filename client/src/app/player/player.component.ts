@@ -17,6 +17,7 @@ export class PlayerComponent {
     private properties = [];
     private gameId = null;
     private gameStatus = 'init';
+    private myTurn = false;
     private ws = null;
     static parameters = [PlayerService, GameService, ActivatedRoute, SocketService, BoardService];
     constructor(private service: PlayerService,
@@ -39,7 +40,10 @@ export class PlayerComponent {
                         if (this.data.account == msg.payload.player.account) {
                             _.assign(this.data.player, msg.payload.player);
                             this.boardService.Stream.emit(msg.payload.player);
+                            this.myTurn = true;
                         }
+                        else
+                            this.myTurn = false;
                         break;
                     case 'status':
                         this.gameStatus = msg.payload.status;
@@ -51,8 +55,9 @@ export class PlayerComponent {
 
     ngAfterViewInit() {
         this.service.getMyColor(this.gameId, this.data.account).subscribe(player => {
-            this.data.player = player;
+            this.data.player = _.without(player, 'current');
             this.boardService.Stream.emit(player);
+            this.myTurn = player['current'];
         });
     }
 
@@ -62,7 +67,7 @@ export class PlayerComponent {
     }
 
     commit() {
-        this.gameService.commit(this.gameId)
+        this.gameService.commit(this.gameId, this.data.account)
             .subscribe(res => console.log(res));
     }
 

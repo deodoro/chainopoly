@@ -134,7 +134,7 @@ class ControlHandler(tornado.web.RequestHandler):
                 game.roll()
                 self.write({'result': 'roll'})
             elif args['action'] == 'commit':
-                game.commit()
+                game.commit(args['account_id'])
                 self.write({'result': 'commit'})
         except Exception as e:
             logger.exception('Game control action %r' % args)

@@ -15,7 +15,7 @@
     <div *ngIf="gameStatus == 'move'" >
         <button class="btn btn-primary" (click)="roll()">Roll</button>
     </div>
-    <div *ngIf="gameStatus == 'wait'">
+    <div *ngIf="myTurn && gameStatus == 'wait'">
         <button class="btn btn-success" (click)="commit()">Commit</button>
     </div>
 </div>

@@ -71,7 +71,13 @@ class Game(object):
 
     # Lista de jogadores inscritos
     def get_player(self, account_id):
-        return findOne(self.players, lambda p: p['account'] == account_id)
+        p = findOne(self.players, lambda p: p['account'] == account_id)
+        if p:
+            if self.status == State.WAIT and self.players[self.cur_player]['account'] == account_id:
+                return {**p, 'current': True}
+            else:
+                return {**p, 'current': False}
+        return p
 
     def get_player_properties(self, account_id):
         return self.properties.what_owns(self.accounts[account_id])
@@ -95,8 +101,9 @@ class Game(object):
             self.set_status(State.WAIT)
             self.emit('move', player=self.players[self.cur_player])
 
-    def commit(self):
-        self.set_status(State.MOVE)
+    def commit(self, account_id):
+        if self.status == State.WAIT and account_id == self.players[self.cur_player]['account']:
+            self.set_status(State.MOVE)
 
     def get_status(self):
         if self.status == State.INIT:

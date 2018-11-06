@@ -17,7 +17,7 @@ export class GameService {
     }
 
     control(id, action) {
-        return this.Http.post(`/api/game/${id}/control`, {'action': action})
+        return this.Http.post(`/api/game/${id}/control`, action)
                         .map(res => {
                             return res.json();
                         })
@@ -28,15 +28,15 @@ export class GameService {
     }
 
     startGame(id) {
-        return this.control(id, 'roll');
+        return this.control(id, {action: 'roll'});
     }
 
     roll(id) {
-        return this.control(id, 'roll');
+        return this.control(id, {action: 'roll'});
     }
 
-    commit(id) {
-        return this.control(id, 'commit');
+    commit(id, account_id) {
+        return this.control(id, {action: 'commit', account_id: account_id});
     }
 
     create(player) {
