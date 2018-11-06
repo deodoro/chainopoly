@@ -7,7 +7,7 @@
             {{ player.alias }}
         </li>
     </ul>
-    <button class="btn btn-danger" [disabled]="!players || players.length == 0" (click)="startGame()">
+    <button class="btn btn-danger" [disabled]="!players || players.length == 0" (click)="startGame()" *ngIf="gameState=='init'">
         <span *ngIf="!players || players.length == 0">Aguardando oponentes</span>
         <span *ngIf="players && players.length > 0">Iniciar jogo</span>
     </button>

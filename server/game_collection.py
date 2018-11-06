@@ -12,11 +12,15 @@ def broadcast_new_player(game_id, player):
 
 def broadcast_new_game(game):
     logger.debug('new game game=%r' % game)
-    broadcast('new_game', payload={'game_id': game['id'], 'game': {'id': game['id'], 'title': game['title']}})
+    broadcast('new_game', payload={'game_id': game['id'], 'game': game})
 
 def broadcast_move(game_id, player):
     logger.debug('move game=%s player=%r' % (game_id, player))
     broadcast('move', payload={'game_id': game_id, 'player': player})
+
+def broadcast_status(game_id, status):
+    logger.debug('status game=%s status=%s' % (game_id, status))
+    broadcast('status', payload={'game_id': game_id, 'status': status})
 
 class GameCollection:
     # Here will be the instance stored.
@@ -40,6 +44,7 @@ class GameCollection:
         self.ee.on('newgame', broadcast_new_game)
         self.ee.on('newplayer', broadcast_new_player)
         self.ee.on('move', broadcast_move)
+        self.ee.on('status', broadcast_status)
 
     def get(self, idx):
         if idx < 0 or idx >= len(self.games):
@@ -60,7 +65,7 @@ class GameCollection:
         new_id = len(self.games)
         game = {'id': new_id, 'title': self.deduplicate_title(title), 'game': Game(new_id, self.ee)}
         self.games.append(game)
-        self.ee.emit('newgame', game)
+        self.ee.emit('newgame', {'id': game['id'], 'title': game['title']})
         return game
 
     def list(self):

@@ -15,6 +15,8 @@ export class OpponentComponent {
     private players;
     private gameId;
     private n = 0;
+    private gameState = null;
+    private ws = null;
     static parameters = [OpponentService, GameService, ActivatedRoute, SocketService, BoardService];
     constructor(private service: OpponentService,
                 private gameService: GameService,
@@ -23,14 +25,14 @@ export class OpponentComponent {
                 private boardService: BoardService) {
         let myAccount = localStorage.getItem("account");
         this.gameId = this.route.snapshot.paramMap.get('id');
+        this.gameService.status(this.gameId).subscribe(status => this.gameState = status);
         this.service.list(this.gameId).subscribe(players => {
             this.players = players.filter(i => i.account != myAccount);
             this.players.forEach(p => {
                 this.boardService.Stream.emit(p);
             })
         });
-        this.socketService.messages.subscribe(msg => {
-            console.log("Response from websocket: " + JSON.stringify(msg));
+        this.ws = this.socketService.messages.subscribe(msg => {
             if (msg.payload.game_id == this.gameId) {
                 switch(msg.type) {
                     case 'new_player':
@@ -44,15 +46,23 @@ export class OpponentComponent {
                         });
                         this.boardService.Stream.emit(msg.payload.player);
                         break;
+                    case 'status':
+                        this.gameState = msg.payload.status;
+                        break;
                 }
             }
         });
     }
 
     startGame() {
-        console.dir(this.players);
-        this.boardService.Stream.emit({color: 'blue', position: ++this.n});
-        this.n %= 40;
+        this.gameService.startGame(this.gameId)
+            .subscribe(res => {
+                this.gameState = 'other';
+            });
+    }
+
+    OnDestroy() {
+        this.ws.unsubscribe();
     }
 
 }

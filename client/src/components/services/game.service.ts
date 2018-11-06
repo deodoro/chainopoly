@@ -16,8 +16,27 @@ export class GameService {
                         .map(res => res.json());
     }
 
+    control(id, action) {
+        return this.Http.post(`/api/game/${id}/control`, {'action': action})
+                        .map(res => {
+                            return res.json();
+                        })
+                        .catch(err => {
+                            console.dir(err);
+                            return of(err.json());
+                        });
+    }
+
     startGame(id) {
-        console.log("start");
+        return this.control(id, 'roll');
+    }
+
+    roll(id) {
+        return this.control(id, 'roll');
+    }
+
+    commit(id) {
+        return this.control(id, 'commit');
     }
 
     create(player) {
@@ -32,5 +51,10 @@ export class GameService {
                     console.dir(err);
                     return of(err.json());
                 });
+    }
+
+    status(game) {
+        return this.Http.get(`/api/game/${game}/status`)
+                .map(res => res.json());
     }
 }

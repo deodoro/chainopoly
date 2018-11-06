@@ -17,6 +17,7 @@ export class StartComponent {
     }
     private games: Array<any>;
     private isEmpty = _.isEmpty;
+    private ws = null;
 
     static parameters = [GameService, SocketService, Router];
     constructor(private gameService : GameService, private socketService: SocketService, private router: Router) {
@@ -25,8 +26,7 @@ export class StartComponent {
         gameService.getActive().subscribe( games => {
             this.games = games;
         });
-        this.socketService.messages.subscribe(msg => {
-            console.log("Response from websocket: " + JSON.stringify(msg));
+        this.ws = this.socketService.messages.subscribe(msg => {
             switch(msg.type) {
                 case 'new_game':
                     this.games.push(_.assign(msg.payload.game, {players: 0}));
@@ -66,6 +66,10 @@ export class StartComponent {
             .subscribe(game => {
                 this.router.navigateByUrl(`/panel/${game.id}`);
             });
+    }
+
+    OnDestry() {
+        this.ws.unsubscribe();
     }
 
 }

@@ -91,6 +91,39 @@ class PlayerInfoHandler(tornado.web.RequestHandler):
             self.set_status(400)
             self.write('Invalid game')
 
+class PropertiesHandler(tornado.web.RequestHandler):
+    def get(self, game_id=-1, player_id=-1):
+        try:
+            game = GameCollection.instance().get(int(game_id))
+            self.set_header('Content-Type', 'application/json')
+            self.write(json.dumps(game.get_player_properties(player_id)))
+        except Exception as e:
+            logger.exception('Retrieving properties for player %s for game #%s' % (player_id, game_id))
+            self.set_status(400)
+            self.write('Invalid game')
+
+class BalanceHandler(tornado.web.RequestHandler):
+    def get(self, game_id=-1, player_id=-1):
+        try:
+            game = GameCollection.instance().get(int(game_id))
+            self.set_header('Content-Type', 'application/json')
+            self.write(json.dumps(game.get_player_balance(player_id)))
+        except Exception as e:
+            logger.exception('Retrieving balance for player %s for game #%s' % (player_id, game_id))
+            self.set_status(400)
+            self.write('Invalid game')
+
+class StatusHandler(tornado.web.RequestHandler):
+    def get(self, game_id=-1):
+        try:
+            game = GameCollection.instance().get(int(game_id))
+            self.set_header('Content-Type', 'application/json')
+            self.write(json.dumps(game.get_status()))
+        except Exception as e:
+            logger.exception('Retrieving status game #%s' % game_id)
+            self.set_status(400)
+            self.write('Invalid game')
+
 class ControlHandler(tornado.web.RequestHandler):
     def post(self, game_id=-1):
         args = json.loads(self.request.body)
@@ -114,10 +147,14 @@ if __name__ == '__main__':
         logger.info('Webserver boot')
 
         urls = [
-            (r'/api/game/control/(.+)', ControlHandler),
-            (r'/api/game(/.+)?', GameHandler),
+            (r'/api/game/(.+?)/properties/(.+)', PropertiesHandler),
+            (r'/api/game/(.+?)/balance/(.+)', BalanceHandler),
+            (r'/api/game/(.+?)/player/(.+)', PlayerInfoHandler),
+            (r'/api/game/(.+)/status', StatusHandler),
+            (r'/api/game/(.+)/control', ControlHandler),
+            (r'/api/game', GameHandler),
+            (r'/api/game/(.+)', GameHandler),
             (r'/api/players/(.+)', PlayerHandler),
-            (r'/api/player/(.+)/(.+)', PlayerInfoHandler),
             (r'/api/board', BoardHandler),
             (r'/ws', WebSocketHandler),
         ]

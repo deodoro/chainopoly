@@ -29,6 +29,6 @@ export class BoardService {
     }
 
     getProperties() {
-        return this.Http.get('/api/board').map(res => return res.json());
+        return this.Http.get('/api/board').map(res => res.json());
     }
 }

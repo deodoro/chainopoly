@@ -11,3 +11,11 @@
         <li *ngFor="let property of properties"> {{ property.name }} </li>
     </ul>
 </div>
+<div>
+    <div *ngIf="gameStatus == 'move'" >
+        <button class="btn btn-primary" (click)="roll()">Roll</button>
+    </div>
+    <div *ngIf="gameStatus == 'wait'">
+        <button class="btn btn-success" (click)="commit()">Commit</button>
+    </div>
+</div>

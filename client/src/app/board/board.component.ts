@@ -35,7 +35,7 @@ export class BoardComponent {
     }
 
     ngAfterViewInit() {
-        this.squareDivs.forEach(i => this.squareIndex[i.nativeElement.dataset.index] = i.nativeElement));
+        this.squareDivs.forEach(i => this.squareIndex[i.nativeElement.dataset.index] = i.nativeElement);
     }
 
     getPiece(color) {
