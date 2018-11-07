@@ -19,22 +19,21 @@ export class NewsComponent implements OnInit {
     let user_account = localStorage.getItem("account");
     this.news = [];
     this.ws = this.service.messages.subscribe(msg => {
-        console.log("news");
         if (msg.payload.game_id == gameId) {
             switch(msg.type) {
                 case "new_player":
-                    this.news.push(`${msg.payload.player.alias} se juntou ao jogo`);
+                    this.news.push(`${msg.payload.player.alias} chegou`);
                     break;
                 case "move":
-                    this.news.push(`Os dados foram jogados para ${msg.payload.player.alias} `);
+                    this.news.push(`Movimenta ${msg.payload.player.alias} `);
                     break;
                 case "status":
                     switch(msg.payload.status) {
                         case 'move':
-                            this.news.push(`A jogada corrente foi finalizada`);
+                            this.news.push(`Finalizado turno`);
                             break;
                         case 'finished':
-                            this.news.push(`O jogo foi finalizado`);
+                            this.news.push(`Fim de jogo`);
                             break;
                     }
             }

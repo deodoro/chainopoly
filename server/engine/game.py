@@ -57,8 +57,8 @@ class Game(object):
     # O jogador se registra no jogo
     def register_player(self, account_id, alias = 'anon'):
         if self.status == State.INIT and \
-           len(self.players) < Game.MAX_PLAYERS and \
-           not findOne(self.players, lambda p: p['account'] == account_id):
+                len(self.players) < Game.MAX_PLAYERS and \
+                not findOne(self.players, lambda p: p['account'] == account_id):
             account = Account(account_id)
             self.accounts[account_id] = account
             self.money.transfer(self.money.account, account, Game.INITIAL_BALANCE)
@@ -93,6 +93,23 @@ class Game(object):
     def list_properties(self):
         return self.board
 
+    def get_player_action_expectation_by_account(self, account):
+        return get_player_action_expectation(self, findOne(self.players, lambda p: p['account'] == account_id)):
+
+    def get_player_action_expectation(self, player):
+        if player['account'] == self.players[self.cur_player]:
+            owner = self.properties.who_owns(self.board[cur_player]._id)
+            if owner:
+                return {'player': player, 'action': 'rent', 'owner': owner, 'property': self.board[cur_player]}
+            else:
+                return {'player': player, 'action': 'buy', 'property': self.board[cur_player]}
+        else
+            return {'player': player, 'action': 'wait', 'current': self.players[self.cur_player]}
+
+    def notify_expected_action(self, player):
+        ee.emit('action', player=player)
+        if get_player_action_expectation(self, player):
+
     def roll(self):
         if self.status in [State.INIT, State.MOVE]:
             self.cur_player = (self.cur_player + 1) % len(self.players)
@@ -100,6 +117,7 @@ class Game(object):
                 (self.players[self.cur_player]['position'] + randint(2,12)) % len(self.board)
             self.set_status(State.WAIT)
             self.emit('move', player=self.players[self.cur_player])
+            notify_expected_action(self.players[self.cur_player])
 
     def commit(self, account_id):
         if self.status == State.WAIT and account_id == self.players[self.cur_player]['account']:
