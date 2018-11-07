@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { PanelComponent } from './panel.component';
 import { OpponentModule } from '../opponent/opponent.module';
 import { PlayerModule } from '../player/player.module';
+import { NewsModule } from '../news/news.module';
 import { RouterModule, Routes } from '@angular/router';
 
 export const ROUTES: Routes = [
@@ -15,6 +16,7 @@ export const ROUTES: Routes = [
         RouterModule.forChild(ROUTES),
         OpponentModule,
         PlayerModule,
+        NewsModule,
     ],
     declarations: [
         PanelComponent,

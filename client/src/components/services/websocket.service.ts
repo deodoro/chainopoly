@@ -20,7 +20,6 @@ export class WebSocketService {
 
         let observable = Rx.Observable.create(
             (obs: Rx.Observer<MessageEvent>) => {
-                console.dir(obs);
                 ws.onmessage = obs.next.bind(obs);
                 ws.onerror = obs.error.bind(obs);
                 ws.onclose = obs.complete.bind(obs);

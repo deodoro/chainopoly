@@ -14,10 +14,11 @@ import { OpponentService } from '../components/services/opponent.service';
 import { BoardService } from '../components/services/board.service';
 import { WebSocketService } from '../components/services/websocket.service';
 import { SocketService } from '../components/services/socket.service';
+import { NewsModule } from './news/news.module';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
@@ -26,6 +27,7 @@ import { SocketService } from '../components/services/socket.service';
     BoardModule,
     PanelModule,
     StartModule,
+    NewsModule,
   ],
   providers: [
     GameService,

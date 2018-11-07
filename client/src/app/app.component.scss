@@ -11,4 +11,15 @@ div.frame {
 }
 
 div.container {
+    height: 100%;
+}
+
+div.title {
+    height: 3em;
+}
+
+div.body {
+    height: 100%;
+    margin-top: -3em;
+    padding-top: 3em;
 }

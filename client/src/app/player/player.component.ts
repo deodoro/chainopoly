@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { PlayerService } from '../../components/services/player.service';
 import { GameService } from '../../components/services/game.service';
-import { ActivatedRoute } from '@angular/router';
 import { SocketService } from '../../components/services/socket.service';
 import { BoardService } from '../../components/services/board.service';
 import _ from 'lodash';
@@ -55,7 +55,7 @@ export class PlayerComponent {
 
     ngAfterViewInit() {
         this.service.getMyColor(this.gameId, this.data.account).subscribe(player => {
-            this.data.player = _.without(player, 'current');
+            this.data.player = _.omit(player, 'current');
             this.boardService.Stream.emit(player);
             this.myTurn = player['current'];
         });
