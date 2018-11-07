@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from engine.entities import Account
+from engine import Account
 
 class NonFungible(object):
     def __init__(self):
@@ -51,7 +51,10 @@ class NonFungible(object):
 
     # Quem é dono dessa propriedade?
     def who_owns(self, id):
-        return self.ownership_reverse[id] if id in self.ownership_reverse else None
+        if id in self.ownership_reverse and self.ownership_reverse[id]._id != self.account._id:
+            return self.ownership_reverse[id]
+        else:
+            return None
 
     # Que propriedades esse jogador possui?
     def what_owns(self, account):

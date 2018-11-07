@@ -26,7 +26,7 @@ export class BoardComponent {
         this.squares = _.fill(new Array(40), {name: ''});
         this.service.getProperties().subscribe(properties => {
             properties.forEach(p => {
-                this.squares[p.position - 1] = p;
+                this.squares[p.position] = p;
             });
         });
         this.service.Stream.subscribe(data => {

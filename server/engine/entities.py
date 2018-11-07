@@ -7,6 +7,12 @@ class Account:
         self._id = id
         self.balance = 0
 
+    def to_dict(self):
+        return {'id': self._id}
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
+
 class Property:
     LAST_ID = 1
 
@@ -19,5 +25,8 @@ class Property:
         self._id = Property.LAST_ID
         Property.LAST_ID += 1
 
+    def to_dict(self):
+        return {'name': self.name, 'color': self.color, 'price': self.price, 'rent': self.rent, 'id': self._id}
+
     def to_json(self):
-        return json.dumps({'name': self.name, 'color': self.color, 'price': self.price, 'rent': self.rent})
+        return json.dumps(self.to_dict())

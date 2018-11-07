@@ -11,7 +11,7 @@ import { SocketService } from '../../components/services/socket.service';
 export class NewsComponent implements OnInit {
 
   private ws = null;
-  private news = Array<String>;
+  private news = [];
   constructor(private service: SocketService, private route: ActivatedRoute) { }
 
   ngOnInit() {

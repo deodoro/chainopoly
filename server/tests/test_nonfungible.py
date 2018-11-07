@@ -14,7 +14,7 @@ def test_mint():
     t = nonfungible.NonFungible()
     assert t.who_owns(1) == None
     t.mint(1)
-    assert t.who_owns(1)._id == t.account._id
+    assert not t.who_owns(1)
     assert t.what_owns(t.account) == [1]
 
 def test_transfer(token):
@@ -22,7 +22,7 @@ def test_transfer(token):
     assert token.transfer(a, 1)
     assert token.what_owns(token.account) == [1]
     assert token.what_owns(a) == []
-    assert token.who_owns(1)._id == 0
+    assert token.who_owns(1) == None
     assert token.confirm(a, 1)
     assert token.who_owns(1)._id == 1
 

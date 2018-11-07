@@ -8,6 +8,7 @@ import logging
 import os
 import sys
 from pyee import EventEmitter
+from engine import Game
 from game_collection import GameCollection
 from websocket_handler import WebSocketHandler
 
@@ -24,9 +25,8 @@ logging.getLogger('').addHandler(ch)
 
 class BoardHandler(tornado.web.RequestHandler):
     def get(self):
-        with open('engine/properties.json') as data_file:
-            self.set_header('Content-Type', 'application/json')
-            self.write(data_file.read())
+        self.set_header('Content-Type', 'application/json')
+        self.write(json.dumps([i.to_dict() for i in Game.get_properties()]))
 
 class GameHandler(tornado.web.RequestHandler):
     def post(self, id = None):

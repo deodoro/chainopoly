@@ -1,7 +1,7 @@
 import tornado.ioloop
 import logging
 from pyee import EventEmitter
-from engine.game import Game
+from engine import Game
 from websocket_handler import broadcast
 
 logger = logging.getLogger('game_collection')

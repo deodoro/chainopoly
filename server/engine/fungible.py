@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from engine.entities import Account
+from engine import Account
 
 MAX_BALANCE = 10 ** 10
 
