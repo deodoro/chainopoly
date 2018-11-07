@@ -78,14 +78,14 @@ class Game(object):
     def get_player(self, account_id):
         p = findOne(self.players, lambda p: p['account'] == account_id)
         if p:
-            if self.status == State.WAIT and self.cur_player()['account'] == account_id:
-                return {**p, 'current': True}
-            else:
-                return {**p, 'current': False}
+            return {**p, 'current': self.is_current(account_id)}
         return p
 
     def cur_player(self):
         return self.players[self.cur_player_idx]
+
+    def is_current(self, account_id):
+        return self.status == State.WAIT and self.cur_player()['account'] == account_id
 
     def get_player_properties(self, account_id):
         return self.properties.what_owns(self.accounts[account_id])
@@ -118,17 +118,28 @@ class Game(object):
         else:
             return {'player': player, 'action': 'wait', 'current': self.cur_player()}
 
-    def notify_expected_action(self, player):
-        self.emit('action', **self.get_player_action_expectation(player))
-
-    def roll(self, dice = None):
+    def update_player_position(self, dice):
         if self.status in [State.INIT, State.MOVE]:
             self.cur_player_idx = (self.cur_player_idx + 1) % len(self.players)
             self.cur_player()['position'] = \
                 (self.cur_player()['position'] + (dice if dice else randint(2,12))) % len(self.board)
             self.set_status(State.WAIT)
             self.emit('move', player=self.cur_player())
-            self.notify_expected_action(self.cur_player())
+            return True
+        else:
+            return False
+
+    def prepare_player_action(self):
+        action = self.get_player_action_expectation(self.cur_player())
+        if action['action'] == 'buy':
+           pass
+        elif action['action'] == 'rent':
+           pass
+        self.emit('action', **action)
+
+    def roll(self, dice = None):
+        if self.update_player_position(dice):
+            self.prepare_player_action()
 
     def commit(self, account_id):
         if self.status == State.WAIT and account_id == self.cur_player()['account']:

@@ -5,3 +5,4 @@ from engine.fungible import Fungible
 from engine.nonfungible import NonFungible
 from engine.game import Game
 from engine.game import State
+from engine.atomic_swap import AtomicSwap
