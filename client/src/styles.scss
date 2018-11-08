@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,900|Roboto:300,500,700,900|Archivo+Black);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:100,300,400,600,900|Roboto:100,300,500,700,900|Archivo+Black);
 /*
 Alts:
 @import url('https://fonts.googleapis.com/css?family=Anton||Paytone+One|Bowlby+One+SC|Fascinate|Fascinate+Inline');
@@ -16,7 +16,7 @@ body {
     height: 100%;
     font-size: 1.5vw;
     background-color: #333;
-    color: #eee;
+    color: #ddd;
     overflow: hidden;
 }
 
@@ -33,4 +33,17 @@ input.form-control {
 
 a, a:hover {
     color: #fddb1d;
+}
+
+span.alias {
+}
+
+span.account {
+    color: orange;
+    padding-left: 0.5em;
+    font-size: 0.8em;
+
+    &::before {
+        content: "#";
+    }
 }

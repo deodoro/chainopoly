@@ -19,6 +19,7 @@ div.title {
     text-align: center;
 
     h1 {
+        user-select: none;
         font-family: Archivo Black;
         font-weight: 900;
         text-transform: uppercase;
