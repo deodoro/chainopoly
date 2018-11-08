@@ -11,7 +11,7 @@ import _ from 'lodash';
                        </div>
                    </div>
                </ng-container>`,
-    styles: [require('./notification-panel.scss')]
+    styleUrls: ['./notification-panel.scss']
 })
 export class NotificationPanelComponent {
     isOpen: boolean = false;
