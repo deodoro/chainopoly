@@ -80,7 +80,7 @@ export class PlayerComponent {
             .subscribe(success => {
                            this.transaction = { target: null, value: null};
                            this.newsService.Stream.emit(`${this.data.username} transferiu ${this.transaction.value} para a conta ${this.transaction.target}`);
-                       }
+                       },
                        error => {
                            this.errorMessage = error._body;
                            this.errorDialog.open();

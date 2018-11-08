@@ -16,12 +16,10 @@ import { BoardService } from '../components/services/board.service';
 import { WebSocketService } from '../components/services/websocket.service';
 import { SocketService } from '../components/services/socket.service';
 import { NewsService } from '../components/services/news.service';
-import { NotificationComponent } from './notification/notification.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NotificationComponent,
   ],
   imports: [
     BrowserModule,

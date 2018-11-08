@@ -33,7 +33,7 @@ export class BoardComponent {
             if (data != null)
                 this.renderer.appendChild(this.squareIndex[data.position], this.getPiece(data.color))
             else {
-                _.each(this.pieces, p => this.renderer.removeChild(this.renderer.parentNode(p), p);
+                _.each(this.pieces, p => this.renderer.removeChild(this.renderer.parentNode(p), p));
                 this.pieces = {};
             }
         })

@@ -16,10 +16,25 @@ div.container {
 
 div.title {
     height: 3em;
+    text-align: center;
+
+    h1 {
+        font-family: Archivo Black;
+        font-weight: 900;
+        text-transform: uppercase;
+        color: #444;
+        letter-spacing: 0.25em;
+        font-size: 7vw;
+        margin-top: -0.3em;
+        padding-left: 0.1em;
+        border-bottom: 1px solid #444;
+        line-height: 1em;
+        text-shadow: -0.05em -0.05em #222;
+    }
 }
 
 div.body {
     height: 100%;
-    margin-top: -3em;
-    padding-top: 3em;
+    margin-top: -4em;
+    padding-top: 5.5em;
 }
