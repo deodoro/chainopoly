@@ -141,6 +141,38 @@ class ControlHandler(tornado.web.RequestHandler):
             self.set_status(400)
             self.write('Invalid game')
 
+class TransferHandler(tornado.web.RequestHandler):
+    def post(self, game_id=-1):
+        args = json.loads(self.request.body)
+        try:
+            game = GameCollection.instance().get(int(game_id))
+            if args["source"] not in game.accounts:
+                raise Exception('Invalid debit account')
+            if args["target"] not in game.accounts:
+                raise Exception('Invalid credit account')
+            if int(args["value"]) <= 0:
+                raise Exception('Invalid value')
+            self.set_header('Content-Type', 'application/json')
+            self.write(json.dumps({"result": game.money.transfer(game.accounts[args["source"]], game.accounts[args["target"]], int(args["value"]))}))
+        except Exception as e:
+            logger.exception('Making transaction %r in game #%s' % (args, game_id))
+            self.set_status(400)
+            self.write(str(e))
+
+class CancelHandler(tornado.web.RequestHandler):
+    def post(self, game_id=-1):
+        args = json.loads(self.request.body)
+        try:
+            game = GameCollection.instance().get(int(game_id))
+            if args["source"] not in game.accounts:
+                raise Exception('Invalid debit account')
+            self.set_header('Content-Type', 'application/json')
+            self.write(json.dumps({"result": game.swap.cancel_offer(debitor=game.accounts[args["source"]])}))
+        except Exception as e:
+            logger.exception('Cancelling offer %r in game #%s' % (args, game_id))
+            self.set_status(400)
+            self.write(str(e))
+
 # Framework do servidor
 if __name__ == '__main__':
     try:
@@ -148,6 +180,8 @@ if __name__ == '__main__':
 
         urls = [
             (r'/api/game/(.+?)/properties/(.+)', PropertiesHandler),
+            (r'/api/game/(.+?)/transfer', TransferHandler),
+            (r'/api/game/(.+?)/cancel', CancelHandler),
             (r'/api/game/(.+?)/balance/(.+)', BalanceHandler),
             (r'/api/game/(.+?)/player/(.+)', PlayerInfoHandler),
             (r'/api/game/(.+)/status', StatusHandler),

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SocketService } from '../../components/services/socket.service';
-
+import { NewsService } from '../../components/services/news.service';
 
 @Component({
   selector: 'news',
@@ -12,33 +12,43 @@ export class NewsComponent implements OnInit {
 
   private ws = null;
   private news = [];
-  constructor(private service: SocketService, private route: ActivatedRoute) { }
+  static parameters = [SocketService, NewsService, ActivatedRoute];
+  constructor(private service: SocketService, private newsService: NewsService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     let gameId = this.route.snapshot.paramMap.get('id');
     let user_account = localStorage.getItem("account");
-    this.news = [];
+    this.newsService.Stream.subscribe(msg => this.news.push(msg));
     this.ws = this.service.messages.subscribe(msg => {
         if (msg.payload.game_id == gameId) {
             switch(msg.type) {
                 case "new_player":
-                    this.news.push(`${msg.payload.player.alias} chegou`);
+                    this.newsService.Stream.emit(`${msg.payload.player.alias} chegou`);
                     break;
                 case "move":
-                    this.news.push(`Movimenta ${msg.payload.player.alias} `);
+                    this.newsService.Stream.emit(`Movimenta ${msg.payload.player.alias} `);
                     break;
                 case "status":
                     switch(msg.payload.status) {
                         case 'move':
-                            this.news.push(`Finalizado turno`);
+                            this.newsService.Stream.emit(`Finalizado turno`);
                             break;
                         case 'finished':
-                            this.news.push(`Fim de jogo`);
+                            this.newsService.Stream.emit(`Fim de jogo`);
                             break;
                     }
-            }
-            if (msg.type == "news") {
-                this.news.push(msg);
+                    break;
+                case "action":
+                    console.dir(msg.payload);
+                    switch(msg.payload.info.action) {
+                        case "buy":
+                            this.newsService.Stream.emit(`${msg.payload.player.alias} tem a opção de comprar ${msg.payload.info.property.name} por $${msg.payload.info.property.price}`)
+                            break;
+                        case "rent":
+                            this.newsService.Stream.emit(`${msg.payload.player.alias} deve a ${msg.payload.info.owner.name} aluguel de $${msg.payload.info.property.rent}`)
+                            break;
+                    }
+                    break;
             }
         }
     })

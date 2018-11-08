@@ -57,4 +57,14 @@ export class GameService {
         return this.Http.get(`/api/game/${game}/status`)
                 .map(res => res.json());
     }
+
+    transfer(game, transaction) {
+        return this.Http.post(`/api/game/${game}/transfer`, transaction)
+                .map(res => res.json());
+    }
+
+    cancel(game, account_id) {
+        return this.Http.post(`/api/game/${game}/cancel`, account_id)
+                .map(res => res.json());
+    }
 }

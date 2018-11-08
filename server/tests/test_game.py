@@ -40,59 +40,65 @@ def test_init(game):
             assert not game.properties.who_owns(p._id)
 
 def test_register(game):
-    game.register_player("0", "deodoro")
-    game.register_player("1", "mario")
+    game.register_player("1", "deodoro")
+    game.register_player("2", "mario")
     players = game.list_players()
     assert len(players) == 2
     assert len([i for i in players if i["alias"] == "deodoro"]) == 1
     assert len([i for i in players if i["alias"] == "mario"]) == 1
-    game.register_player("0", "deodoro")
+    game.register_player("1", "deodoro")
     assert len(players) == 2
 
 def test_status(game):
-    game.register_player("0", "deodoro")
-    game.register_player("1", "mario")
+    game.set_check_pending(False)
+    game.register_player("1", "deodoro")
+    game.register_player("2", "mario")
     assert game.status == State.INIT
     game.roll()
     assert game.status == State.WAIT
-    assert game.get_player("0")["current"]
-    assert not game.get_player("1")["current"]
-    game.commit("0")
-    assert game.status == State.MOVE
-    assert not game.get_player("0")["current"]
-    assert not game.get_player("1")["current"]
-    game.roll()
-    game.commit("0")
-    assert game.status == State.WAIT
-    assert not game.get_player("0")["current"]
     assert game.get_player("1")["current"]
+    assert not game.get_player("2")["current"]
     game.commit("1")
     assert game.status == State.MOVE
-    assert not game.get_player("0")["current"]
     assert not game.get_player("1")["current"]
+    assert not game.get_player("2")["current"]
+    game.roll()
+    game.commit("1")
+    assert game.status == State.WAIT
+    assert not game.get_player("1")["current"]
+    assert game.get_player("2")["current"]
+    game.commit("2")
+    assert game.status == State.MOVE
+    assert not game.get_player("1")["current"]
+    assert not game.get_player("2")["current"]
 
 def test_move_events(game):
+    game.set_check_pending(False)
     assert game.ee.check_event(game.ee.get_event(-1), {"type": "status", "status": "init"})
-    game.register_player("0", "deodoro")
-    assert game.ee.check_event(game.ee.get_event(-1), {"type": "newplayer", "player.account": "0", "player.alias": "deodoro", "player.position": 0})
-    game.register_player("1", "mario")
-    assert game.ee.check_event(game.ee.get_event(-1), {"type": "newplayer", "player.account": "1", "player.alias": "mario", "player.position": 0})
+    game.register_player("1", "deodoro")
+    assert game.ee.check_event(game.ee.get_event(-1), {"type": "newplayer", "player.account": "1", "player.alias": "deodoro", "player.position": 0})
+    game.register_player("2", "mario")
+    assert game.ee.check_event(game.ee.get_event(-1), {"type": "newplayer", "player.account": "2", "player.alias": "mario", "player.position": 0})
     game.roll(1)
-    assert game.ee.check_event(game.ee.get_event(-2), {"type": "move", "player.account": "0"})
-    assert game.ee.check_event(game.ee.get_event(-1), {"type": "action", "action": "buy", "player.account": "0", "property.id": 1})
-    game.commit("0")
-    game.roll(2)
     assert game.ee.check_event(game.ee.get_event(-2), {"type": "move", "player.account": "1"})
-    assert game.ee.check_event(game.ee.get_event(-1), {"type": "action", "action": "parking", "player.account": "1"})
+    assert game.ee.check_event(game.ee.get_event(-1), {"type": "action", "info.action": "buy", "player.account": "1", "info.property.id": 1})
+    game.commit("1")
+    game.roll(2)
+    assert game.ee.check_event(game.ee.get_event(-2), {"type": "move", "player.account": "2"})
+    assert game.ee.check_event(game.ee.get_event(-1), {"type": "action", "info.action": "parking", "player.account": "2"})
 
 def test_buy_property(game):
-    game.register_player("0", "deodoro")
-    game.register_player("1", "mario")
+    game.register_player("1", "deodoro")
+    game.register_player("2", "mario")
     game.roll(1)
-    assert game.ee.check_event(game.ee.get_event(-2), {"type": "move", "player.account": "0"})
-    assert game.ee.check_event(game.ee.get_event(-1), {"type": "action", "action": "buy", "player.account": "0", "property.id": 1})
-
-    game.commit("0")
-    game.roll(2)
     assert game.ee.check_event(game.ee.get_event(-2), {"type": "move", "player.account": "1"})
-    assert game.ee.check_event(game.ee.get_event(-1), {"type": "action", "action": "parking", "player.account": "1"})
+    assert game.ee.check_event(game.ee.get_event(-1), {"type": "action", "info.action": "buy", "player.account": "1", "info.property.id": 1})
+    assert not game.commit("1")
+    game.money.transfer(game.accounts["1"], game.properties.account, 60)
+    assert game.commit("1")
+    game.roll(1)
+    assert game.ee.check_event(game.ee.get_event(-2), {"type": "move", "player.account": "2"})
+    assert game.ee.check_event(game.ee.get_event(-1), {"type": "action", "info.action": "rent", "player.account": "2"})
+    assert not game.commit("2")
+    game.money.transfer(game.accounts["2"], game.accounts["1"], 2)
+    assert game.commit("2")

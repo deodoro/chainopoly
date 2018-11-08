@@ -27,6 +27,7 @@ export class SocketService {
                 }
             })
             .subscribe(msg => {
+                console.dir(msg);
                 if (!_.isEmpty(msg))
                     this.messages.next(msg);
             });

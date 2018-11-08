@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PlayerService } from '../../components/services/player.service';
 import { GameService } from '../../components/services/game.service';
 import { SocketService } from '../../components/services/socket.service';
 import { BoardService } from '../../components/services/board.service';
+import { NewsService } from '../../components/services/news.service';
+import { NotificationPanelComponent } from '../../components/notification-panel/notification-panel.component';
 import _ from 'lodash';
 
 @Component({
@@ -19,12 +21,16 @@ export class PlayerComponent {
     private gameStatus = 'init';
     private myTurn = false;
     private ws = null;
-    static parameters = [PlayerService, GameService, ActivatedRoute, SocketService, BoardService];
+    private transaction = { target: null, value: null};
+    @ViewChild("errorDialog") errorDialog: NotificationPanelComponent;
+    private errorMessage = null;
+    static parameters = [PlayerService, GameService, ActivatedRoute, SocketService, BoardService, NewsService];
     constructor(private service: PlayerService,
                 private gameService: GameService,
                 private route: ActivatedRoute,
                 private socketService: SocketService,
-                private boardService: BoardService) {
+                private boardService: BoardService,
+                private newsService: NewsService) {
         this.gameId = this.route.snapshot.paramMap.get('id');
         this.data = {
             username: localStorage.getItem("username"),
@@ -32,7 +38,10 @@ export class PlayerComponent {
         }
         this.gameService.status(this.gameId).subscribe(status => this.gameStatus = status);
         this.service.getBalance(this.gameId, this.data.account).subscribe(balance => this.balance = balance);
-        this.service.getProperties(this.gameId, this.data.account).subscribe(properties => this.properties = properties);
+        this.service.getProperties(this.gameId, this.data.account).subscribe(properties => {
+            this.properties = properties;
+            console.dir(properties);
+        });
         this.ws = this.socketService.messages.subscribe(msg => {
             if (msg.payload.game_id == this.gameId) {
                 switch(msg.type) {
@@ -63,6 +72,23 @@ export class PlayerComponent {
 
     roll() {
         this.gameService.roll(this.gameId)
+            .subscribe(res => console.log(res));
+    }
+
+    transfer() {
+        this.gameService.transfer(this.gameId, _.assign(this.transaction, {source: this.data.account}))
+            .subscribe(success => {
+                           this.transaction = { target: null, value: null};
+                           this.newsService.Stream.emit(`${this.data.username} transferiu ${this.transaction.value} para a conta ${this.transaction.target}`);
+                       }
+                       error => {
+                           this.errorMessage = error._body;
+                           this.errorDialog.open();
+                       });
+    }
+
+    cancel() {
+        this.gameService.cancel(this.gameId, _.assign({source: this.data.account}))
             .subscribe(res => console.log(res));
     }
 

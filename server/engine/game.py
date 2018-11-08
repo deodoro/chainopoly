@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from engine import Fungible, NonFungible, Account, Property
+from engine import Fungible, NonFungible, Account, Property, AtomicSwap
 from enum import Enum
 from random import randint
 import json
@@ -37,23 +37,23 @@ class Game(object):
 
     # Inicializando um jogo vazio
     def __init__(self, game_id, ee = None):
-        # Token fungível
+        # Tokens
         self.money = Fungible()
-        # As casas de um tabuleiro vazio
-        self.board = [None] * (max([i.position for i in Game.get_properties()]) + 1)
-        # Emitindo os tokens não fungíveis
         self.properties = NonFungible()
-
+        self.swap = AtomicSwap(self.money, self.properties)
+        # Emissão de tokens e atribuição no tabuleiro
+        self.board = [None] * (max([i.position for i in Game.get_properties()]) + 1)
         for p in Game.get_properties():
             self.properties.mint(p._id, p.to_json())
             self.board[p.position] = p
         # Estado Inicial
         self.players = []
-        self.accounts = {}
+        self.accounts = { self.properties.account._id: self.properties.account}
         self.cur_player_idx = -1
         self._id = game_id
         self.ee = ee
         self.set_status(State.INIT)
+        self.check_pending = True
 
     def emit(self, type, **kwargs):
         if self.ee:
@@ -63,7 +63,7 @@ class Game(object):
     def register_player(self, account_id, alias = 'anon'):
         if self.status == State.INIT and \
                 len(self.players) < Game.MAX_PLAYERS and \
-                not self.get_player(account_id):
+                account_id not in self.accounts:
             account = Account(account_id)
             self.accounts[account_id] = account
             self.money.transfer(self.money.account, account, Game.INITIAL_BALANCE)
@@ -88,7 +88,7 @@ class Game(object):
         return self.status == State.WAIT and self.cur_player()['account'] == account_id
 
     def get_player_properties(self, account_id):
-        return self.properties.what_owns(self.accounts[account_id])
+        return [json.loads(self.properties.get_uri(i)) for i in self.properties.what_owns(self.accounts[account_id])]
 
     def get_player_balance(self, account_id):
         return self.money.balance_of(self.accounts[account_id])
@@ -110,13 +110,13 @@ class Game(object):
             if prop:
                 owner = self.properties.who_owns(prop._id)
                 if owner:
-                    return {'player': player, 'action': 'rent', 'owner': owner.to_dict(), 'property': prop.to_dict()}
+                    return {'player': player, 'info': {'action': 'rent', 'owner': self.get_player(owner._id), 'property': prop.to_dict()}}
                 else:
-                    return {'player': player, 'action': 'buy', 'property': prop.to_dict()}
+                    return {'player': player, 'info': {'action': 'buy', 'property': prop.to_dict()}}
             else:
-                return {'player': player, 'action': 'parking'}
+                return {'player': player, 'info': {'action': 'parking'}}
         else:
-            return {'player': player, 'action': 'wait', 'current': self.cur_player()}
+            return {'player': player, 'info': {'action': 'wait', 'current': self.cur_player()}}
 
     def update_player_position(self, dice):
         if self.status in [State.INIT, State.MOVE]:
@@ -131,10 +131,10 @@ class Game(object):
 
     def prepare_player_action(self):
         action = self.get_player_action_expectation(self.cur_player())
-        if action['action'] == 'buy':
-           pass
-        elif action['action'] == 'rent':
-           pass
+        if action['info']['action'] == 'buy':
+           self.swap.add_iofferu(self.accounts[action['player']['account']], action['info']['property']['id'], action['info']['property']['price'])
+        elif action['info']['action'] == 'rent':
+           self.swap.add_iou(self.accounts[action['info']['owner']['account']], self.accounts[action['player']['account']], action['info']['property']['rent'])
         self.emit('action', **action)
 
     def roll(self, dice = None):
@@ -142,8 +142,11 @@ class Game(object):
             self.prepare_player_action()
 
     def commit(self, account_id):
-        if self.status == State.WAIT and account_id == self.cur_player()['account']:
+        if self.status == State.WAIT and account_id == self.cur_player()['account'] and not (self.check_pending and self.swap.has_pending(self.accounts[account_id])):
             self.set_status(State.MOVE)
+            return True
+        else:
+            return False
 
     def get_status(self):
         if self.status == State.INIT:
@@ -160,3 +163,6 @@ class Game(object):
     def set_status(self, status):
         self.status = status
         self.emit('status', status=self.get_status())
+
+    def set_check_pending(self, value):
+        self.check_pending = value

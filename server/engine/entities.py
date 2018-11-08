@@ -8,7 +8,7 @@ class Account:
         self.balance = 0
 
     def to_dict(self):
-        return {'id': self._id}
+        return {'account': self._id}
 
     def to_json(self):
         return json.dumps(self.to_dict())
@@ -26,7 +26,7 @@ class Property:
         Property.LAST_ID += 1
 
     def to_dict(self):
-        return {'name': self.name, 'color': self.color, 'price': self.price, 'rent': self.rent, 'id': self._id}
+        return {'name': self.name, 'color': self.color, 'price': self.price, 'rent': self.rent, 'id': self._id, 'position': self.position}
 
     def to_json(self):
         return json.dumps(self.to_dict())

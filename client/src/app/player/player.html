@@ -16,6 +16,19 @@
         <button class="btn btn-primary" (click)="roll()">Roll</button>
     </div>
     <div *ngIf="myTurn && gameStatus == 'wait'">
-        <button class="btn btn-success" (click)="commit()">Commit</button>
+        <div class="form-group col-lg-12">
+            <input class="form-control" type="text" [(ngModel)]="transaction.target" placeholder="Transferir para">
+        </div>
+        <div class="form-group col-lg-12">
+            <input class="form-control" type="text" [(ngModel)]="transaction.value" placeholder="Valor">
+        </div>
+        <div class="form-group col-lg-12">
+            <button class="btn btn-success" (click)="transfer()">Transferir</button>
+            <button class="btn btn-warning" (click)="cancel()">Ignorar</button>
+            <button class="btn btn-primary" (click)="commit()">Continuar</button>
+        </div>
     </div>
 </div>
+<notification-panel #errorDialog>
+    {{ errorMessage }}
+</notification-panel>

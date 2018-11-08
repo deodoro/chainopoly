@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from engine import nonfungible
+from engine import NonFungible
 from engine.entities import *
 import pytest
 
 @pytest.fixture
 def token():
-    token = nonfungible.NonFungible()
+    token = NonFungible()
     token.mint(1)
     return token
 
 def test_mint():
-    t = nonfungible.NonFungible()
+    t = NonFungible()
     assert t.who_owns(1) == None
     t.mint(1)
     assert not t.who_owns(1)

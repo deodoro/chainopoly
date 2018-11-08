@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { GameService } from '../../components/services/game.service';
+import { BoardService } from '../../components/services/board.service';
 import { SocketService } from '../../components/services/socket.service';
 import _ from 'lodash';
 
@@ -19,11 +20,12 @@ export class StartComponent {
     private isEmpty = _.isEmpty;
     private ws = null;
 
-    static parameters = [GameService, SocketService, Router];
-    constructor(private gameService : GameService, private socketService: SocketService, private router: Router) {
+    static parameters = [GameService, SocketService, BoardService, Router];
+    constructor(private gameService : GameService, private socketService: SocketService, private boardService: BoardService, private router: Router) {
+        this.boardService.Stream.emit(null);
         this.data.account = localStorage.getItem('account');
         this.data.username = localStorage.getItem('username');
-        gameService.getActive().subscribe( games => {
+        this.gameService.getActive().subscribe( games => {
             this.games = games;
         });
         this.ws = this.socketService.messages.subscribe(msg => {

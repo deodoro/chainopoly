@@ -6,8 +6,8 @@ MAX_BALANCE = 10 ** 10
 
 class Fungible(object):
     def __init__(self, notify_hook = None):
-        self.account = Account(0)
-        self.balances = { 0: MAX_BALANCE }
+        self.account = Account("0")
+        self.balances = { "0": MAX_BALANCE }
         self.notify_hook = notify_hook
 
     def balance_of(self, account):

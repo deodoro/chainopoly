@@ -1,0 +1,20 @@
+div.notification-panel {
+	font-size: 1.2em;
+	position: fixed;
+	top: 1em;
+	left: 50%;
+    transform: translate(-50%, 0);
+    padding: 1em;
+    z-index: 1001;
+    border-radius: 0.5em;
+    min-width: 50%;
+    box-shadow: 0.5em 0.5em 1em black;
+    font-weight: 300;
+    background-color: #d08d07;
+	.button-bar {
+		margin-top: 2em;
+		width: 100%;
+		text-align: center;
+		color: #666;
+	}
+}

@@ -4,7 +4,7 @@
     <ul>
         <li *ngFor="let player of players">
             <div style="height: 1em; width: 1em; display: inline-block; margin-right: 1em" [ngStyle]="{'background': player.color}"></div>
-            {{ player.alias }}
+            <span class="alias">{{ player.alias }}</span> <span class="account">{{ player.account }}</span>
         </li>
     </ul>
     <button class="btn btn-danger" [disabled]="!players || players.length == 0" (click)="startGame()" *ngIf="gameState=='init'">

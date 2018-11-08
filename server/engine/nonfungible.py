@@ -4,7 +4,7 @@ from engine import Account
 
 class NonFungible(object):
     def __init__(self):
-        self.account = Account(0)
+        self.account = Account("0")
         self.ownership = {self.account._id: []}
         self.ownership_reverse = {}
         self.tokenUris = {}
@@ -33,7 +33,7 @@ class NonFungible(object):
     # Transfere de um indivíduo para outro
     def transfer(self, _to, id):
         if id in self.ownership_reverse:
-            self.pending.append((self.ownership_reverse[id], _to,id))
+            self.pending.append((self.ownership_reverse[id], _to, id))
             return True
         else:
             return False
@@ -46,6 +46,14 @@ class NonFungible(object):
                 self.ownership[_from._id].remove(id)
                 self.ownership[_to._id].append(id)
                 self.ownership_reverse[id] = _to
+                return True
+        return False
+
+    def cancel(self, _to, id):
+        if id in self.ownership_reverse:
+            _from = self.ownership_reverse[id]
+            if (_from, _to, id) in self.pending:
+                self.pending.remove((_from, _to, id))
                 return True
         return False
 

@@ -30,7 +30,12 @@ export class BoardComponent {
             });
         });
         this.service.Stream.subscribe(data => {
-            this.renderer.appendChild(this.squareIndex[data.position], this.getPiece(data.color))
+            if (data != null)
+                this.renderer.appendChild(this.squareIndex[data.position], this.getPiece(data.color))
+            else {
+                _.each(this.pieces, p => this.renderer.removeChild(this.renderer.parentNode(p), p);
+                this.pieces = {};
+            }
         })
     }
 

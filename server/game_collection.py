@@ -22,6 +22,10 @@ def broadcast_status(game_id, status):
     logger.debug('status game=%s status=%s' % (game_id, status))
     broadcast('status', payload={'game_id': game_id, 'status': status})
 
+def broadcast_action(game_id, player, info):
+    logger.debug('action game=%s player=%s action=%s' % (game_id, player, info))
+    broadcast('action', payload={'game_id': game_id, 'player': player, 'info': info})
+
 class GameCollection:
     # Here will be the instance stored.
     __instance = None
@@ -45,6 +49,7 @@ class GameCollection:
         self.ee.on('newplayer', broadcast_new_player)
         self.ee.on('move', broadcast_move)
         self.ee.on('status', broadcast_status)
+        self.ee.on('action', broadcast_action)
 
     def get(self, idx):
         if idx < 0 or idx >= len(self.games):
