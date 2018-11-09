@@ -7,9 +7,12 @@
     ${{ balance }}
 </div>
 <div class="player-info">
-    <span class="prop" *ngFor="let property of properties">
-        <a routerLink="" (mouseenter)="showProperty(property)">{{ property.name }}</a>
-    </span>
+    <div class="prop" *ngFor="let property of properties">
+        <div class="contents">
+            <a routerLink="" (mouseenter)="showProperty(property)">{{ property.name }}</a>
+            <div class="color {{property.color}}"></div>
+        </div>
+    </div>
 </div>
 <div class="transaction-form">
     <div *ngIf="gameStatus == 'move'" >

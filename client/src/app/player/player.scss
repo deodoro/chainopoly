@@ -5,12 +5,41 @@ div.player-name {
 div.player-info {
     color: #aaa;
 
-    span.prop {
-        font-size: 0.8em;
-        cursor: pointer;
+    div.prop {
+        display: inline-block;
+
+        div.contents {
+            display: inline-block;
+            position: relative;
+            font-size: 0.8em;
+            height: 2.5em;
+            border-radius: 0.4em 0.4em 0 0;
+            background-color: #444;
+            padding: 0.2em 0;
+            a {
+                cursor: pointer;
+                padding: 1em;
+            }
+            div.color {
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                height: 0.7em;
+                border-radius: 0 0 0.4em 0.4em;
+                &.purple { background-color: purple; }
+                &.lightblue { background-color: lightskyblue; }
+                &.violet { background-color: violet; }
+                &.orange { background-color: orange; }
+                &.red { background-color: red; }
+                &.yellow { background-color: khaki; }
+                &.darkgreen { background-color: green; }
+                &.darkblue { background-color: royalblue; }
+                &.utility { background-color: #999999; }
+            }
+        }
     }
 
-    span.prop+span.prop::before {
+    div.prop+div.prop::before {
         content: "\2022";
         color: #997100;
         margin-left: 0.5em;
