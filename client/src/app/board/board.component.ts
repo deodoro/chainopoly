@@ -17,21 +17,37 @@ export class BoardComponent {
     private squares: Array<any>;
     private pieces = {};
     private squareIndex = {};
+    private highlightTimers = {};
     public range = _.range;
     public rangeRight = _.rangeRight;
     @ViewChildren('square') squareDivs : QueryList<any>;
 
     static parameters = [BoardService, Renderer2];
     constructor(private service: BoardService, private renderer: Renderer2) {
-        this.squares = _.fill(new Array(40), {name: ''});
+        this.squares = _.map(new Array(40), () => { return {name: '', highlight: false} });
         this.service.getProperties().subscribe(properties => {
             properties.forEach(p => {
-                this.squares[p.position] = p;
+                this.squares[p.position] = _.assign(p, {highlight: false});
             });
         });
         this.service.Stream.subscribe(data => {
-            if (data != null)
-                this.renderer.appendChild(this.squareIndex[data.position], this.getPiece(data.color))
+            if (data != null) {
+                if (_.has(data, 'player'))
+                    this.renderer.appendChild(this.squareIndex[data.player.position], this.getPiece(data.player.color))
+                else {
+                    if (_.has(data, 'property')) {
+                        if (_.has(this.highlightTimers, data.property.id)) {
+                            clearTimeout(this.highlightTimers[data.property.id]);
+                        }
+                        else
+                            this.squares[data.property.position].highlight = true;
+                        this.highlightTimers[data.property.id] = setTimeout(() => {
+                            this.squares[data.property.position].highlight = false;
+                            delete this.highlightTimers[data.property.id];
+                        }, 1000);
+                    }
+                }
+            }
             else {
                 _.each(this.pieces, p => this.renderer.removeChild(this.renderer.parentNode(p), p));
                 this.pieces = {};

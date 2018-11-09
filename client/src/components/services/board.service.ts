@@ -11,7 +11,7 @@ export class Piece {
     position: number;
 }
 
-export class PieceEventEmitter extends Subject<Piece>{
+export class PieceEventEmitter extends Subject<any>{
     constructor() {
         super();
     }

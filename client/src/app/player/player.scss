@@ -4,4 +4,22 @@ div.player-name {
 
 div.player-info {
     color: #aaa;
+
+    span.prop {
+        font-size: 0.8em;
+        cursor: pointer;
+    }
+
+    span.prop+span.prop::before {
+        content: "\2022";
+        color: #997100;
+        margin-left: 0.5em;
+        margin-right: 0.5em;
+    }
+}
+
+div.transaction-form {
+    padding: 2em 0;
+    margin: 2em 0;
+    background: #444;
 }

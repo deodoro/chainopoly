@@ -4,17 +4,18 @@
     {{ data.username }}
 </div>
 <div class="player-info">
-    Seu saldo: ${{ balance }}
+    ${{ balance }}
 </div>
 <div class="player-info">
-    Suas propriedades:
-    <ul>
-        <li *ngFor="let property of properties"> {{ property.name }} </li>
-    </ul>
+    <span class="prop" *ngFor="let property of properties">
+        <a routerLink="" (mouseenter)="showProperty(property)">{{ property.name }}</a>
+    </span>
 </div>
-<div>
+<div class="transaction-form">
     <div *ngIf="gameStatus == 'move'" >
-        <button class="btn btn-primary" (click)="roll()">Roll</button>
+        <div class="form-group col-lg-12">
+            <button class="btn btn-primary" (click)="roll()">Roll</button>
+        </div>
     </div>
     <div *ngIf="myTurn && gameStatus == 'wait'">
         <div class="form-group col-lg-12">

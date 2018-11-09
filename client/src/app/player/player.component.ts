@@ -37,18 +37,14 @@ export class PlayerComponent {
             account: localStorage.getItem("account")
         }
         this.gameService.status(this.gameId).subscribe(status => this.gameStatus = status);
-        this.service.getBalance(this.gameId, this.data.account).subscribe(balance => this.balance = balance);
-        this.service.getProperties(this.gameId, this.data.account).subscribe(properties => {
-            this.properties = properties;
-            console.dir(properties);
-        });
+        this.refreshPlayerInfo();
         this.ws = this.socketService.messages.subscribe(msg => {
             if (msg.payload.game_id == this.gameId) {
                 switch(msg.type) {
                     case 'move':
                         if (this.data.account == msg.payload.player.account) {
                             _.assign(this.data.player, msg.payload.player);
-                            this.boardService.Stream.emit(msg.payload.player);
+                            this.boardService.Stream.emit({player: msg.payload.player});
                             this.myTurn = true;
                         }
                         else
@@ -65,9 +61,16 @@ export class PlayerComponent {
     ngAfterViewInit() {
         this.service.getMyColor(this.gameId, this.data.account).subscribe(player => {
             this.data.player = _.omit(player, 'current');
-            this.boardService.Stream.emit(player);
+            this.boardService.Stream.emit({player: player});
             this.myTurn = player['current'];
         });
+    }
+
+    refreshPlayerInfo() {
+        this.service.getBalance(this.gameId, this.data.account)
+            .subscribe(balance => this.balance = balance);
+        this.service.getProperties(this.gameId, this.data.account)
+            .subscribe(properties => this.properties = properties);
     }
 
     roll() {
@@ -80,6 +83,7 @@ export class PlayerComponent {
             .subscribe(success => {
                            this.transaction = { target: null, value: null};
                            this.newsService.Stream.emit(`${this.data.username} transferiu ${this.transaction.value} para a conta ${this.transaction.target}`);
+                           this.refreshPlayerInfo();
                        },
                        error => {
                            this.errorMessage = error._body;
@@ -95,6 +99,10 @@ export class PlayerComponent {
     commit() {
         this.gameService.commit(this.gameId, this.data.account)
             .subscribe(res => console.log(res));
+    }
+
+    showProperty(p) {
+        this.boardService.Stream.emit({property: p});
     }
 
     OnDestroy() {

@@ -8,7 +8,7 @@ class Square {
 
 @Component({
     selector: 'property',
-    template: `<div class='property'>
+    template: `<div class='property' [class.highlight]="value.highlight">
                     <div class="name">{{value.name}}</div>
                     <div class="color {{value.color}}"></div>
                 </div>`,

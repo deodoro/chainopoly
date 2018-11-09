@@ -28,23 +28,21 @@ export class OpponentComponent {
         this.gameService.status(this.gameId).subscribe(status => this.gameState = status);
         this.service.list(this.gameId).subscribe(players => {
             this.players = players.filter(i => i.account != myAccount);
-            this.players.forEach(p => {
-                this.boardService.Stream.emit(p);
-            })
+            this.players.forEach(p => this.boardService.Stream.emit({player: p}))
         });
         this.ws = this.socketService.messages.subscribe(msg => {
             if (msg.payload.game_id == this.gameId) {
                 switch(msg.type) {
                     case 'new_player':
                         this.players.push(msg.payload.player);
-                        this.boardService.Stream.emit(msg.payload.player);
+                        this.boardService.Stream.emit({player: msg.payload.player});
                         break;
                     case 'move':
                         this.players.forEach(p => {
                             if (p.account == msg.payload.player.account)
                                 _.assign(p, msg.payload.player);
                         });
-                        this.boardService.Stream.emit(msg.payload.player);
+                        this.boardService.Stream.emit({player: msg.payload.player});
                         break;
                     case 'status':
                         this.gameState = msg.payload.status;
