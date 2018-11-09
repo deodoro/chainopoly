@@ -1,9 +1,9 @@
 <div>
-    <div class="title">Oponentes</div>
+    <div class="list-title">Oponentes</div>
 
     <ul>
         <li *ngFor="let player of players">
-            <div style="height: 1em; width: 1em; display: inline-block; margin-right: 1em" [ngStyle]="{'background': player.color}"></div>
+            <div class="player-marker" [ngStyle]="{'background': player.color}"></div>
             <span class="alias">{{ player.alias }}</span> <span class="account">{{ player.account }}</span>
         </li>
     </ul>

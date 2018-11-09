@@ -1,11 +1,12 @@
-<div>
-    <div style="height: 1em; width: 1em; display: inline-block; margin-right: 1em" [ngStyle]="{'background': data.player.color}" *ngIf="data.player"></div>
+<div class="list-title">Jogador</div>
+<div class="player-name">
+    <div class="player-marker" [ngStyle]="{'background': data.player.color}" *ngIf="data.player"></div>
     {{ data.username }}
 </div>
-<div>
+<div class="player-info">
     Seu saldo: ${{ balance }}
 </div>
-<div>
+<div class="player-info">
     Suas propriedades:
     <ul>
         <li *ngFor="let property of properties"> {{ property.name }} </li>
