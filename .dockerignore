@@ -1,0 +1,4 @@
+**/.git
+client/e2e/**
+server/logs/**
+client/node_modules/**

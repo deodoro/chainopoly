@@ -178,6 +178,7 @@ if __name__ == '__main__':
     try:
         logger.info('Webserver boot')
 
+        static_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "contents", "client")
         urls = [
             (r'/api/game/(.+?)/properties/(.+)', PropertiesHandler),
             (r'/api/game/(.+?)/transfer', TransferHandler),
@@ -191,11 +192,14 @@ if __name__ == '__main__':
             (r'/api/players/(.+)', PlayerHandler),
             (r'/api/board', BoardHandler),
             (r'/ws', WebSocketHandler),
+            (r'/start', tornado.web.StaticFileHandler, {'path': static_path, 'default_filename': 'index.html'}),
+            (r'/panel/*', tornado.web.StaticFileHandler, {'path': static_path, 'default_filename': 'index.html'}),
+            (r'/(.*)', tornado.web.StaticFileHandler, {'path': static_path, 'default_filename': 'index.html'}),
         ]
-
+        logger.info('Static files from %s' % static_path)
         # Iniciar servidor
         webServerPort = os.getenv('PORT') or 8080
-        application = tornado.web.Application(urls, autoreload=True)
+        application = tornado.web.Application(urls, autoreload=True, debug=True, static_path=".")
         application.listen(webServerPort)
 
         # Iniciar loop de servidor
