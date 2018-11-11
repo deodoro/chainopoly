@@ -3,8 +3,9 @@ import { Observable, Subject } from "rxjs/Rx";
 import { WebSocketService } from "./websocket.service";
 import * as Rx from "rxjs/Rx";
 import _ from "lodash";
+import { environment } from '../../environments/environment';
 
-const WS_URL = `ws://${window.location.host}/ws`;
+const WS_URL = `ws://${window.location.host}${environment._folder('/ws')}`;
 
 export interface Message {
     type: string,

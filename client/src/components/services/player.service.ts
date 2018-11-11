@@ -4,6 +4,7 @@ import { Http } from '@angular/http';
 import { of } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import { environment as e } from '../../environments/environment';
 
 @Injectable()
 export class PlayerService {
@@ -12,17 +13,17 @@ export class PlayerService {
     constructor(private Http: Http) { }
 
     getMyColor(game_id, account_id) {
-        return this.Http.get(`/api/game/${game_id}/player/${account_id}`)
+        return this.Http.get(e._folder(`/api/game/${game_id}/player/${account_id}`))
                 .map(res => res.json());
     }
 
     getBalance(game_id, account_id) {
-        return this.Http.get(`/api/game/${game_id}/balance/${account_id}`)
+        return this.Http.get(e._folder(`/api/game/${game_id}/balance/${account_id}`))
                 .map(res => res.json());
     }
 
     getProperties(game_id, account_id) {
-        return this.Http.get(`/api/game/${game_id}/properties/${account_id}`)
+        return this.Http.get(e._folder(`/api/game/${game_id}/properties/${account_id}`))
                 .map(res => res.json());
     }
 

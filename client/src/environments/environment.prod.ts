@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  _folder: uri => '/chainopoly' + uri,
 };

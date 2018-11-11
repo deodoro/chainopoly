@@ -4,6 +4,7 @@ import { Http } from '@angular/http';
 import { of } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import { environment as e } from '../../environments/environment';
 
 @Injectable()
 export class GameService {
@@ -12,12 +13,12 @@ export class GameService {
     constructor(private Http: Http) { }
 
     getActive() {
-        return this.Http.get('/api/game')
+        return this.Http.get(e._folder('/api/game'))
                         .map(res => res.json());
     }
 
     control(id, action) {
-        return this.Http.post(`/api/game/${id}/control`, action)
+        return this.Http.post(e._folder(`/api/game/${id}/control`), action)
                         .map(res => {
                             return res.json();
                         })
@@ -40,12 +41,12 @@ export class GameService {
     }
 
     create(player) {
-        return this.Http.post('/api/game', player)
+        return this.Http.post(e._folder('/api/game'), player)
                 .map(res => res.json());
     }
 
     register(game, player) {
-        return this.Http.post(`/api/players/${game}`, player)
+        return this.Http.post(e._folder(`/api/players/${game}`), player)
                 .map(res => res.json())
                 .catch(err => {
                     console.dir(err);

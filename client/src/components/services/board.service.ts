@@ -5,6 +5,7 @@ import { Http } from '@angular/http';
 import { of } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import { environment as e } from '../../environments/environment';
 
 export class Piece {
     color: string;
@@ -29,6 +30,6 @@ export class BoardService {
     }
 
     getProperties() {
-        return this.Http.get('/api/board').map(res => res.json());
+        return this.Http.get(e._folder('/api/board')).map(res => res.json());
     }
 }
