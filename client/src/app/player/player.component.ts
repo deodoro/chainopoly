@@ -14,16 +14,16 @@ import _ from 'lodash';
     styleUrls: ['./player.scss'],
 })
 export class PlayerComponent {
-    private data: any;
-    private balance = 0;
-    private properties = [];
-    private gameId = null;
-    private gameStatus = 'init';
-    private myTurn = false;
+    public data: any;
+    public balance = 0;
+    public properties = [];
+    public gameId = null;
+    public gameStatus = 'init';
+    public myTurn = false;
+    public errorMessage = null;
     private ws = null;
     private transaction = { target: null, value: null};
     @ViewChild("errorDialog") errorDialog: NotificationPanelComponent;
-    private errorMessage = null;
     static parameters = [PlayerService, GameService, ActivatedRoute, SocketService, BoardService, NewsService];
     constructor(private service: PlayerService,
                 private gameService: GameService,

@@ -10,8 +10,8 @@ import { NewsService } from '../../components/services/news.service';
 })
 export class NewsComponent implements OnInit {
 
+  public news = [];
   private ws = null;
-  private news = [];
   static parameters = [SocketService, NewsService, ActivatedRoute];
   constructor(private service: SocketService, private newsService: NewsService, private route: ActivatedRoute) { }
 

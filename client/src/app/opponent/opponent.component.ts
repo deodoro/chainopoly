@@ -12,10 +12,10 @@ import _ from 'lodash';
     styleUrls: ['./opponent.scss'],
 })
 export class OpponentComponent {
-    private players;
+    public players;
+    public gameState = null;
     private gameId;
     private n = 0;
-    private gameState = null;
     private ws = null;
     static parameters = [OpponentService, GameService, ActivatedRoute, SocketService, BoardService];
     constructor(private service: OpponentService,

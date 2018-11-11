@@ -12,12 +12,12 @@ import _ from 'lodash';
 })
 export class StartComponent {
 
-    private data = {
+    public data = {
         account: '0',
         username: ''
     }
-    private games: Array<any>;
-    private isEmpty = _.isEmpty;
+    public games: Array<any>;
+    public isEmpty = _.isEmpty;
     private ws = null;
 
     static parameters = [GameService, SocketService, BoardService, Router];

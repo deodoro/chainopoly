@@ -14,10 +14,10 @@ class Square {
 export class BoardComponent {
 
     private properties;
-    private squares: Array<any>;
     private pieces = {};
     private squareIndex = {};
     private highlightTimers = {};
+    public squares: Array<any>;
     public range = _.range;
     public rangeRight = _.rangeRight;
     @ViewChildren('square') squareDivs : QueryList<any>;
