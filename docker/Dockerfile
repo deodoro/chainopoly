@@ -13,7 +13,7 @@ COPY server/requirements.txt /app
 RUN pip3 install -r requirements.txt
 
 ADD ./server /app
-COPY ./client/dist/client /app/server/contents/client
+COPY ./client/dist/client /app/contents/client
 
 RUN apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
