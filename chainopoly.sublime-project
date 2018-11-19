@@ -1,0 +1,10 @@
+{
+	"folders":
+	[
+        {
+			"path": ".",
+            "folder_exclude_patterns": [".hypothesis", "**/.pytest_cache", "**/build"],
+            "file_exclude_patterns": [".gitignore", ".dockerignore", "*.sublime-project"]
+		}
+	]
+}

@@ -1,0 +1,991 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"nonfun",
+				"nonfungible"
+			],
+			[
+				"non",
+				"nonfungible"
+			],
+			[
+				"no",
+				"notify_transaction"
+			],
+			[
+				"pending",
+				"pending_unfungible"
+			],
+			[
+				"PROPR",
+				"PROPERTIES"
+			],
+			[
+				"owner",
+				"ownership"
+			],
+			[
+				"list",
+				"ListService\talias"
+			],
+			[
+				"me",
+				"message.service\tscript"
+			],
+			[
+				"update",
+				"updateDict"
+			],
+			[
+				"item",
+				"itemUpdate"
+			],
+			[
+				"in",
+				"inbound_queue"
+			],
+			[
+				"dri",
+				"drivers_to_load"
+			],
+			[
+				"st",
+				"startServer"
+			],
+			[
+				"text-",
+				"text-align"
+			],
+			[
+				"paddin",
+				"padding-top"
+			],
+			[
+				"font",
+				"font-size"
+			],
+			[
+				"background",
+				"background-color"
+			],
+			[
+				"backgrou",
+				"background-color"
+			],
+			[
+				"Playlis",
+				"PlaylistInfo\talias"
+			],
+			[
+				"playlist",
+				"PlaylistInfo\talias"
+			],
+			[
+				"block",
+				"block_number"
+			],
+			[
+				"proto",
+				"prototype"
+			],
+			[
+				"valid",
+				"validate_block"
+			],
+			[
+				"pend",
+				"pending_block"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "Searching 110 files for \"renderer\"\n\n/Users/deodoro/dev/monopoly/client/src/polyfills.ts:\n   37  /**\n   38   * If the application will be indexed by Google Search, the following is required.\n   39:  * Googlebot uses a renderer based on Chrome 41.\n   40   * https://developers.google.com/search/docs/guides/rendering\n   41   **/\n\n/Users/deodoro/dev/monopoly/client/src/app/board/board.component.ts:\n    1: import { ViewChildren, QueryList, Component, Renderer2 } from '@angular/core';\n    2  import { BoardService } from '../../components/services/board.service';\n    3  import _ from 'lodash';\n    .\n   23      @ViewChildren('square') squareDivs : QueryList<any>;\n   24  \n   25:     static parameters = [BoardService, Renderer2];\n   26:     constructor(private service: BoardService, private renderer: Renderer2) {\n   27          this.squares = _.map(new Array(40), () => { return {name: '', highlight: false} });\n   28          this.service.getProperties().subscribe(properties => {\n   ..\n   34              if (data != null) {\n   35                  if (_.has(data, 'player'))\n   36:                     this.renderer.appendChild(this.squareIndex[data.player.position], this.getPiece(data.player.color))\n   37                  else {\n   38                      if (_.has(data, 'property')) {\n   ..\n   50              }\n   51              else {\n   52:                 _.each(this.pieces, p => this.renderer.removeChild(this.renderer.parentNode(p), p));\n   53                  this.pieces = {};\n   54              }\n   ..\n   62      getPiece(color) {\n   63          if (!_.has(this.pieces, color)) {\n   64:             let e = this.renderer.createElement('div');\n   65:             this.renderer.addClass(e, 'piece');\n   66:             this.renderer.setStyle(e, 'background-color', color);\n   67              this.pieces[color] = e;\n   68          }\n\n11 matches across 2 files\n",
+			"settings":
+			{
+				"buffer_size": 1878,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"contents": "import { ViewChildren, QueryList, Component,    } from '@angular/core';\nimport { BoardService } from '../../components/services/board.service';\nimport _ from 'lodash';\n\nclass Square {\n    constructor(public idx: number, public name: string) {}\n}\n\n@Component({\n    selector: 'board',\n    templateUrl: './board.html',\n    styleUrls: ['./board.scss'],\n})\nexport class BoardComponent {\n\n    private properties;\n    private pieces = {};\n    private squareIndex = {};\n    private highlightTimers = {};\n    public squares: Array<any>;\n    public range = _.range;\n    public rangeRight = _.rangeRight;\n    @ViewChildren('square') squareDivs : QueryList<any>;\n\n    static parameters = [BoardService, Renderer2];\n    constructor(private service: BoardService, private renderer: Renderer2) {\n        this.squares = _.map(new Array(40), () => { return {name: '', highlight: false} });\n        this.service.getProperties().subscribe(properties => {\n            properties.forEach(p => {\n                this.squares[p.position] = _.assign(p, {highlight: false});\n            });\n        });\n        this.service.Stream.subscribe(data => {\n            if (data != null) {\n                if (_.has(data, 'player'))\n                    this.renderer.appendChild(this.squareIndex[data.player.position], this.getPiece(data.player.color))\n                else {\n                    if (_.has(data, 'property')) {\n                        if (_.has(this.highlightTimers, data.property.id)) {\n                            clearTimeout(this.highlightTimers[data.property.id]);\n                        }\n                        else\n                            this.squares[data.property.position].highlight = true;\n                        this.highlightTimers[data.property.id] = setTimeout(() => {\n                            this.squares[data.property.position].highlight = false;\n                            delete this.highlightTimers[data.property.id];\n                        }, 1000);\n                    }\n                }\n            }\n            else {\n                _.each(this.pieces, p => this.renderer.removeChild(this.renderer.parentNode(p), p));\n                this.pieces = {};\n            }\n        })\n    }\n\n    ngAfterViewInit() {\n        this.squareDivs.forEach(i => this.squareIndex[i.nativeElement.dataset.index] = i.nativeElement);\n    }\n\n    getPiece(color) {\n        if (!_.has(this.pieces, color)) {\n            let e = this.renderer.createElement('div');\n            this.renderer.addClass(e, 'piece');\n            this.renderer.setStyle(e, 'background-color', color);\n            this.pieces[color] = e;\n        }\n        return this.pieces[color];\n    }\n\n}\n",
+			"file": "client/src/app/board/board.component.ts",
+			"file_size": 2676,
+			"file_write_time": 131864960660000000,
+			"settings":
+			{
+				"buffer_size": 2669,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					""
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Traditional"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Script Builder"
+				]
+			],
+			[
+				"Packages/LaTeXTools/LaTeX.sublime-build",
+				"Traditional"
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Restart RabbitMQ",
+					""
+				],
+				[
+					"Start MySQL",
+					""
+				],
+				[
+					"Start RabbitMQ",
+					""
+				],
+				[
+					"Test bridge",
+					""
+				]
+			],
+			[
+				"Start RabbitMQ",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 119.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"lower",
+				"Convert Case: Lower Case"
+			],
+			[
+				"load",
+				"Sync Settings: Download"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"html",
+				"HTMLBeautify"
+			],
+			[
+				"format",
+				"CodeFormatter: Format Code"
+			],
+			[
+				"form",
+				"CodeFormatter: Format Code"
+			],
+			[
+				"conver ta",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"instll",
+				"Package Control: Install Package"
+			],
+			[
+				"f",
+				"Format: Javascript"
+			],
+			[
+				"rabb",
+				"Build With: Start RabbitMQ"
+			],
+			[
+				"for",
+				"Format: Javascript"
+			],
+			[
+				"start",
+				"Build With: Start RabbitMQ"
+			],
+			[
+				"forma",
+				"Format: Javascript"
+			],
+			[
+				"edit",
+				"Project: Edit"
+			],
+			[
+				"down",
+				"Sync Settings: Download"
+			],
+			[
+				"sync",
+				"Sync Settings: Download"
+			],
+			[
+				"case",
+				"Convert Case: Title Case"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"tabs",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 444.0
+	},
+	"console":
+	{
+		"height": 262.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/deodoro/dev/monopoly"
+	],
+	"file_history":
+	[
+		"/Users/deodoro/truffle/build/contracts/Migrations.json",
+		"/Users/deodoro/dev/monopoly/client/src/app/player/player.scss",
+		"/Users/deodoro/dev/monopoly/client/src/app/opponent/opponent.scss",
+		"/Users/deodoro/dev/monopoly/client/src/app/player/player.component.ts",
+		"/Users/deodoro/dev/monopoly/client/src/app/app.component.scss",
+		"/Users/deodoro/dev/monopoly/client/src/app/board/board.component.ts",
+		"/Users/deodoro/dev/monopoly/client/src/app/board/board.html",
+		"/Users/deodoro/dev/monopoly/client/src/app/board/property.component.ts",
+		"/Users/deodoro/dev/monopoly/client/src/app/board/board.scss",
+		"/Users/deodoro/dev/monopoly/client/src/app/board/property.scss",
+		"/Users/deodoro/dev/monopoly/client/src/styles.scss",
+		"/Users/deodoro/dev/monopoly/client/src/app/news/news.component.scss",
+		"/Users/deodoro/dev/monopoly/client/src/app/start/start.scss",
+		"/Users/deodoro/dev/monopoly/client/src/app/player/player.html",
+		"/Users/deodoro/dev/monopoly/client/src/app/opponent/opponent.html",
+		"/Users/deodoro/dev/monopoly/server/engine/fungible.py",
+		"/Users/deodoro/dev/monopoly/server/tests/test_fungible.py",
+		"/Users/deodoro/dev/monopoly/server/tests/test_game.py",
+		"/Users/deodoro/dev/monopoly/server/engine/game.py",
+		"/Users/deodoro/dev/monopoly/server/engine/atomic_swap.py",
+		"/Users/deodoro/dev/monopoly/server/tests/test_atomic_swap.py",
+		"/Users/deodoro/dev/monopoly/server/engine/__init__.py",
+		"/Users/deodoro/dev/monopoly/server/server.py",
+		"/Users/deodoro/dev/monopoly/server/game_collection.py",
+		"/Users/deodoro/dev/monopoly/server/engine/nonfungible.py",
+		"/Users/deodoro/dev/monopoly/server/engine/entities.py",
+		"/Users/deodoro/dev/monopoly/server/engine/properties.json",
+		"/Users/deodoro/dev/monopoly/server/tests/test_nonfungible.py",
+		"/Users/deodoro/dev/monopoly/client/src/app/news/news.component.ts",
+		"/Users/deodoro/dev/monopoly/client/src/components/services/game.service.ts",
+		"/Users/deodoro/dev/teste.html",
+		"/Users/deodoro/dev/monopoly/src/engine/manager.py",
+		"/Users/deodoro/dev/monopoly/src/server.py",
+		"/Users/deodoro/dev/monopoly/src/tests/fungible.py",
+		"/Users/deodoro/dev/monopoly/src/tests/manager.py",
+		"/Users/deodoro/dev/monopoly/src/engine/fungible.py",
+		"/Users/deodoro/dev/monopoly/src/engine/entities.py",
+		"/Users/deodoro/dev/monopoly/src/engine/nonfungible.py",
+		"/Users/deodoro/dev/monopoly/src/tests/test_fungible.py",
+		"/Users/deodoro/dev/monopoly/requirements.txt",
+		"/Users/deodoro/dev/monopoly/.gitignore",
+		"/Users/deodoro/dev/slides/outline.html",
+		"/Users/deodoro/dev/slides/index.html",
+		"/Users/deodoro/dev/slides/notes.html",
+		"/Users/deodoro/dev/resume/cv.tex",
+		"/Users/deodoro/dev/advertizor/client/app/list/view/view.scss",
+		"/Users/deodoro/dev/advertizor/client/app/list/message/message.html",
+		"/Users/deodoro/dev/advertizor/client/app/message/view/view.component.ts",
+		"/Users/deodoro/dev/advertizor/client/components/services/list.service.ts",
+		"/Users/deodoro/dev/advertizor/server/api/list/list.controller.js",
+		"/Users/deodoro/dev/advertizor/client/app/list/view/view.component.ts",
+		"/Users/deodoro/dev/advertizor/client/app/list/view/view.html",
+		"/Users/deodoro/dev/advertizor/client/app/list/message/message.component.ts",
+		"/Users/deodoro/dev/advertizor/server/api/message/message.controller.js",
+		"/Users/deodoro/dev/advertizor/server/api/list/list.integration.js",
+		"/Users/deodoro/dev/advertizor/client/app/list/list/list.component.ts",
+		"/Users/deodoro/dev/advertizor/server/api/list/index.spec.js",
+		"/Users/deodoro/dev/advertizor/server/api/message/message.model.js",
+		"/Users/deodoro/dev/advertizor/client/app/list/list/list.html",
+		"/Users/deodoro/dev/advertizor/client/app/list/list/list.scss",
+		"/Users/deodoro/dev/advertizor/client/app/message/list/list.component.ts",
+		"/Users/deodoro/dev/advertizor/server/api/list/index.js",
+		"/Users/deodoro/dev/advertizor/server/api/list/list.model.js",
+		"/Users/deodoro/dev/advertizor/client/components/services/message.service.ts",
+		"/Users/deodoro/dev/advertizor/client/app/message/list/list.scss",
+		"/Users/deodoro/dev/advertizor/client/app/message/list/list.html",
+		"/Users/deodoro/dev/advertizor/client/app/item/view/view.component.ts",
+		"/Users/deodoro/dev/advertizor/client/app/item/view/view.html",
+		"/Users/deodoro/dev/advertizor/client/app/item/view/view.scss",
+		"/Users/deodoro/dev/advertizor/client/components/views/message-item/message-item.component.html",
+		"/Users/deodoro/dev/advertizor/server/config/environment/development.js",
+		"/Users/deodoro/dev/advertizor/server/api/message/index.js",
+		"/Users/deodoro/dev/advertizor/client/app/message/view/view.html",
+		"/Users/deodoro/dev/advertizor/client/app/message/view/view.scss",
+		"/Users/deodoro/dev/advertizor/client/components/views/message/message.component.ts",
+		"/Users/deodoro/dev/advertizor/client/components/views/message/message.component.html",
+		"/Users/deodoro/dev/advertizor/client/components/views/views.module.ts",
+		"/Users/deodoro/dev/advertizor/client/components/views/message-item/message-item.component.scss",
+		"/Users/deodoro/dev/advertizor/client/components/views/message-item/message-item.component.ts",
+		"/Users/deodoro/dev/advertizor/client/components/notification-panel/notification-panel.component.ts",
+		"/Users/deodoro/dev/advertizor/client/app/list/message/message.scss",
+		"/Users/deodoro/dev/advertizor/client/app/list/list.module.ts",
+		"/Users/deodoro/dev/advertizor/client/app/message/message.module.ts",
+		"/Users/deodoro/dev/advertizor/client/components/views/message/message.component.scss",
+		"/Users/deodoro/dev/advertizor/client/app/item/item.module.ts",
+		"/Users/deodoro/dev/advertizor/client/components/services/item.service.ts",
+		"/Users/deodoro/dev/advertizor/client/components/views/message.component.html",
+		"/Users/deodoro/dev/advertizor/client/components/views/message.component.ts",
+		"/Users/deodoro/dev/advertizor/client/components/detail-panel/detail-panel.component.ts",
+		"/Users/deodoro/dev/advertizor/client/components/detail-panel/detail-panel.scss",
+		"/Users/deodoro/dev/advertizor/client/app/item/edit/edit.html",
+		"/Users/deodoro/dev/advertizor/server/api/user/user.controller.js",
+		"/Users/deodoro/dev/advertizor/client/components/navbar/navbar.component.ts",
+		"/Users/deodoro/dev/advertizor/server/api/item/item.controller.js",
+		"/Users/deodoro/dev/advertizor/server/api/message/message.item.model.js",
+		"/Users/deodoro/dev/advertizor/server/api/item/item.model.js",
+		"/Users/deodoro/dev/advertizor_db/test.csv",
+		"/Users/deodoro/dev/advertizor/client/components/input-file/inputFile.component.ts",
+		"/Users/deodoro/dev/advertizor/client/components/notification-panel/notification-panel.scss",
+		"/Users/deodoro/dev/advertizor/client/components/input-file/inputFile.html",
+		"/Users/deodoro/dev/advertizor/client/components/detail-panel/detail-panel.module.ts",
+		"/Users/deodoro/dev/advertizor/client/components/directives.module.ts",
+		"/Users/deodoro/dev/advertizor/client/app/app.module.ts",
+		"/Users/deodoro/Library/Application Support/Sublime Text 3/Packages/HTMLBeautify/HTMLBeautify.sublime-settings",
+		"/Users/deodoro/Library/Application Support/Sublime Text 3/Packages/CodeFormatter/CodeFormatter.sublime-settings",
+		"/Users/deodoro/dev/advertizor/bridge/test/test_response_queue.js",
+		"/Users/deodoro/dev/advertizor/bridge_py/test/replay.to.queue.py",
+		"/Users/deodoro/dev/advertizor/bridge_py/src/results.py",
+		"/Users/deodoro/dev/advertizor/bridge_py/config/config.98.json",
+		"/Users/deodoro/dev/advertizor/server/api/item/item.integration.js",
+		"/Users/deodoro/dev/advertizor/bridge_py/docker/Dockerfile",
+		"/Users/deodoro/dev/advertizor/bridge/config/rabbitmq.js",
+		"/Users/deodoro/dev/advertizor/bridge_py/test/messages.txt",
+		"/Users/deodoro/dev/advertizor/bridge_py/src/consumer.py",
+		"/Users/deodoro/dev/advertizor/bridge_py/config/config.61.json",
+		"/Users/deodoro/dev/advertizor/bridge_py/src/pipeline.py",
+		"/Users/deodoro/dev/advertizor/bridge_py/src/drivers.py",
+		"/Users/deodoro/dev/advertizor/logs/combined.log",
+		"/Users/deodoro/dev/advertizor/bridge/components/response_handler/advertizor.handler.js",
+		"/Users/deodoro/dev/advertizor/bridge_py/src/server.py",
+		"/Users/deodoro/dev/advertizor/bridge/mock_server/server.py",
+		"/Users/deodoro/dev/advertizor/bridge/api/send/send.controller.js",
+		"/Users/deodoro/dev/advertizor/bridge/config/environment/development.js",
+		"/Users/deodoro/dev/advertizor/bridge/config/environment/production.js",
+		"/Users/deodoro/dev/advertizor/logs/bridge_combined.log",
+		"/Users/deodoro/dev/advertizor/bridge/test/messages.txt",
+		"/Users/deodoro/dev/advertizor/bridge_py/docker/requirements.txt",
+		"/Users/deodoro/dev/advertizor/bridge/test/test_queue.js"
+	],
+	"find":
+	{
+		"height": 36.0
+	},
+	"find_in_files":
+	{
+		"height": 106.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"renderer"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1878,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										217,
+										225
+									],
+									[
+										449,
+										457
+									],
+									[
+										717,
+										725
+									],
+									[
+										791,
+										799
+									],
+									[
+										801,
+										809
+									],
+									[
+										1110,
+										1118
+									],
+									[
+										1399,
+										1407
+									],
+									[
+										1425,
+										1433
+									],
+									[
+										1632,
+										1640
+									],
+									[
+										1687,
+										1695
+									],
+									[
+										1742,
+										1750
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								455,
+								455
+							]
+						],
+						"settings":
+						{
+							"WordCount":
+							{
+								"changes": 4,
+								"count": 84,
+								"modified": false,
+								"selection": true,
+								"status": -1,
+								"syntax": "plain text"
+							},
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										459,
+										460
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										411,
+										412
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"default_dir": "/Users/deodoro/truffle/contracts",
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "client/src/app/board/board.component.ts",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2669,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								47,
+								47
+							]
+						],
+						"settings":
+						{
+							"WordCount":
+							{
+								"changes": 3,
+								"count": 86,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										48,
+										49
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										7,
+										8
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"syntax": "Packages/TypeScript Syntax/TypeScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 36.0
+	},
+	"input":
+	{
+		"height": 37.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.doc":
+	{
+		"height": 0.0
+	},
+	"output.exec":
+	{
+		"height": 310.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.latextools":
+	{
+		"height": 441.0
+	},
+	"output.markdown":
+	{
+		"height": 158.0
+	},
+	"pinned_build_system": "",
+	"project": "chainopoly.sublime-project",
+	"replace":
+	{
+		"height": 68.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 339.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
