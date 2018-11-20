@@ -20,9 +20,7 @@ contract AtomicSwap is ITransferReceiver {
     event TransferEvent(address indexed _from, address indexed _to, uint _value);
 
     constructor (address coin) public {
-        require(coin.call(bytes4(keccak256("registerCallback(address)")),this));
-        // ChainopolyCoin _coin = ChainopolyCoin(coin);
-        // coin.registerCallback(this);
+        (ChainopolyCoin(coin)).registerCallback(this);
     }
 
     function addIOU (address to, address from, uint value) public returns(bool) {

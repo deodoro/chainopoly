@@ -7,11 +7,6 @@ contract('AtomicSwap', function(accounts) {
         var account_one = accounts[0];
         var account_two = accounts[1];
         return AtomicSwap.deployed().then(function(instance) {
-            // var event = instance.TransferEvent({});
-            // event.watch((err, results) => {
-            //   console.dir(err);
-            //   console.dir(results);
-            // });
             meta = instance;
             return meta.isPending.call();
         }).then(function(result) {

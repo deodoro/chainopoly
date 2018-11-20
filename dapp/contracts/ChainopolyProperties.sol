@@ -1,17 +1,16 @@
 pragma solidity ^0.4.24;
 
 import "./openzeppelin/math/SafeMath.sol";
-import "./openzeppelin/utils/Address.sol";
+import "./Property.sol";
 
 contract ChainopolyProperties {
     using SafeMath for uint256;
-    using Address for address;
 
     mapping (uint256 => address) private _tokenOwner;
     mapping (uint256 => address) private _tokenApprovals;
     mapping (address => uint256) private _ownedTokensCount;
     mapping (uint256 => string) private _tokenURIs;
-    uint256[] private _tokenList;
+    mapping (uint256 => Property) private _tokenInfo;
 
     event TransferEvent(address indexed _from, address indexed _to, uint256 _value);
 
@@ -65,8 +64,14 @@ contract ChainopolyProperties {
       return _tokenURIs[tokenId];
     }
 
-    function listTokens() public view returns (uint256) {
-      return _tokenList.length;
+    /**
+     * @dev Internal function to set the token URI for a given token
+     * Reverts if the token ID does not exist
+     * @param tokenId uint256 ID of the token to set its URI
+     * @param uri string URI to assign
+     */
+    function _setTokenURI(uint256 tokenId, string uri) internal {
+      _tokenURIs[tokenId] = uri;
     }
 
     function mintWithTokenURI(
@@ -88,8 +93,6 @@ contract ChainopolyProperties {
      */
     function _mint(uint256 tokenId) internal {
       _addTokenTo(msg.sender, tokenId);
-      _tokenList.length = _tokenList.length.add(1);
-      _tokenList[_tokenList.length - 1] = tokenId;
     }
 
     /**
@@ -119,14 +122,16 @@ contract ChainopolyProperties {
         _tokenOwner[tokenId] = address(0);
     }
 
-    /**
-     * @dev Internal function to set the token URI for a given token
-     * Reverts if the token ID does not exist
-     * @param tokenId uint256 ID of the token to set its URI
-     * @param uri string URI to assign
-     */
-    function _setTokenURI(uint256 tokenId, string uri) internal {
-      _tokenURIs[tokenId] = uri;
+    function mintTokenWithInfo(uint256 tokenId, string name, string color, uint256 price, uint256 rent, uint256 position) public {
+        require(_tokenInfo[tokenId] == address(0));
+        if (_tokenOwner[tokenId] == address(0))
+            _mint(tokenId);
+        _tokenInfo[tokenId] = new Property(name, color, price, rent, position);
+    }
+
+    function getTokenInfo(uint256 tokenId) public view returns (string name, string color, uint256 price, uint256 rent, uint256 position) {
+        require(_tokenInfo[tokenId] != address(0));
+        return (_tokenInfo[tokenId].getName(), _tokenInfo[tokenId].getColor(), _tokenInfo[tokenId].getPrice(), _tokenInfo[tokenId].getRent(), _tokenInfo[tokenId].getPosition());
     }
 
 }
