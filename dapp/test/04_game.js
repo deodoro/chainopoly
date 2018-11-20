@@ -101,4 +101,44 @@ contract('Game', function(accounts) {
             assert.equal(result.toNumber(), 1500, 'Balance for second player')
         });
   });
+  it("should give roll dice", function() {
+        var coin;
+        return Game.deployed().then(function(instance) {
+            meta = instance;
+            return ChainopolyCoin.deployed();
+        }).then(function(_coin) {
+            coin = _coin;
+            return meta.reset();
+        }).then(function() {
+            return coin.balanceOf.call(accounts[0]);
+        }).then(function(balance) {
+            if (balance > 0)
+                return coin.transfer(Game.address, balance, {from: accounts[0]});
+            else
+                return null;
+        }).then(function() {
+            return meta.registerPlayer("deodoro", {from: accounts[0]});
+        }).then(function(result) {
+            return meta.registerPlayer("mario", {from: accounts[1]});
+        }).then(function(result) {
+            return meta.roll_fixed(1);
+        }).then(function(result) {
+            return meta.getPlayerInfoByIndex.call(0);
+        }).then(function(result) {
+            assert.equal(result[3].toNumber(), 1, 'Moved')
+            return meta.getPlayerInfoByIndex.call(1);
+        }).then(function(result) {
+            assert.equal(result[3].toNumber(), 0, 'Did not move')
+            return meta.commit();
+        }).then(function(result) {
+            return meta.roll_fixed(1);
+        }).then(function(result) {
+            return meta.getPlayerInfoByIndex.call(0);
+        }).then(function(result) {
+            assert.equal(result[3].toNumber(), 1, 'Did not move')
+            return meta.getPlayerInfoByIndex.call(1);
+        }).then(function(result) {
+            assert.equal(result[3].toNumber(), 1, 'Moved')
+        });
+  });
 });

@@ -12,6 +12,7 @@ contract Game {
         uint256 position;
     }
     uint256 constant MAX_PLAYERS = 6;
+    uint256 constant BOARD_SIZE = 40;
     string[6] COLORS = ["blue", "red", "purple", "green", "orange", "darkturquoise"];
 
     address _owner;
@@ -25,6 +26,7 @@ contract Game {
     ChainopolyProperties _properties;
 
     event StateEvent(State state);
+    event MoveEvent(address player, uint position);
 
     constructor(AtomicSwap swap, ChainopolyCoin coin, ChainopolyProperties properties) public {
         _state = State.INIT;
@@ -41,18 +43,29 @@ contract Game {
         _players.push(msg.sender);
     }
 
-    function roll() public pure {
-
+    function _roll(uint dice) private {
+        require(_state == State.INIT || _state == State.MOVE);
+        if (_state == State.MOVE)
+            _curPlayer = (_curPlayer + 1) % _players.length;
+        updatePlayerPosition(dice);
     }
 
-    function getPlayerInfoByIndex(uint index) public view returns (address, string, string, uint256) {
+    function roll() public {
+        _roll(random());
+    }
+
+    function roll_fixed(uint dice) public {
+        _roll(dice);
+    }
+
+    function getPlayerInfoByIndex(uint index) public view returns (address, string, string, uint256, bool) {
         require(index < MAX_PLAYERS);
         return getPlayerInfo(_players[index]);
     }
 
-    function getPlayerInfo(address addr) public view returns (address, string, string, uint256) {
+    function getPlayerInfo(address addr) public view returns (address, string, string, uint256, bool) {
         require(_playerInfo[addr].position > 0);
-        return (addr, _playerInfo[addr].name, _playerInfo[addr].color, _playerInfo[addr].position - 1);
+        return (addr, _playerInfo[addr].name, _playerInfo[addr].color, _playerInfo[addr].position - 1, isCurrentPlayer(addr));
     }
 
     function setState(State newState) private {
@@ -79,6 +92,24 @@ contract Game {
 
     function getPlayerCount() public view returns(uint256) {
         return _players.length;
+    }
+
+    function updatePlayerPosition(uint dice) private {
+        _playerInfo[_players[_curPlayer]].position = (_playerInfo[_players[_curPlayer]].position + dice) % BOARD_SIZE;
+        setState(State.WAIT);
+        emit MoveEvent(_players[_curPlayer], _playerInfo[_players[_curPlayer]].position-1);
+    }
+
+    function random() private view returns (uint8) {
+        return uint8(uint256(keccak256(block.timestamp, block.difficulty))%251);
+    }
+
+    function isCurrentPlayer(address player) public view returns (bool) {
+        return player == _players[_curPlayer];
+    }
+
+    function commit() public {
+        setState(State.MOVE);
     }
 
 }
