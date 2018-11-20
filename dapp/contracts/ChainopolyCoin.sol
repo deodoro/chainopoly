@@ -5,31 +5,61 @@ contract ITransferReceiver {
 }
 
 contract ChainopolyCoin {
-	mapping (address => uint) balances;
-    ITransferReceiver _receiver;
+	mapping (address => uint) private _balances;
+    address[] private _accounts;
+    mapping (address => bool) private _accountIndexes;
+    ITransferReceiver private _receiver;
+    address private _myAccount;
 
-	event TransferEvent(address indexed _from, address indexed _to, uint256 _value);
+    event TransferEvent(address indexed _from, address indexed _to, uint256 _value);
 
 	constructor() public {
-		balances[tx.origin] = 10000;
+		_balances[tx.origin] = 10 ** 10;
+        _myAccount = tx.origin;
 	}
 
-	function transfer(address receiver, uint amount) public returns(bool sufficient) {
-		if (balances[msg.sender] < amount) return false;
-		balances[msg.sender] -= amount;
-		balances[receiver] += amount;
-        if (_receiver != address(0))
-            _receiver.OnTransfer(receiver, msg.sender, amount);
-		emit TransferEvent(msg.sender, receiver, amount);
-		return true;
+    function checkIndex(address account) private returns (bool) {
+        if (_accountIndexes[account])
+            return false;
+        else {
+            _accountIndexes[account] = true;
+            _accounts.push(account);
+        }
+    }
+
+    event TraceEvent(string msg, address a, address s, address r, uint v);
+
+	function transfer(address receiver, uint amount) public returns (bool) {
+        require(receiver != address(0));
+		if (_balances[msg.sender] >= amount) {
+    		_balances[msg.sender] -= amount;
+    		_balances[receiver] += amount;
+            checkIndex(receiver);
+            if (_receiver != address(0))
+                _receiver.OnTransfer(receiver, msg.sender, amount);
+    		emit TransferEvent(msg.sender, receiver, amount);
+            return true;
+        }
+        else
+            return false;
 	}
 
 	function balanceOf(address addr) public view returns(uint) {
-		return balances[addr];
+		return _balances[addr];
 	}
 
     function registerCallback(address receiver) public returns(bool) {
         _receiver = ITransferReceiver(receiver);
         return true;
     }
+
+    function reset() public {
+        for(uint256 i = 0; i < _accounts.length; i++) {
+            _balances[_accounts[i]] = 0;
+            delete _accountIndexes[_accounts[i]];
+        }
+        delete _accounts;
+        _balances[_myAccount] = 10 ** 10;
+    }
+
 }

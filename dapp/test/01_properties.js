@@ -3,20 +3,21 @@ var ChainopolyProperties = artifacts.require("./ChainopolyProperties.sol");
 contract('ChainopolyProperties', function(accounts) {
   var meta;
   it("should mint a few tokens", function() {
+    var oldBalance;
     return ChainopolyProperties.deployed().then(function(instance) {
         meta = instance;
-        return instance.mintWithTokenURI(0, '{}', {from: accounts[0]});
+        return meta.balanceOf.call(accounts[0]);
     }).then(function(result) {
-        return meta.mintWithTokenURI(1, '{}', {from: accounts[0]});
+        oldBalance = result.toNumber();
+        return meta.mintWithTokenURI(1001, '{}', {from: accounts[0]});
     }).then(function(result) {
-        return meta.mintWithTokenURI(2, '{}', {from: accounts[0]});
+        return meta.mintWithTokenURI(1002, '{}', {from: accounts[0]});
+    }).then(function(result) {
+        return meta.mintWithTokenURI(1003, '{}', {from: accounts[0]});
     }).then(function(result) {
         return meta.balanceOf.call(accounts[0]);
     }).then(function(result) {
-        assert.equal(result.toNumber(), 3);
-        return meta.listTokens.call();
-    }).then(function(result) {
-        assert.equal(result.toNumber(), 3);
+        assert.equal(result.toNumber() - oldBalance, 3);
     });
   });
   it("should transfer", function() {
@@ -27,7 +28,7 @@ contract('ChainopolyProperties', function(accounts) {
 
     return ChainopolyProperties.deployed().then(function(instance) {
         meta = instance;
-        return instance.mintWithTokenURI(3, '{}', {from: accounts[0]});
+        return instance.mintWithTokenURI(1004, '{}', {from: accounts[0]});
     }).then(function(result) {
         return meta.balanceOf.call(accounts[0]);
     }).then(function(balance) {
@@ -37,13 +38,13 @@ contract('ChainopolyProperties', function(accounts) {
     }).then(function(balance) {
         balance_account_two = balance.toNumber();
     }).then(function(result) {
-        return meta.ownerOf.call(3);
+        return meta.ownerOf.call(1004);
     }).then(function(addr) {
         assert.equal(addr, accounts[0]);
     }).then(function(result) {
-        return meta.transfer(accounts[1], 3, { from: accounts[0] });
+        return meta.transfer(accounts[1], 1004, { from: accounts[0] });
     }).then(function() {
-        return meta.ownerOf.call(3);
+        return meta.ownerOf.call(1004);
     }).then(function(result) {
         return meta.balanceOf.call(accounts[0]);
     }).then(function(balance) {

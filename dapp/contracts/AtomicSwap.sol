@@ -65,4 +65,7 @@ contract AtomicSwap is ITransferReceiver {
         }
     }
 
+    function reset() view public {
+    }
+
 }

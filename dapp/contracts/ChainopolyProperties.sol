@@ -11,6 +11,7 @@ contract ChainopolyProperties {
     mapping (address => uint256) private _ownedTokensCount;
     mapping (uint256 => string) private _tokenURIs;
     mapping (uint256 => Property) private _tokenInfo;
+    mapping (uint256 => Property) private _tokenPosition;
 
     event TransferEvent(address indexed _from, address indexed _to, uint256 _value);
 
@@ -127,11 +128,23 @@ contract ChainopolyProperties {
         if (_tokenOwner[tokenId] == address(0))
             _mint(tokenId);
         _tokenInfo[tokenId] = new Property(name, color, price, rent, position);
+        _tokenPosition[position] = _tokenInfo[tokenId];
     }
 
     function getTokenInfo(uint256 tokenId) public view returns (string name, string color, uint256 price, uint256 rent, uint256 position) {
         require(_tokenInfo[tokenId] != address(0));
         return (_tokenInfo[tokenId].getName(), _tokenInfo[tokenId].getColor(), _tokenInfo[tokenId].getPrice(), _tokenInfo[tokenId].getRent(), _tokenInfo[tokenId].getPosition());
+    }
+
+    function getTokenContract(uint256 tokenId) public view returns (address) {
+        return _tokenInfo[tokenId];
+    }
+
+    function getTokenContractByPosition(uint256 position) public view returns (address) {
+        return _tokenInfo[position];
+    }
+
+    function reset() view public {
     }
 
 }
