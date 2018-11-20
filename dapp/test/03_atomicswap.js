@@ -1,4 +1,5 @@
 var AtomicSwap = artifacts.require("./AtomicSwap.sol");
+var ChainopolyCoin = artifacts.require("./ChainopolyCoin.sol");
 
 contract('AtomicSwap', function(accounts) {
   var meta;
@@ -6,6 +7,11 @@ contract('AtomicSwap', function(accounts) {
         var account_one = accounts[0];
         var account_two = accounts[1];
         return AtomicSwap.deployed().then(function(instance) {
+            // var event = instance.TransferEvent({});
+            // event.watch((err, results) => {
+            //   console.dir(err);
+            //   console.dir(results);
+            // });
             meta = instance;
             return meta.isPending.call();
         }).then(function(result) {
@@ -16,7 +22,7 @@ contract('AtomicSwap', function(accounts) {
             return meta.isPending();
         }).then(function(result) {
             assert.ok(result);
-            return meta.TransferReceived(account_two, account_one, 100);
+            return meta.OnTransfer(account_two, account_one, 100);
         }).then(function(result) {
             return meta.isPending();
         }).then(function(result) {
@@ -37,7 +43,7 @@ contract('AtomicSwap', function(accounts) {
             return meta.isPending();
         }).then(function(result) {
             assert.ok(result);
-            return meta.TransferReceived(account_two, account_one, 100);
+            return meta.OnTransfer(account_two, account_one, 100);
         }).then(function(result) {
             return meta.isPending();
         }).then(function(result) {
@@ -61,16 +67,39 @@ contract('AtomicSwap', function(accounts) {
             return meta.isPending();
         }).then(function(result) {
             assert.ok(result);
-            return meta.TransferReceived(account_two, account_one, 100);
+            return meta.OnTransfer(account_two, account_one, 100);
         }).then(function(result) {
             return meta.isPending();
         }).then(function(result) {
             assert.ok(result);
-            return meta.TransferReceived(account_two, account_one, 101);
+            return meta.OnTransfer(account_two, account_one, 101);
         }).then(function(result) {
             return meta.isPending();
         }).then(function(result) {
             assert.ok(!result);
         });
+  });
+  it("should clear offer", function() {
+    return ChainopolyCoin.deployed().then(function(coin) {
+        var account_one = accounts[0];
+        var account_two = accounts[1];
+        return AtomicSwap.deployed().then(function(instance) {
+            meta = instance;
+            return meta.isPending.call();
+        }).then(function(result) {
+            assert.ok(!result);
+            return meta.addOffer(account_two, account_one, 1, 100, {from: account_one});
+        }).then(function(result) {
+            assert.ok(result);
+            return meta.isPending();
+        }).then(function(result) {
+            assert.ok(result);
+            return coin.transfer(account_two, 100, {from: account_one});
+        }).then(function() {
+            return meta.isPending();
+        }).then(function(result) {
+            assert.ok(!result);
+        });
+    })
   });
 });

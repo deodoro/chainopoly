@@ -2,8 +2,9 @@ pragma solidity ^0.4.24;
 
 import "./openzeppelin/math/SafeMath.sol";
 import "./openzeppelin/utils/Address.sol";
+import "./ChainopolyCoin.sol";
 
-contract AtomicSwap  {
+contract AtomicSwap is ITransferReceiver {
     using SafeMath for uint256;
     using Address for address;
 
@@ -15,6 +16,14 @@ contract AtomicSwap  {
     mapping (address => mapping (address => Offer)) private _offers;
     mapping (address => mapping (address => uint)) private _iou;
     uint256 private _pendingCount;
+
+    event TransferEvent(address indexed _from, address indexed _to, uint _value);
+
+    constructor (address coin) public {
+        require(coin.call(bytes4(keccak256("registerCallback(address)")),this));
+        // ChainopolyCoin _coin = ChainopolyCoin(coin);
+        // coin.registerCallback(this);
+    }
 
     function addIOU (address to, address from, uint value) public returns(bool) {
         require(value > 0);
@@ -42,7 +51,8 @@ contract AtomicSwap  {
         return _pendingCount > 0;
     }
 
-    function TransferReceived(address to, address from, uint value) public {
+    function OnTransfer(address to, address from, uint value) public {
+        emit TransferEvent(address(0),address(0),0);
         if (_pendingCount > 0) {
             if (_iou[to][from] == value) {
                 _iou[to][from] = 0;
