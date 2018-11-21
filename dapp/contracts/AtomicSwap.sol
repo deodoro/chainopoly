@@ -3,6 +3,7 @@ pragma solidity ^0.4.24;
 import "./openzeppelin/math/SafeMath.sol";
 import "./openzeppelin/utils/Address.sol";
 import "./ChainopolyCoin.sol";
+import "./ChainopolyProperties.sol";
 
 contract AtomicSwap is ITransferReceiver {
     using SafeMath for uint256;
@@ -20,41 +21,31 @@ contract AtomicSwap is ITransferReceiver {
 
     mapping (address => mapping (address => Offer)) private _offers;
     mapping (address => mapping (address => uint)) private _iou;
+    ChainopolyProperties private _properties;
     uint256 private _pendingCount;
 
     event TraceEvent(string text, address _from, address _to, uint _value);
 
-    constructor (address coin) public {
+    constructor (address coin, address properties) public {
         (ChainopolyCoin(coin)).registerCallback(this);
+        _properties = ChainopolyProperties(properties);
     }
 
-    function addIOU (address from, address to, uint value) public returns(bool) {
+    function addIOU(address from, address to, uint value) public returns(bool) {
         require(value > 0);
-
-        emit TraceEvent('iou', to, from, value);
         _pendingCount = _pendingCount.add(1);
-        if (_iou[to][from] > 0)
-            return false;
-        else {
-            _iou[to][from] = value;
-            return true;
-        }
+        _iou[to][from] = value;
+        return true;
     }
 
-    function addOffer (address from, address to, uint256 tokenId, uint value) public returns(bool) {
-        require(value > 0);
-
-        emit TraceEvent('offer', to, from, value);
+    function addOffer(address from, address to, uint256 tokenId, uint value) public returns(bool) {
+        require(tokenId > 0 && value > 0);
         _pendingCount = _pendingCount.add(1);
-        if (_offers[to][from].value > 0)
-            return false;
-        else {
-            _offers[to][from] = Offer(tokenId, value);
-            return true;
-        }
+        _offers[to][from] = Offer(tokenId, value);
+        return true;
     }
 
-    function isPending () public view returns(bool) {
+    function isPending() public view returns(bool) {
         return _pendingCount > 0;
     }
 
@@ -66,6 +57,7 @@ contract AtomicSwap is ITransferReceiver {
             }
             else {
                 if (_offers[to][from].value == value) {
+                    _properties.transfer(to, _offers[to][from].tokenId);
                     _offers[to][from] = Offer(0,0);
                     _pendingCount = _pendingCount.sub(1);
                 }

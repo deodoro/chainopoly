@@ -18,7 +18,7 @@ contract ChainopolyCoin {
         _myAccount = tx.origin;
 	}
 
-    function checkIndex(address account) private returns (bool) {
+    function checkIndex(address account) private returns(bool) {
         if (_accountIndexes[account])
             return false;
         else {
@@ -27,7 +27,7 @@ contract ChainopolyCoin {
         }
     }
 
-	function transfer(address receiver, uint amount) public returns (bool) {
+	function transfer(address receiver, uint amount) public returns(bool) {
         require(receiver != address(0));
 		if (_balances[msg.sender] >= amount) {
     		_balances[msg.sender] -= amount;

@@ -143,7 +143,6 @@ contract('Game', function(accounts) {
         }).then(function(result) {
             return meta.commit({from: accounts[1]});
         }).then(function(result) {
-            console.log('roll');
             return meta.roll_fixed(39);
         }).then(function(result) {
             return meta.getPlayerInfoByIndex.call(0);
@@ -158,7 +157,6 @@ contract('Game', function(accounts) {
             return meta.getPlayerInfoByIndex.call(1);
         }).then(function(result) {
             assert.ok(result[3].toNumber() > 5, 'Did not move')
-            assert.ok(false);
         });
   });
 });

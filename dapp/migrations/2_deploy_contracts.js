@@ -12,6 +12,6 @@ module.exports = function(deployer) {
     });
     return Promise.all(promises).then(() => instance);
   }).then(() => deployer.deploy(ChainopolyCoin))
-    .then(() => deployer.deploy(AtomicSwap, ChainopolyCoin.address))
+    .then(() => deployer.deploy(AtomicSwap, ChainopolyCoin.address, ChainopolyProperties.address))
     .then(() => deployer.deploy(Game, AtomicSwap.address, ChainopolyCoin.address, ChainopolyProperties.address));
 };

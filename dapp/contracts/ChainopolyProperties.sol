@@ -14,7 +14,7 @@ contract ChainopolyProperties {
     uint256[] private tokens;
     address _owner;
 
-    event TransferEvent(address indexed _from, address indexed _to, uint256 _value);
+    event TransferEvent(address _from, address _to, uint256 _value);
 
     constructor() public {
         _owner = tx.origin;
@@ -25,7 +25,7 @@ contract ChainopolyProperties {
      * @param owner address to query the balance of
      * @return uint256 representing the amount owned by the passed address
      */
-    function balanceOf(address owner) public view returns (uint256) {
+    function balanceOf(address owner) public view returns(uint256) {
       return _ownedTokensCount[owner];
     }
 
@@ -34,11 +34,11 @@ contract ChainopolyProperties {
      * @param tokenId uint256 ID of the token to query the owner of
      * @return owner address currently marked as the owner of the given token ID
      */
-    function ownerOf(uint256 tokenId) public view returns (address) {
-      address owner = _tokenOwner[tokenId];
-      return owner;
+    function ownerOf(uint256 tokenId) public view returns(address) {
+      return _tokenOwner[tokenId];
     }
 
+    event LogEvent(string text, address owner, address sender, uint256 tokenId);
     /**
      * @dev Transfers the ownership of a given token ID to another address
      * Usage of this method is discouraged, use `safeTransferFrom` whenever possible
@@ -55,7 +55,6 @@ contract ChainopolyProperties {
       require(_tokenOwner[tokenId] == msg.sender);
       _removeTokenFrom(msg.sender, tokenId);
       _addTokenTo(to, tokenId);
-      emit TransferEvent(msg.sender, to, tokenId);
     }
 
     /**
@@ -63,7 +62,7 @@ contract ChainopolyProperties {
      * Throws if the token ID does not exist. May return an empty string.
      * @param tokenId uint256 ID of the token to query
      */
-    function tokenURI(uint256 tokenId) external view returns (string) {
+    function tokenURI(uint256 tokenId) external view returns(string) {
       return _tokenURIs[tokenId];
     }
 
@@ -135,16 +134,16 @@ contract ChainopolyProperties {
         _tokenPosition[position] = tokenId;
     }
 
-    function getTokenInfo(uint256 tokenId) public view returns (string name, string color, uint256 price, uint256 rent, uint256 position) {
+    function getTokenInfo(uint256 tokenId) public view returns(string name, string color, uint256 price, uint256 rent, uint256 position) {
         require(_tokenInfo[tokenId] != address(0));
         return (_tokenInfo[tokenId].getName(), _tokenInfo[tokenId].getColor(), _tokenInfo[tokenId].getPrice(), _tokenInfo[tokenId].getRent(), _tokenInfo[tokenId].getPosition());
     }
 
-    function getTokenContract(uint256 tokenId) public view returns (address) {
+    function getTokenContract(uint256 tokenId) public view returns(address) {
         return _tokenInfo[tokenId];
     }
 
-    function getTokenByPosition(uint256 position) public view returns (uint256) {
+    function getTokenByPosition(uint256 position) public view returns(uint256) {
         return _tokenPosition[position];
     }
 

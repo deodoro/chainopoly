@@ -68,12 +68,12 @@ contract Game {
         _roll(dice);
     }
 
-    function getPlayerInfoByIndex(uint index) public view returns (address, string, string, uint256, bool) {
+    function getPlayerInfoByIndex(uint index) public view returns(address, string, string, uint256, bool) {
         require(index < MAX_PLAYERS);
         return getPlayerInfo(_players[index]);
     }
 
-    function getPlayerInfo(address addr) public view returns (address, string, string, uint256, bool) {
+    function getPlayerInfo(address addr) public view returns(address, string, string, uint256, bool) {
         require(_playerInfo[addr].position > 0);
         return (addr, _playerInfo[addr].name, _playerInfo[addr].color, _playerInfo[addr].position - 1, isCurrentPlayer(addr));
     }
@@ -110,7 +110,7 @@ contract Game {
         emit MoveEvent(getCurrentPlayer(), _playerInfo[getCurrentPlayer()].position-1);
     }
 
-    function random() private view returns (uint8) {
+    function random() private view returns(uint8) {
         return 1 + uint8(uint256(keccak256(block.timestamp, block.difficulty))%12);
     }
 
@@ -118,7 +118,7 @@ contract Game {
         return _players[_curPlayer];
     }
 
-    function isCurrentPlayer(address player) public view returns (bool) {
+    function isCurrentPlayer(address player) public view returns(bool) {
         return player == getCurrentPlayer();
     }
 
@@ -140,6 +140,7 @@ contract Game {
             Property prop = Property(_properties.getTokenContract(tokenId));
 
             if (prop_owner == address(this)) {
+                _properties.transfer(address(_swap), tokenId);
                 _swap.addOffer(curPlayer, this, tokenId, prop.getPrice());
                 return ("buy", curPlayer, this, prop.getPrice());
             }

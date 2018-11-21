@@ -1,5 +1,6 @@
 var AtomicSwap = artifacts.require("./AtomicSwap.sol");
 var ChainopolyCoin = artifacts.require("./ChainopolyCoin.sol");
+var ChainopolyProperties = artifacts.require("./ChainopolyProperties.sol");
 
 contract('AtomicSwap', function(accounts) {
   var meta;
@@ -25,22 +26,23 @@ contract('AtomicSwap', function(accounts) {
         });
   });
   it("should add offer", function() {
+        var props;
         var account_one = accounts[0];
         var account_two = accounts[1];
         return AtomicSwap.deployed().then(function(instance) {
             meta = instance;
+            return ChainopolyProperties.deployed();
+        }).then(function(instance) {
+            return instance.transfer(AtomicSwap.address, 1, {from: account_one});
+        }).then(function() {
+            return meta.addOffer(account_two, account_one, 1, 100, {from: account_two});
+        }).then(function(result) {
             return meta.isPending.call();
-        }).then(function(result) {
-            assert.ok(!result);
-            return meta.addOffer(account_two, account_one, 1, 100, {from: account_one});
-        }).then(function(result) {
-            assert.ok(result);
-            return meta.isPending();
         }).then(function(result) {
             assert.ok(result);
             return meta.OnTransfer(account_two, account_one, 100);
         }).then(function(result) {
-            return meta.isPending();
+            return meta.isPending.call();
         }).then(function(result) {
             assert.ok(!result);
         });
@@ -50,26 +52,28 @@ contract('AtomicSwap', function(accounts) {
         var account_two = accounts[1];
         return AtomicSwap.deployed().then(function(instance) {
             meta = instance;
+            return ChainopolyProperties.deployed();
+        }).then(function(instance) {
+            return instance.transfer(AtomicSwap.address, 1, {from: account_one});
+        }).then(function() {
             return meta.isPending.call();
         }).then(function(result) {
             assert.ok(!result);
             return meta.addOffer(account_two, account_one, 1, 100, {from: account_one});
         }).then(function(result) {
-            assert.ok(result);
             return meta.addIOU(account_two, account_one, 101, {from: account_one});
         }).then(function(result) {
-            assert.ok(result);
-            return meta.isPending();
+            return meta.isPending.call();
         }).then(function(result) {
             assert.ok(result);
             return meta.OnTransfer(account_two, account_one, 100);
         }).then(function(result) {
-            return meta.isPending();
+            return meta.isPending.call();
         }).then(function(result) {
             assert.ok(result);
             return meta.OnTransfer(account_two, account_one, 101);
         }).then(function(result) {
-            return meta.isPending();
+            return meta.isPending.call();
         }).then(function(result) {
             assert.ok(!result);
         });
@@ -80,6 +84,10 @@ contract('AtomicSwap', function(accounts) {
         var account_two = accounts[1];
         return AtomicSwap.deployed().then(function(instance) {
             meta = instance;
+            return ChainopolyProperties.deployed();
+        }).then(function(instance) {
+            return instance.transfer(AtomicSwap.address, 1, {from: account_one});
+        }).then(function() {
             return meta.isPending.call();
         }).then(function(result) {
             assert.ok(!result);
