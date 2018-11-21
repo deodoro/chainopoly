@@ -43,32 +43,26 @@ export class BoardService {
             this.ChainopolyProperties
                 .deployed()
                 .then(instance => {
-                    console.log("promising");
-                  var promises = _.range(1,29).map(i =>
-                      instance.getTokenInfo
-                          .call(i)
-                          .then(results => {
-                              console.log(`promised ${results}`);
-                              return {
-                                  "name": results[0],
-                                  "color": results[1],
-                                  "price": results[2].toNumber(),
-                                  "rent": results[3].toNumber(),
-                                  "position": results[4].toNumber(),
-                                  "token": i
-                              };
-                          })
-                  );
-                  console.log("Alling");
-                  return Promise.all(promises)
-                      .then(value => {
-                          console.log(`Alled ${value}`);
-                          observer.next(value)
-                          observer.complete()
-                      })
+                      var promises = _.range(1,29).map(i =>
+                          instance.getTokenInfo
+                              .call(i)
+                              .then(results => {
+                                  return {
+                                      "name": results[0],
+                                      "color": results[1],
+                                      "price": results[2].toNumber(),
+                                      "rent": results[3].toNumber(),
+                                      "position": results[4].toNumber(),
+                                      "token": i
+                                  };
+                              })
+                      );
+                      return Promise.all(promises).then(value => {
+                              observer.next(value)
+                              observer.complete()
+                      });
                 })
                 .catch(e => {
-                  console.log(e);
                   observer.error(e)
                 });
         }
