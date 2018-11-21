@@ -83,7 +83,7 @@ contract('AtomicSwap', function(accounts) {
             return meta.isPending.call();
         }).then(function(result) {
             assert.ok(!result);
-            return meta.addOffer(account_two, account_one, 1, 100, {from: account_one});
+            return meta.addOffer(account_one, account_two, 1, 100, {from: account_one});
         }).then(function(result) {
             assert.ok(result);
             return meta.isPending();

@@ -7,15 +7,17 @@ contract ChainopolyProperties {
     using SafeMath for uint256;
 
     mapping (uint256 => address) private _tokenOwner;
-    mapping (uint256 => address) private _tokenApprovals;
     mapping (address => uint256) private _ownedTokensCount;
     mapping (uint256 => string) private _tokenURIs;
     mapping (uint256 => Property) private _tokenInfo;
-    mapping (uint256 => Property) private _tokenPosition;
+    mapping (uint256 => uint256) private _tokenPosition;
+    uint256[] private tokens;
+    address _owner;
 
     event TransferEvent(address indexed _from, address indexed _to, uint256 _value);
 
     constructor() public {
+        _owner = tx.origin;
     }
 
     /**
@@ -93,7 +95,9 @@ contract ChainopolyProperties {
      * @param tokenId uint256 ID of the token to be minted by the msg.sender
      */
     function _mint(uint256 tokenId) internal {
+      require(msg.sender == _owner);
       _addTokenTo(msg.sender, tokenId);
+      tokens.push(tokenId);
     }
 
     /**
@@ -128,7 +132,7 @@ contract ChainopolyProperties {
         if (_tokenOwner[tokenId] == address(0))
             _mint(tokenId);
         _tokenInfo[tokenId] = new Property(name, color, price, rent, position);
-        _tokenPosition[position] = _tokenInfo[tokenId];
+        _tokenPosition[position] = tokenId;
     }
 
     function getTokenInfo(uint256 tokenId) public view returns (string name, string color, uint256 price, uint256 rent, uint256 position) {
@@ -140,11 +144,17 @@ contract ChainopolyProperties {
         return _tokenInfo[tokenId];
     }
 
-    function getTokenContractByPosition(uint256 position) public view returns (address) {
-        return _tokenInfo[position];
+    function getTokenByPosition(uint256 position) public view returns (uint256) {
+        return _tokenPosition[position];
     }
 
-    function reset() view public {
+    function resetTo(address owner) public {
+        _owner = owner;
+        for (uint256 i = 0; i < tokens.length; i++) {
+            _ownedTokensCount[_tokenOwner[tokens[i]]] = 0;
+            _tokenOwner[tokens[i]] = _owner;
+        }
+        _ownedTokensCount[_owner] = tokens.length;
     }
 
 }

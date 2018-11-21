@@ -2,6 +2,7 @@ pragma solidity ^0.4.24;
 
 import "./ChainopolyCoin.sol";
 import "./ChainopolyProperties.sol";
+import "./Property.sol";
 import "./AtomicSwap.sol";
 
 contract Game {
@@ -11,6 +12,9 @@ contract Game {
         string color;
         uint256 position;
     }
+
+    event ActionEvent(string msg, address src, address target, uint256 value);
+
     uint256 constant MAX_PLAYERS = 6;
     uint256 constant BOARD_SIZE = 40;
     string[6] COLORS = ["blue", "red", "purple", "green", "orange", "darkturquoise"];
@@ -44,10 +48,16 @@ contract Game {
     }
 
     function _roll(uint dice) private {
+        string memory action;
+        address from;
+        address to;
+        uint256 value;
         require(_state == State.INIT || _state == State.MOVE);
         if (_state == State.MOVE)
             _curPlayer = (_curPlayer + 1) % _players.length;
         updatePlayerPosition(dice);
+        (action, from, to, value) = preparePlayerAction();
+        emit ActionEvent(action, from, to, value);
     }
 
     function roll() public {
@@ -78,7 +88,7 @@ contract Game {
         _state = State.INIT;
         _swap.reset();
         _coin.reset();
-        _properties.reset();
+        _properties.resetTo(this);
         _curPlayer = 0;
         for (uint i = 0; i < _players.length; i++) {
             delete _playerInfo[_players[i]];
@@ -95,21 +105,49 @@ contract Game {
     }
 
     function updatePlayerPosition(uint dice) private {
-        _playerInfo[_players[_curPlayer]].position = (_playerInfo[_players[_curPlayer]].position + dice) % BOARD_SIZE;
+        _playerInfo[getCurrentPlayer()].position = (_playerInfo[getCurrentPlayer()].position + dice) % BOARD_SIZE;
         setState(State.WAIT);
-        emit MoveEvent(_players[_curPlayer], _playerInfo[_players[_curPlayer]].position-1);
+        emit MoveEvent(getCurrentPlayer(), _playerInfo[getCurrentPlayer()].position-1);
     }
 
     function random() private view returns (uint8) {
-        return uint8(uint256(keccak256(block.timestamp, block.difficulty))%251);
+        return 1 + uint8(uint256(keccak256(block.timestamp, block.difficulty))%12);
+    }
+
+    function getCurrentPlayer() public view returns(address) {
+        return _players[_curPlayer];
     }
 
     function isCurrentPlayer(address player) public view returns (bool) {
-        return player == _players[_curPlayer];
+        return player == getCurrentPlayer();
     }
 
     function commit() public {
-        setState(State.MOVE);
+        if (_state == State.WAIT && isCurrentPlayer(msg.sender) && !_swap.isPending()) {
+            emit ActionEvent("commit", msg.sender, address(0), 0);
+            setState(State.MOVE);
+        }
+    }
+
+    function preparePlayerAction() private returns(string, address, address, uint256) {
+        address curPlayer = getCurrentPlayer();
+        uint256 tokenId = _properties.getTokenByPosition(_playerInfo[curPlayer].position);
+        if (tokenId == 0) {
+            return ("parking", curPlayer, address(0), 0);
+        }
+        else {
+            address prop_owner = _properties.ownerOf(tokenId);
+            Property prop = Property(_properties.getTokenContract(tokenId));
+
+            if (prop_owner == address(this)) {
+                _swap.addOffer(curPlayer, this, tokenId, prop.getPrice());
+                return ("buy", curPlayer, this, prop.getPrice());
+            }
+            else {
+                _swap.addIOU(curPlayer, prop_owner, prop.getRent());
+                return ("rent", curPlayer, prop_owner, 0);
+            }
+        }
     }
 
 }

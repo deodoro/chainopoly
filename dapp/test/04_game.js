@@ -101,7 +101,7 @@ contract('Game', function(accounts) {
             assert.equal(result.toNumber(), 1500, 'Balance for second player')
         });
   });
-  it("should give roll dice", function() {
+  it("should roll dice", function() {
         var coin;
         return Game.deployed().then(function(instance) {
             meta = instance;
@@ -121,24 +121,44 @@ contract('Game', function(accounts) {
         }).then(function(result) {
             return meta.registerPlayer("mario", {from: accounts[1]});
         }).then(function(result) {
-            return meta.roll_fixed(1);
+            return meta.roll_fixed(6);
         }).then(function(result) {
             return meta.getPlayerInfoByIndex.call(0);
         }).then(function(result) {
-            assert.equal(result[3].toNumber(), 1, 'Moved')
+            assert.equal(result[3].toNumber(), 6, 'Moved')
             return meta.getPlayerInfoByIndex.call(1);
         }).then(function(result) {
             assert.equal(result[3].toNumber(), 0, 'Did not move')
             return meta.commit();
         }).then(function(result) {
-            return meta.roll_fixed(1);
+            return meta.roll_fixed(2);
         }).then(function(result) {
             return meta.getPlayerInfoByIndex.call(0);
         }).then(function(result) {
-            assert.equal(result[3].toNumber(), 1, 'Did not move')
+            assert.equal(result[3].toNumber(), 6, 'Did not move')
             return meta.getPlayerInfoByIndex.call(1);
         }).then(function(result) {
-            assert.equal(result[3].toNumber(), 1, 'Moved')
+            assert.equal(result[3].toNumber(), 2, 'Moved')
+            return coin.transfer(Game.address, 60, {from: accounts[1]});
+        }).then(function(result) {
+            return meta.commit({from: accounts[1]});
+        }).then(function(result) {
+            console.log('roll');
+            return meta.roll_fixed(39);
+        }).then(function(result) {
+            return meta.getPlayerInfoByIndex.call(0);
+        }).then(function(result) {
+            assert.equal(result[3].toNumber(), 5, 'Did not move')
+            return coin.transfer(Game.address, 100, {from: accounts[0]});
+        }).then(function(result) {
+            return meta.commit();
+        }).then(function(result) {
+            return meta.roll();
+        }).then(function(result) {
+            return meta.getPlayerInfoByIndex.call(1);
+        }).then(function(result) {
+            assert.ok(result[3].toNumber() > 5, 'Did not move')
+            assert.ok(false);
         });
   });
 });
