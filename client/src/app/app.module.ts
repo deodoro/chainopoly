@@ -16,6 +16,7 @@ import { BoardService } from '../components/services/board.service';
 import { WebSocketService } from '../components/services/websocket.service';
 import { SocketService } from '../components/services/socket.service';
 import { NewsService } from '../components/services/news.service';
+import { Web3Service } from '../components/services/web3.service';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { NewsService } from '../components/services/news.service';
     SocketService,
     BoardService,
     NewsService,
+    Web3Service,
   ],
   bootstrap: [AppComponent]
 })
