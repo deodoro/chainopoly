@@ -118,45 +118,45 @@ contract('Game', function(accounts) {
                 return null;
         }).then(function() {
             return meta.registerPlayer("deodoro", {from: accounts[0]});
-        }).then(function(result) {
+        }).then(function() {
             return meta.registerPlayer("mario", {from: accounts[1]});
-        }).then(function(result) {
+        }).then(function() {
             return meta.roll_fixed(6);
-        }).then(function(result) {
+        }).then(function() {
             return meta.getPlayerInfoByIndex.call(0);
         }).then(function(result) {
-            assert.equal(result[3].toNumber(), 6, 'Moved')
+            assert.equal(result[3].toNumber(), 6, 'Player{0} not in 6(0)')
             return meta.getPlayerInfoByIndex.call(1);
         }).then(function(result) {
-            assert.equal(result[3].toNumber(), 0, 'Did not move')
+            assert.equal(result[3].toNumber(), 0, 'Player{1} not in 0(0)')
             return meta.commit();
-        }).then(function(result) {
+        }).then(function() {
             return meta.roll_fixed(2);
-        }).then(function(result) {
+        }).then(function() {
             return meta.getPlayerInfoByIndex.call(0);
         }).then(function(result) {
-            assert.equal(result[3].toNumber(), 6, 'Did not move')
+            assert.equal(result[3].toNumber(), 6, 'Player{0} not in 6(1)')
             return meta.getPlayerInfoByIndex.call(1);
         }).then(function(result) {
-            assert.equal(result[3].toNumber(), 2, 'Moved')
+            assert.equal(result[3].toNumber(), 2, 'Player{1}  not in 2(1)')
             return coin.transfer(Game.address, 60, {from: accounts[1]});
-        }).then(function(result) {
+        }).then(function() {
             return meta.commit({from: accounts[1]});
-        }).then(function(result) {
+        }).then(function() {
             return meta.roll_fixed(39);
-        }).then(function(result) {
+        }).then(function() {
             return meta.getPlayerInfoByIndex.call(0);
         }).then(function(result) {
-            assert.equal(result[3].toNumber(), 5, 'Did not move')
+            assert.equal(result[3].toNumber(), 5, 'Player{0}  not in 5(2)')
             return coin.transfer(Game.address, 100, {from: accounts[0]});
-        }).then(function(result) {
+        }).then(function() {
             return meta.commit();
-        }).then(function(result) {
+        }).then(function() {
             return meta.roll();
-        }).then(function(result) {
+        }).then(function() {
             return meta.getPlayerInfoByIndex.call(1);
         }).then(function(result) {
-            assert.ok(result[3].toNumber() > 5, 'Did not move')
+            assert.ok(result[3].toNumber() > 2, `Player{1} in ${result[3].toNumber()} <= 2(3)`)
         });
   });
 });

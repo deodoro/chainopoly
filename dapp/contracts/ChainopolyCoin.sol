@@ -11,7 +11,7 @@ contract ChainopolyCoin {
     ITransferReceiver private _receiver;
     address private _myAccount;
 
-    event XFer(address from, address to, uint amount);
+    event TransferEvent(address from, address to, uint amount);
 
 	constructor() public {
 		_balances[tx.origin] = 10 ** 10;
@@ -35,7 +35,7 @@ contract ChainopolyCoin {
             checkIndex(receiver);
             if (_receiver != address(0))
                 _receiver.OnTransfer(msg.sender, receiver, amount);
-    		emit XFer(msg.sender, receiver, amount);
+    		emit TransferEvent(msg.sender, receiver, amount);
             return true;
         }
         else
