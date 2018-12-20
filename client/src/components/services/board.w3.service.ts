@@ -1,13 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { Http } from '@angular/http';
-import { of } from 'rxjs';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import { fromPromise } from 'rxjs/observable/fromPromise';
 import { Web3Service } from './web3.service'
 import { environment as e } from '../../environments/environment';
+import 'rxjs/add/operator/catch';
+import _ from 'lodash';
 
 declare function require(name:string);
 const metaincoinArtifacts = require('../../../../dapp/build/contracts/ChainopolyProperties.json');
@@ -29,18 +26,17 @@ export class PieceEventEmitter extends Subject<any>{
 export class BoardService {
 
     Stream: PieceEventEmitter;
-    ChainopolyProperties = contract(metaincoinArtifacts);
+    private ChainopolyProperties = contract(metaincoinArtifacts);
 
-    static parameters = [Http, Web3Service];
-    constructor(private Http: Http, web3Ser: Web3Service) {
+    static parameters = [Web3Service];
+    constructor(web3Ser: Web3Service) {
         this.Stream = new PieceEventEmitter();
         this.ChainopolyProperties.setProvider(web3Ser.web3.currentProvider);
     }
 
-    Observable<any> getProperties() {
-        let prop;
+    getProperties(): Observable<any> {
         return Observable.create(observer => {
-            this.ChainopolyProperties
+            return this.ChainopolyProperties
                 .deployed()
                 .then(instance => {
                       var promises = _.range(1,29).map(i =>
@@ -58,13 +54,13 @@ export class BoardService {
                               })
                       );
                       return Promise.all(promises).then(value => {
-                              observer.next(value)
-                              observer.complete()
+                              observer.next(value);
+                              observer.complete();
                       });
                 })
                 .catch(e => {
                   observer.error(e)
                 });
-        }
+        });
     }
 }
