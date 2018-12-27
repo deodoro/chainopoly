@@ -30,7 +30,7 @@ export class BoardComponent {
                 this.squares[p.position] = _.assign(p, {highlight: false});
             });
         });
-        this.service.Stream.subscribe(data => {
+        this.service.getStream().subscribe(data => {
             if (data != null) {
                 if (_.has(data, 'player'))
                     this.renderer.appendChild(this.squareIndex[data.player.position], this.getPiece(data.player.color))

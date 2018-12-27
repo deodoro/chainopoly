@@ -55,7 +55,6 @@ export class GameService {
     }
 
     status(game) {
-        console.log("game.status");
         return this.Http.get(e._folder(`/api/game/${game}/status`))
                 .map(res => res.json());
     }
@@ -69,4 +68,10 @@ export class GameService {
         return this.Http.post(e._folder(`/api/game/${game}/cancel`), account_id)
                 .map(res => res.json());
     }
+
+    players(game) {
+        return this.Http.get(e._folder(`/api/players/${game}`))
+                .map(res => res.json());
+    }
+
 }

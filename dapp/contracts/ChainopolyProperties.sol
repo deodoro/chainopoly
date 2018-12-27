@@ -29,6 +29,17 @@ contract ChainopolyProperties {
       return _ownedTokensCount[owner];
     }
 
+    function tokensOf(address owner) public view returns(uint256[]) {
+        uint256[] memory results = new uint256[](tokens.length);
+        uint j = 0;
+        for(uint i = 0; i < tokens.length; i++) {
+            if (_tokenOwner[tokens[i]] == owner) {
+                results[j++] = tokens[i];
+            }
+        }
+        return results;
+    }
+
     /**
      * @dev Gets the owner of the specified token ID
      * @param tokenId uint256 ID of the token to query the owner of

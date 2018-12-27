@@ -22,7 +22,7 @@ export class StartComponent {
 
     static parameters = [GameService, SocketService, BoardService, Router];
     constructor(private gameService : GameService, private socketService: SocketService, private boardService: BoardService, private router: Router) {
-        this.boardService.Stream.emit(null);
+        this.boardService.getStream().emit(null);
         this.data.account = localStorage.getItem('account');
         this.data.username = localStorage.getItem('username');
         this.gameService.getActive().subscribe( games => {

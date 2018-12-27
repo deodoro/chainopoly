@@ -44,7 +44,7 @@ export class PlayerComponent {
                     case 'move':
                         if (this.data.account == msg.payload.player.account) {
                             _.assign(this.data.player, msg.payload.player);
-                            this.boardService.Stream.emit({player: msg.payload.player});
+                            this.boardService.getStream().emit({player: msg.payload.player});
                             this.myTurn = true;
                         }
                         else
@@ -61,7 +61,7 @@ export class PlayerComponent {
     ngAfterViewInit() {
         this.service.getMyColor(this.gameId, this.data.account).subscribe(player => {
             this.data.player = _.omit(player, 'current');
-            this.boardService.Stream.emit({player: player});
+            this.boardService.getStream().emit({player: player});
             this.myTurn = player['current'];
         });
     }
@@ -102,7 +102,7 @@ export class PlayerComponent {
     }
 
     showProperty(p) {
-        this.boardService.Stream.emit({property: p});
+        this.boardService.getStream().emit({property: p});
     }
 
     OnDestroy() {

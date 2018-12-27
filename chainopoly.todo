@@ -1,0 +1,20 @@
+Chainopoly:
+  ☐ game.w3.service @code
+  ✔ opponent.w3.service @code @done (18-12-26 23:47)
+  ✔ player.w3.service @code @done (18-12-26 18:35)
+  ☐ refactor events @code
+  ☐ refactor contract ownership (resetTo) @code
+  ☐ redraw interface
+  ☐ code new interface @code
+  ☐ CPU player @code
+  ☐ refactor service configuration @code
+  ☐ game instatialization @code
+  ☐ add comments
+  ☐ "production" network
+  ☐ calculate price
+  ☐ webhosting
+  ☐ narrative
+  ☐ find new name
+  ☐ send links
+
+

@@ -1,40 +1,28 @@
+import { BoardService, Property } from './board.service';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
 import { Web3Service } from './web3.service'
-import { environment as e } from '../../environments/environment';
 import 'rxjs/add/operator/catch';
 import _ from 'lodash';
 
 declare function require(name:string);
-const metaincoinArtifacts = require('../../../../dapp/build/contracts/ChainopolyProperties.json');
+const propertiesArtifact = require('../../../../dapp/build/contracts/ChainopolyProperties.json');
 const contract = require('truffle-contract');
 
-export class Piece {
-    color: string;
-    position: number;
-}
+@Injectable({
+  providedIn: 'root',
+})
+export class BoardWeb3Service extends BoardService {
 
-export class PieceEventEmitter extends Subject<any>{
-    constructor() {
-        super();
-    }
-    emit(value) { super.next(value); }
-}
-
-@Injectable()
-export class BoardService {
-
-    Stream: PieceEventEmitter;
-    private ChainopolyProperties = contract(metaincoinArtifacts);
+    private ChainopolyProperties = contract(propertiesArtifact);
 
     static parameters = [Web3Service];
-    constructor(web3Ser: Web3Service) {
-        this.Stream = new PieceEventEmitter();
+    constructor(private web3Ser: Web3Service) {
+        super();
         this.ChainopolyProperties.setProvider(web3Ser.web3.currentProvider);
     }
 
-    getProperties(): Observable<any> {
+    callGetProperties(): Observable<Property[]> {
         return Observable.create(observer => {
             return this.ChainopolyProperties
                 .deployed()

@@ -8,11 +8,10 @@ import { BoardModule } from './board/board.module';
 import { PanelModule } from './panel/panel.module';
 import { StartModule } from './start/start.module';
 import { NewsModule } from './news/news.module';
+import { ServicesModule } from '../components/services/chainopoly.services';
 
 import { GameService } from '../components/services/game.service';
 import { PlayerService } from '../components/services/player.service';
-import { OpponentService } from '../components/services/opponent.service';
-import { BoardService } from '../components/services/board.service';
 import { WebSocketService } from '../components/services/websocket.service';
 import { SocketService } from '../components/services/socket.service';
 import { NewsService } from '../components/services/news.service';
@@ -30,14 +29,13 @@ import { Web3Service } from '../components/services/web3.service';
     PanelModule,
     StartModule,
     NewsModule,
+    ServicesModule,
   ],
   providers: [
     GameService,
     PlayerService,
-    OpponentService,
     WebSocketService,
     SocketService,
-    BoardService,
     NewsService,
     Web3Service,
   ],

@@ -55,4 +55,25 @@ contract('ChainopolyProperties', function(accounts) {
         assert.equal(balance_account_two + 1, balance.toNumber());
     });
   });
+  it("should return tokens for an account", function() {
+    return ChainopolyProperties.deployed().then(function(instance) {
+        meta = instance;
+        return meta.mintWithTokenURI(1005, '{}', {from: accounts[0]});
+    }).then(function(result) {
+        return meta.mintWithTokenURI(1006, '{}', {from: accounts[0]});
+    }).then(function(result) {
+        return meta.mintWithTokenURI(1007, '{}', {from: accounts[0]});
+    }).then(function(result) {
+        return meta.transfer(accounts[2], 1005, { from: accounts[0] });
+    }).then(function(result) {
+        return meta.transfer(accounts[2], 1006, { from: accounts[0] });
+    }).then(function(result) {
+        return meta.transfer(accounts[2], 1007, { from: accounts[0] });
+    }).then(function(result) {
+        return meta.tokensOf.call(accounts[2]);
+    }).then(function(result) {
+        var properties = result.filter(i => i > 0);
+        return assert.equal(properties.length, 3);
+    });
+  });
 });
