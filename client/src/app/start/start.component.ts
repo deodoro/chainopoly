@@ -25,7 +25,7 @@ export class StartComponent {
         this.boardService.getStream().emit(null);
         this.data.account = localStorage.getItem('account');
         this.data.username = localStorage.getItem('username');
-        this.gameService.getActive().subscribe( games => {
+        this.gameService.listGames().subscribe( games => {
             this.games = games;
         });
         this.ws = this.socketService.messages.subscribe(msg => {
@@ -64,7 +64,7 @@ export class StartComponent {
     }
 
     createGame() {
-        this.gameService.create(this.data)
+        this.gameService.newGame(this.data)
             .subscribe(game => {
                 this.router.navigateByUrl(`/panel/${game.id}`);
             });

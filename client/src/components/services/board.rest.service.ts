@@ -1,7 +1,7 @@
-import { BoardService, Property } from './board.service';
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { BoardService, Property } from './board.service';
 import { environment as e } from '../../environments/environment';
 import 'rxjs/add/operator/map';
 

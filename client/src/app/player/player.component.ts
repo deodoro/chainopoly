@@ -36,7 +36,7 @@ export class PlayerComponent {
             username: localStorage.getItem("username"),
             account: localStorage.getItem("account")
         }
-        this.gameService.status(this.gameId).subscribe(status => this.gameStatus = status);
+        this.gameService.getStatus(this.gameId).subscribe(status => this.gameStatus = status);
         this.refreshPlayerInfo();
         this.ws = this.socketService.messages.subscribe(msg => {
             if (msg.payload.game_id == this.gameId) {

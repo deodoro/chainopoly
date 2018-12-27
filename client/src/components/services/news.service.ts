@@ -9,7 +9,9 @@ export class NewsEventEmitter extends Subject<String> {
     emit(value) { super.next(value); }
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class NewsService {
     Stream: NewsEventEmitter;
 

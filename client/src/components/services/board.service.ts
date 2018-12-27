@@ -40,7 +40,7 @@ export abstract class BoardService {
     abstract callGetProperties(): Observable<Property[]>;
 
     getProperties(): Observable<Property[]> {
-        if (_.empty(this.cache)) {
+        if (_.isEmpty(this.cache)) {
             return Observable.create(observer => {
                 this.callGetProperties().subscribe(values => {
                     this.cache = values;

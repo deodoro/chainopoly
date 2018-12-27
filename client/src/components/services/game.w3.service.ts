@@ -1,77 +1,54 @@
-import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { Http } from '@angular/http';
-import { of } from 'rxjs';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import { environment as e } from '../../environments/environment';
+import { Injectable } from '@angular/core';
+import { GameService, GameInfo, PlayerInfo } from './game.service';
 
-@Injectable()
-export class GameService {
+@Injectable({
+  providedIn: 'root',
+})
+export class GameWeb3Service extends GameService {
 
-    static parameters = [Http];
-    constructor(private Http: Http) { }
-
-    getActive() {
-        return this.Http.get(e._folder('/api/game'))
-                        .map(res => res.json());
+    constructor() {
+        super();
     }
 
-    control(id, action) {
-        return this.Http.post(e._folder(`/api/game/${id}/control`), action)
-                        .map(res => {
-                            return res.json();
-                        })
-                        .catch(err => {
-                            console.dir(err);
-                            return of(err.json());
-                        });
+    public listGames(): Observable<GameInfo[]> {
+        return null;
     }
 
-    startGame(id) {
-        return this.control(id, {action: 'roll'});
+    public listPlayers(game): Observable<PlayerInfo[]> {
+        return null;
     }
 
-    roll(id) {
-        return this.control(id, {action: 'roll'});
+    public newGame(player): Observable<GameInfo> {
+        return null;
     }
 
-    commit(id, account_id) {
-        return this.control(id, {action: 'commit', account_id: account_id});
+    public register(game, player): Observable<any> {
+        return null;
     }
 
-    create(player) {
-        return this.Http.post(e._folder('/api/game'), player)
-                .map(res => res.json());
+    public getStatus(game): Observable<string> {
+        return null;
     }
 
-    register(game, player) {
-        return this.Http.post(e._folder(`/api/players/${game}`), player)
-                .map(res => res.json())
-                .catch(err => {
-                    console.dir(err);
-                    return of(err.json());
-                });
+    public startGame(id): Observable<any> {
+        return null;
     }
 
-    status(game) {
-        return this.Http.get(e._folder(`/api/game/${game}/status`))
-                .map(res => res.json());
+    public roll(id): Observable<any> {
+        return null;
     }
 
-    transfer(game, transaction) {
-        return this.Http.post(e._folder(`/api/game/${game}/transfer`), transaction)
-                .map(res => res.json());
+    public commit(id, account_id): Observable<any> {
+        return null;
     }
 
-    cancel(game, account_id) {
-        return this.Http.post(e._folder(`/api/game/${game}/cancel`), account_id)
-                .map(res => res.json());
+    public transfer(game, transaction): Observable<any> {
+        return null;
     }
 
-    players(game) {
-        return this.Http.get(e._folder(`/api/players/${game}`))
-                .map(res => res.json());
+    public cancel(game, account_id): Observable<any> {
+        return null;
     }
 
 }

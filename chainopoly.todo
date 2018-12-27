@@ -3,6 +3,8 @@ Chainopoly:
   ✔ opponent.w3.service @code @done (18-12-26 23:47)
   ✔ player.w3.service @code @done (18-12-26 18:35)
   ☐ refactor events @code
+  ☐ detect if network is unreachable/down @code
+  ☐ notifications backlog (interface) @code
   ☐ refactor contract ownership (resetTo) @code
   ☐ redraw interface
   ☐ code new interface @code

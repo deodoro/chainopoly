@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
-import { PlayerService as PlayerWeb3Service } from './player.w3.service';
+import { Observable } from 'rxjs/Observable';
+import { Property } from './board.service';
 
-@Injectable()
-export class PlayerService extends PlayerWeb3Service {
+export abstract class PlayerService {
+    public abstract getMyColor(game_id, account_id): Observable<string>;
+    public abstract getBalance(game_id, account_id): Observable<number>;
+    public abstract getProperties(game_id, account_id): Observable<Property[]>;
 }

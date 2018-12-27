@@ -10,7 +10,9 @@ const Web3 = require('web3');
 
 declare var window: any;
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class Web3Service {
 
 	public web3: any;

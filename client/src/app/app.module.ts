@@ -10,13 +10,6 @@ import { StartModule } from './start/start.module';
 import { NewsModule } from './news/news.module';
 import { ServicesModule } from '../components/services/chainopoly.services';
 
-import { GameService } from '../components/services/game.service';
-import { PlayerService } from '../components/services/player.service';
-import { WebSocketService } from '../components/services/websocket.service';
-import { SocketService } from '../components/services/socket.service';
-import { NewsService } from '../components/services/news.service';
-import { Web3Service } from '../components/services/web3.service';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,14 +24,7 @@ import { Web3Service } from '../components/services/web3.service';
     NewsModule,
     ServicesModule,
   ],
-  providers: [
-    GameService,
-    PlayerService,
-    WebSocketService,
-    SocketService,
-    NewsService,
-    Web3Service,
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

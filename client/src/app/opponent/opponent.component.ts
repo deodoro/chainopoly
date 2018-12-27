@@ -23,8 +23,8 @@ export class OpponentComponent {
                 private boardService: BoardService) {
         let myAccount = localStorage.getItem("account");
         this.gameId = this.route.snapshot.paramMap.get('id');
-        this.gameService.status(this.gameId).subscribe(status => this.gameState = status);
-        this.gameService.players(this.gameId).subscribe(players => {
+        this.gameService.getStatus(this.gameId).subscribe(status => this.gameState = status);
+        this.gameService.listPlayers(this.gameId).subscribe(players => {
             this.players = players.filter(i => i.account != myAccount);
             this.players.forEach(p => this.boardService.getStream().emit({player: p}))
         });

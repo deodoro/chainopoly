@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Web3Service } from './web3.service'
-import { BoardService } from './board.service';
+import { BoardService, Property } from './board.service';
+import { PlayerService } from './player.service';
+import { environment as e } from '../../environments/environment';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import { environment as e } from '../../environments/environment';
 import _ from 'lodash';
 
 declare function require(name:string);
@@ -13,8 +14,10 @@ const coinArtifacts = require('../../../../dapp/build/contracts/ChainopolyCoin.j
 const propertiesArtifact = require('../../../../dapp/build/contracts/ChainopolyProperties.json');
 const contract = require('truffle-contract');
 
-@Injectable()
-export class PlayerService {
+@Injectable({
+  providedIn: 'root',
+})
+export class PlayerWeb3Service extends PlayerService {
     private Game = contract(gameArtifacts);
     private Coin = contract(coinArtifacts);
     private Properties = contract(propertiesArtifact);
@@ -22,6 +25,7 @@ export class PlayerService {
 
     static parameters = [Web3Service, BoardService];
     constructor(private web3Ser: Web3Service, private board: BoardService) {
+        super();
         this.Game.setProvider(web3Ser.web3.currentProvider);
         this.Coin.setProvider(web3Ser.web3.currentProvider);
         this.Properties.setProvider(web3Ser.web3.currentProvider);
@@ -75,7 +79,7 @@ export class PlayerService {
         );
     }
 
-    getProperties(game_id, account_id) : Observable<object[]> {
+    getProperties(game_id, account_id) : Observable<Property[]> {
         return Observable.create(observer =>
             this.web3Ser.getAccounts()
                 .subscribe(accounts =>

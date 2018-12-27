@@ -1,9 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Observable, Subject } from "rxjs/Rx";
 import { WebSocketService } from "./websocket.service";
-import * as Rx from "rxjs/Rx";
-import _ from "lodash";
 import { environment } from '../../environments/environment';
+import _ from "lodash";
 
 const WS_URL = `${(window.location.protocol=="https:"?"wss":"ws")}://${window.location.host}${environment._folder('/ws')}`;
 
@@ -12,9 +11,11 @@ export interface Message {
     payload: any
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class SocketService {
-    public messages = new Rx.Subject<Message>();
+    public messages = new Subject<Message>();
     private sub = null;
 
     constructor(wsService: WebSocketService) {
@@ -28,7 +29,6 @@ export class SocketService {
                 }
             })
             .subscribe(msg => {
-                console.dir(msg);
                 if (!_.isEmpty(msg))
                     this.messages.next(msg);
             });
