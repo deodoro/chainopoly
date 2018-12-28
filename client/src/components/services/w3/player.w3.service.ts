@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Web3Service } from './web3.service'
-import { BoardService, Property } from './board.service';
-import { PlayerService } from './player.service';
-import { environment as e } from '../../environments/environment';
+import { BoardService, Property } from '../board.service';
+import { PlayerService } from '../player.service';
+import { environment as e } from '../../../environments/environment';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import _ from 'lodash';
 
 declare function require(name:string);
-const gameArtifacts = require('../../../../dapp/build/contracts/Game.json');
-const coinArtifacts = require('../../../../dapp/build/contracts/ChainopolyCoin.json');
-const propertiesArtifact = require('../../../../dapp/build/contracts/ChainopolyProperties.json');
+const gameArtifacts = require('../../../../../dapp/build/contracts/Game.json');
+const coinArtifacts = require('../../../../../dapp/build/contracts/ChainopolyCoin.json');
+const propertiesArtifact = require('../../../../../dapp/build/contracts/ChainopolyProperties.json');
 const contract = require('truffle-contract');
 
 @Injectable({

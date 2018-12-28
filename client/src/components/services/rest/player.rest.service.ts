@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Http } from '@angular/http';
 import { of } from 'rxjs';
-import { PlayerService } from './player.service';
-import { Property } from './board.service';
+import { PlayerService } from '../player.service';
+import { Property } from '../board.service';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import { environment as e } from '../../environments/environment';
+import { environment as e } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',

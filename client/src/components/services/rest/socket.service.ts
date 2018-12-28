@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Observable, Subject } from "rxjs/Rx";
 import { WebSocketService } from "./websocket.service";
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 import _ from "lodash";
 
 const WS_URL = `${(window.location.protocol=="https:"?"wss":"ws")}://${window.location.host}${environment._folder('/ws')}`;

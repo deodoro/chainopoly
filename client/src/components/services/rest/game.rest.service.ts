@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Http } from '@angular/http';
-import { GameService, GameInfo, PlayerInfo } from './game.service';
 import { SocketService } from './socket.service';
-import { environment as e } from '../../environments/environment';
+import { GameService, GameInfo, PlayerInfo } from '../game.service';
+import { environment as e } from '../../../environments/environment';
 import { of } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';

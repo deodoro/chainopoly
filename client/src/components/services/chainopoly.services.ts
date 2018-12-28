@@ -1,17 +1,19 @@
 import { NgModule } from '@angular/core';
 import { NewsService } from './news.service';
-import { WebSocketService } from './websocket.service';
-import { SocketService } from './socket.service';
-import { Web3Service } from './web3.service';
 import { BoardService } from './board.service';
-import { BoardRESTService } from './board.rest.service';
-import { BoardWeb3Service } from './board.w3.service';
 import { GameService } from './game.service';
-import { GameRESTService } from './game.rest.service';
-import { GameWeb3Service } from './game.w3.service';
 import { PlayerService } from './player.service';
-import { PlayerRESTService } from './player.rest.service';
-import { PlayerWeb3Service } from './player.w3.service';
+
+import { WebSocketService } from './rest/websocket.service';
+import { SocketService } from './rest/socket.service';
+import { BoardRESTService } from './rest/board.rest.service';
+import { GameRESTService } from './rest/game.rest.service';
+import { PlayerRESTService } from './rest/player.rest.service';
+
+import { Web3Service } from './w3/web3.service';
+import { BoardWeb3Service } from './w3/board.w3.service';
+import { GameWeb3Service } from './w3/game.w3.service';
+import { PlayerWeb3Service } from './w3/player.w3.service';
 
 let w3_enabled = false;
 
