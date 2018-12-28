@@ -28,11 +28,15 @@ export class GameWeb3Service extends GameService {
         this.Coin.setProvider(web3Ser.web3.currentProvider);
     }
 
+    public getId() {
+        return '0';
+    }
+
     public listGames(): Observable<GameInfo[]> {
         return of([{id: '0', title: 'The only game'}]);
     }
 
-    public listPlayers(game): Observable<PlayerInfo[]> {
+    public listPlayers(): Observable<PlayerInfo[]> {
         return null;
     }
 
@@ -56,7 +60,7 @@ export class GameWeb3Service extends GameService {
         );
     }
 
-    public getStatus(game): Observable<string> {
+    public getStatus(): Observable<string> {
         return Observable.create(observer =>
             this.Game.deployed()
                 .then(instance =>
@@ -73,11 +77,11 @@ export class GameWeb3Service extends GameService {
         );
     }
 
-    public startGame(id): Observable<any> {
-        return this.roll(id);
+    public startGame(): Observable<any> {
+        return this.roll();
     }
 
-    public roll(id): Observable<any> {
+    public roll(): Observable<any> {
         return Observable.create(observer =>
             this.Game.deployed()
                 .then(instance =>
@@ -93,7 +97,7 @@ export class GameWeb3Service extends GameService {
         );
     }
 
-    public commit(id, account_id): Observable<any> {
+    public commit(account_id): Observable<any> {
         return Observable.create(observer =>
             this.Game.deployed()
                 .then(instance =>
@@ -109,7 +113,7 @@ export class GameWeb3Service extends GameService {
         );
     }
 
-    public transfer(game, transaction): Observable<any> {
+    public transfer(transaction): Observable<any> {
         return Observable.create(observer =>
             this.Coin.deployed()
                 .then(instance =>
@@ -125,7 +129,7 @@ export class GameWeb3Service extends GameService {
         );
     }
 
-    public cancel(game, account_id): Observable<any> {
+    public cancel(account_id): Observable<any> {
         return null;
     }
 

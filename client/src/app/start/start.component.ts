@@ -29,7 +29,7 @@ export class StartComponent {
         });
         this.gameService.on({
             'new_game': data => this.games.push(_.assign(data, {players: 0})),
-            'new_player': this.games.forEach(g => {
+            'new_player': data => this.games.forEach(g => {
                                if (g.id == data.game_id) {
                                    g.players++;
                                }
@@ -63,7 +63,7 @@ export class StartComponent {
             });
     }
 
-    OnDestry() {
+    OnDestroy() {
         this.ws.unsubscribe();
     }
 

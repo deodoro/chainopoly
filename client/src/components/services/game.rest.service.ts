@@ -7,6 +7,7 @@ import { environment as e } from '../../environments/environment';
 import { of } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import _ from 'lodash';
 
 @Injectable({
   providedIn: 'root',
@@ -43,13 +44,17 @@ export class GameRESTService extends GameService {
         this.ws.unsubscribe();
     }
 
+    public getId() {
+        return document.location.href.match(/^.+\/(.+)$/)[1];
+    }
+
     public listGames(): Observable<GameInfo[]> {
         return this.Http.get(e._folder('/api/game'))
                         .map(res => res.json());
     }
 
-    public listPlayers(game): Observable<PlayerInfo[]> {
-        return this.Http.get(e._folder(`/api/players/${game}`))
+    public listPlayers(): Observable<PlayerInfo[]> {
+        return this.Http.get(e._folder(`/api/players/${this.getId()}`))
                 .map(res => res.json());
     }
 
@@ -67,13 +72,13 @@ export class GameRESTService extends GameService {
                 });
     }
 
-    public getStatus(game): Observable<string> {
-        return this.Http.get(e._folder(`/api/game/${game}/status`))
+    public getStatus(): Observable<string> {
+        return this.Http.get(e._folder(`/api/game/${this.getId()}/status`))
                 .map(res => res.json());
     }
 
-    private control(id, action): Observable<any> {
-        return this.Http.post(e._folder(`/api/game/${id}/control`), action)
+    private control(action): Observable<any> {
+        return this.Http.post(e._folder(`/api/game/${this.getId()}/control`), action)
                         .map(res => {
                             return res.json();
                         })
@@ -83,25 +88,25 @@ export class GameRESTService extends GameService {
                         });
     }
 
-    public startGame(id): Observable<any> {
-        return this.control(id, {action: 'roll'});
+    public startGame(): Observable<any> {
+        return this.control({action: 'roll'});
     }
 
-    public roll(id): Observable<any> {
-        return this.control(id, {action: 'roll'});
+    public roll(): Observable<any> {
+        return this.control({action: 'roll'});
     }
 
-    public commit(id, account_id): Observable<any> {
-        return this.control(id, {action: 'commit', account_id: account_id});
+    public commit(account_id): Observable<any> {
+        return this.control({action: 'commit', account_id: account_id});
     }
 
-    public transfer(game, transaction): Observable<any> {
-        return this.Http.post(e._folder(`/api/game/${game}/transfer`), transaction)
+    public transfer(transaction): Observable<any> {
+        return this.Http.post(e._folder(`/api/game/${this.getId()}/transfer`), transaction)
                 .map(res => res.json());
     }
 
-    public cancel(game, account_id): Observable<any> {
-        return this.Http.post(e._folder(`/api/game/${game}/cancel`), account_id)
+    public cancel(account_id): Observable<any> {
+        return this.Http.post(e._folder(`/api/game/${this.getId()}/cancel`), account_id)
                 .map(res => res.json());
     }
 

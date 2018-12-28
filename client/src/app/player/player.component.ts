@@ -1,5 +1,4 @@
 import { Component, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { PlayerService } from '../../components/services/player.service';
 import { GameService } from '../../components/services/game.service';
 import { BoardService } from '../../components/services/board.service';
@@ -16,7 +15,6 @@ export class PlayerComponent {
     public data: any;
     public balance = 0;
     public properties = [];
-    public gameId = null;
     public gameStatus = 'init';
     public myTurn = false;
     public errorMessage = null;
@@ -24,18 +22,16 @@ export class PlayerComponent {
     private transaction = { target: null, value: null};
     @ViewChild("errorDialog") errorDialog: NotificationPanelComponent;
 
-    static parameters = [PlayerService, GameService, ActivatedRoute, BoardService, NewsService];
+    static parameters = [PlayerService, GameService, BoardService, NewsService];
     constructor(private service: PlayerService,
                 private gameService: GameService,
-                private route: ActivatedRoute,
                 private boardService: BoardService,
                 private newsService: NewsService) {
-        this.gameId = this.route.snapshot.paramMap.get('id');
         this.data = {
             username: localStorage.getItem("username"),
             account: localStorage.getItem("account")
         }
-        this.gameService.getStatus(this.gameId).subscribe(status => this.gameStatus = status);
+        this.gameService.getStatus().subscribe(status => this.gameStatus = status);
         this.gameService.on({
             'move': data => {
                         if (this.data.account == data.account) {
@@ -51,27 +47,26 @@ export class PlayerComponent {
     }
 
     ngAfterViewInit() {
-        this.service.getMyColor(this.gameId, this.data.account).subscribe(player => {
+        this.service.getMyColor(this.gameService.getId(), this.data.account).subscribe(player => {
             this.data.player = _.omit(player, 'current');
-            this.boardService.getStream().emit({player: player});
             this.myTurn = player['current'];
         });
     }
 
     refreshPlayerInfo() {
-        this.service.getBalance(this.gameId, this.data.account)
+        this.service.getBalance(this.gameService.getId(), this.data.account)
             .subscribe(balance => this.balance = balance);
-        this.service.getProperties(this.gameId, this.data.account)
+        this.service.getProperties(this.gameService.getId(), this.data.account)
             .subscribe(properties => this.properties = properties);
     }
 
     roll() {
-        this.gameService.roll(this.gameId)
+        this.gameService.roll()
             .subscribe(res => console.log(res));
     }
 
     transfer() {
-        this.gameService.transfer(this.gameId, _.assign(this.transaction, {source: this.data.account}))
+        this.gameService.transfer(_.assign(this.transaction, {source: this.data.account}))
             .subscribe(success => {
                            this.transaction = { target: null, value: null};
                            this.newsService.Stream.emit(`${this.data.username} transferiu ${this.transaction.value} para a conta ${this.transaction.target}`);
@@ -84,12 +79,12 @@ export class PlayerComponent {
     }
 
     cancel() {
-        this.gameService.cancel(this.gameId, _.assign({source: this.data.account}))
+        this.gameService.cancel(_.assign({source: this.data.account}))
             .subscribe(res => console.log(res));
     }
 
     commit() {
-        this.gameService.commit(this.gameId, this.data.account)
+        this.gameService.commit(this.data.account)
             .subscribe(res => console.log(res));
     }
 

@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
 import { NewsService } from "../../components/services/news.service";
 import { GameService } from "../../components/services/game.service";
 
@@ -10,17 +9,13 @@ import { GameService } from "../../components/services/game.service";
 })
 export class NewsComponent implements OnInit {
     public news = [];
-    private ws = null;
-    static parameters = [NewsService, GameService, ActivatedRoute];
+    static parameters = [NewsService, GameService];
     constructor(
         private newsService: NewsService,
         private gameService: GameService,
-        private route: ActivatedRoute
     ) {}
 
     ngOnInit() {
-        let gameId = this.route.snapshot.paramMap.get("id");
-        let user_account = localStorage.getItem("account");
         this.newsService.Stream.subscribe(msg => this.news.push(msg));
         this.gameService.on({
             move: data =>
@@ -51,7 +46,6 @@ export class NewsComponent implements OnInit {
     }
 
     ngDestroy() {
-        this.ws.unsubscribe();
     }
 
     private statusMessage(status: string) {
