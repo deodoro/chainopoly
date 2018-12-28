@@ -2,7 +2,6 @@ import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PlayerService } from '../../components/services/player.service';
 import { GameService } from '../../components/services/game.service';
-import { SocketService } from '../../components/services/socket.service';
 import { BoardService } from '../../components/services/board.service';
 import { NewsService } from '../../components/services/news.service';
 import { NotificationPanelComponent } from '../../components/notification-panel/notification-panel.component';
@@ -24,11 +23,11 @@ export class PlayerComponent {
     private ws = null;
     private transaction = { target: null, value: null};
     @ViewChild("errorDialog") errorDialog: NotificationPanelComponent;
-    static parameters = [PlayerService, GameService, ActivatedRoute, SocketService, BoardService, NewsService];
+
+    static parameters = [PlayerService, GameService, ActivatedRoute, BoardService, NewsService];
     constructor(private service: PlayerService,
                 private gameService: GameService,
                 private route: ActivatedRoute,
-                private socketService: SocketService,
                 private boardService: BoardService,
                 private newsService: NewsService) {
         this.gameId = this.route.snapshot.paramMap.get('id');
@@ -37,25 +36,18 @@ export class PlayerComponent {
             account: localStorage.getItem("account")
         }
         this.gameService.getStatus(this.gameId).subscribe(status => this.gameStatus = status);
-        this.refreshPlayerInfo();
-        this.ws = this.socketService.messages.subscribe(msg => {
-            if (msg.payload.game_id == this.gameId) {
-                switch(msg.type) {
-                    case 'move':
-                        if (this.data.account == msg.payload.player.account) {
-                            _.assign(this.data.player, msg.payload.player);
-                            this.boardService.getStream().emit({player: msg.payload.player});
+        this.gameService.on({
+            'move': data => {
+                        if (this.data.account == data.account) {
+                            _.assign(this.data.player, data);
                             this.myTurn = true;
                         }
                         else
                             this.myTurn = false;
-                        break;
-                    case 'status':
-                        this.gameStatus = msg.payload.status;
-                        break;
-                }
-            }
-        });
+                    },
+            'status': data => this.gameStatus = data
+        })
+        this.refreshPlayerInfo();
     }
 
     ngAfterViewInit() {

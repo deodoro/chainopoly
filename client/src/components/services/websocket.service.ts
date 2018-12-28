@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import * as Rx from "rxjs/Rx";
+import { Subject, Observer, Observable } from "rxjs/Rx";
 
 @Injectable({
   providedIn: 'root',
@@ -7,9 +7,9 @@ import * as Rx from "rxjs/Rx";
 export class WebSocketService {
     constructor() {}
 
-    private subject: Rx.Subject<MessageEvent>;
+    private subject: Subject<MessageEvent>;
 
-    public connect(url): Rx.Subject<MessageEvent> {
+    public connect(url): Subject<MessageEvent> {
         if (!this.subject) {
             this.subject = this.create(url);
             console.log("Successfully connected: " + url);
@@ -17,11 +17,11 @@ export class WebSocketService {
         return this.subject;
     }
 
-    private create(url): Rx.Subject<MessageEvent> {
+    private create(url): Subject<MessageEvent> {
         let ws = new WebSocket(url);
 
-        let observable = Rx.Observable.create(
-            (obs: Rx.Observer<MessageEvent>) => {
+        let observable = Observable.create(
+            (obs: Observer<MessageEvent>) => {
                 ws.onmessage = obs.next.bind(obs);
                 ws.onerror = obs.error.bind(obs);
                 ws.onclose = obs.complete.bind(obs);
@@ -35,7 +35,7 @@ export class WebSocketService {
                 }
             }
         };
-        return Rx.Subject.create(observer, observable);
+        return Subject.create(observer, observable);
     }
 }
 

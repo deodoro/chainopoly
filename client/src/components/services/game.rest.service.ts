@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Http } from '@angular/http';
 import { GameService, GameInfo, PlayerInfo } from './game.service';
+import { SocketService } from './socket.service';
 import { environment as e } from '../../environments/environment';
 import { of } from 'rxjs';
 import 'rxjs/add/operator/map';
@@ -12,9 +13,34 @@ import 'rxjs/add/operator/catch';
 })
 export class GameRESTService extends GameService {
 
-    static parameters = [Http];
-    constructor(private Http: Http) {
+    private ws = null;
+
+    static parameters = [Http, SocketService];
+    constructor(private Http: Http, private socketService: SocketService) {
         super();
+        this.events = Observable.create(observer => {
+            this.ws = this.socketService.messages.subscribe(msg => {
+                switch(msg.type) {
+                    case 'move':
+                    case 'new_player':
+                        observer.next({evt: msg.type, data: _.assign(msg.payload.player, { 'game_id': msg.payload.game_id })});
+                        break;
+                    case 'status':
+                        observer.next({evt: msg.type, data: msg.payload.status});
+                        break;
+                    case 'new_game':
+                        observer.next({evt: msg.type, data: msg.payload.game});
+                        break;
+                    case 'action':
+                        observer.next({evt: msg.type, data: msg.payload});
+                        break;
+                }
+            });
+        });
+    }
+
+    ngDestroy() {
+        this.ws.unsubscribe();
     }
 
     public listGames(): Observable<GameInfo[]> {

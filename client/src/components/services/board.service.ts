@@ -21,7 +21,7 @@ export class PieceEventEmitter extends Subject<any> {
     constructor() {
         super();
     }
-    emit(value) { super.next(value); }
+    public emit(value) { super.next(value); }
 }
 
 export abstract class BoardService {

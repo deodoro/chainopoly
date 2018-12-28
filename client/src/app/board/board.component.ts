@@ -1,5 +1,6 @@
 import { ViewChildren, QueryList, Component, Renderer2 } from '@angular/core';
 import { BoardService } from '../../components/services/board.service';
+import { GameService } from '../../components/services/game.service';
 import _ from 'lodash';
 
 class Square {
@@ -22,30 +23,29 @@ export class BoardComponent {
     public rangeRight = _.rangeRight;
     @ViewChildren('square') squareDivs : QueryList<any>;
 
-    static parameters = [BoardService, Renderer2];
-    constructor(private service: BoardService, private renderer: Renderer2) {
+    static parameters = [BoardService, GameService, Renderer2];
+    constructor(private service: BoardService, private gameService: GameService, private renderer: Renderer2) {
         this.squares = _.map(new Array(40), () => { return {name: '', highlight: false} });
         this.service.getProperties().subscribe(properties => {
             properties.forEach(p => {
                 this.squares[p.position] = _.assign(p, {highlight: false});
             });
         });
+        this.gameService.on({
+            'move': data => this.renderer.appendChild(this.squareIndex[data.position], this.getPiece(data.color))
+        });
         this.service.getStream().subscribe(data => {
             if (data != null) {
-                if (_.has(data, 'player'))
-                    this.renderer.appendChild(this.squareIndex[data.player.position], this.getPiece(data.player.color))
-                else {
-                    if (_.has(data, 'property')) {
-                        if (_.has(this.highlightTimers, data.property.id)) {
-                            clearTimeout(this.highlightTimers[data.property.id]);
-                        }
-                        else
-                            this.squares[data.property.position].highlight = true;
-                        this.highlightTimers[data.property.id] = setTimeout(() => {
-                            this.squares[data.property.position].highlight = false;
-                            delete this.highlightTimers[data.property.id];
-                        }, 1000);
+                if (_.has(data, 'property')) {
+                    if (_.has(this.highlightTimers, data.property.id)) {
+                        clearTimeout(this.highlightTimers[data.property.id]);
                     }
+                    else
+                        this.squares[data.property.position].highlight = true;
+                    this.highlightTimers[data.property.id] = setTimeout(() => {
+                        this.squares[data.property.position].highlight = false;
+                        delete this.highlightTimers[data.property.id];
+                    }, 1000);
                 }
             }
             else {
