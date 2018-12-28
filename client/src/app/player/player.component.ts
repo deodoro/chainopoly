@@ -1,5 +1,4 @@
 import { Component, ViewChild } from '@angular/core';
-import { PlayerService } from '../../components/services/player.service';
 import { GameService } from '../../components/services/game.service';
 import { BoardService } from '../../components/services/board.service';
 import { NewsService } from '../../components/services/news.service';
@@ -22,9 +21,8 @@ export class PlayerComponent {
     private transaction = { target: null, value: null};
     @ViewChild("errorDialog") errorDialog: NotificationPanelComponent;
 
-    static parameters = [PlayerService, GameService, BoardService, NewsService];
-    constructor(private service: PlayerService,
-                private gameService: GameService,
+    static parameters = [GameService, BoardService, NewsService];
+    constructor(private gameService: GameService,
                 private boardService: BoardService,
                 private newsService: NewsService) {
         this.data = {
@@ -47,16 +45,16 @@ export class PlayerComponent {
     }
 
     ngAfterViewInit() {
-        this.service.getMyColor(this.gameService.getId(), this.data.account).subscribe(player => {
+        this.gameService.getMyColor(this.gameService.getId(), this.data.account).subscribe(player => {
             this.data.player = _.omit(player, 'current');
             this.myTurn = player['current'];
         });
     }
 
     refreshPlayerInfo() {
-        this.service.getBalance(this.gameService.getId(), this.data.account)
+        this.gameService.getBalance(this.gameService.getId(), this.data.account)
             .subscribe(balance => this.balance = balance);
-        this.service.getProperties(this.gameService.getId(), this.data.account)
+        this.gameService.getProperties(this.gameService.getId(), this.data.account)
             .subscribe(properties => this.properties = properties);
     }
 

@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { Property } from './board.service';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/filter';
 import _ from 'lodash';
@@ -25,13 +26,25 @@ export abstract class GameService {
 
     protected events: Observable<Message>;
 
-
     public on(args): Subscription {
         return this.events.subscribe(msg => {
             if(_.includes(_.keys(args), msg.evt))
                 args[msg.evt](msg.data);
         });
     }
+
+    public getName(): string {
+        return localStorage.getItem('username');
+    }
+
+    public setName(value: string) {
+        localStorage.setItem('username', value);
+    }
+
+    public abstract getAddress(): string;
+    public abstract getMyColor(game_id, account_id): Observable<string>;
+    public abstract getBalance(game_id, account_id): Observable<number>;
+    public abstract getProperties(game_id, account_id): Observable<Property[]>;
 
     public abstract getId(): string;
     public abstract listGames(): Observable<GameInfo[]>;

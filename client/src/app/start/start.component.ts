@@ -12,19 +12,20 @@ import _ from 'lodash';
 export class StartComponent {
 
     public data = {
-        account: '0',
+        account: '',
         username: ''
     }
     public games: Array<any> = [];
     public isEmpty = _.isEmpty;
-    private ws = null;
 
     static parameters = [GameService, BoardService, Router];
     constructor(private gameService : GameService, private boardService: BoardService, private router: Router) {
+        this.data = {
+            'account': this.gameService.getAddress(),
+            'username': this.gameService.getName()
+        };
         this.boardService.getStream().emit(null);
-        this.data.account = localStorage.getItem('account');
-        this.data.username = localStorage.getItem('username');
-        this.gameService.listGames().subscribe( games => {
+        this.gameService.listGames().subscribe(games => {
             this.games = games;
         });
         this.gameService.on({
@@ -37,12 +38,8 @@ export class StartComponent {
         })
     }
 
-    saveAccount() {
-        localStorage.setItem('account', this.data.account);
-    }
-
     saveUsername() {
-        localStorage.setItem('username', this.data.username);
+        this.gameService.setName(this.data.username);
     }
 
     goToGame(game_id) {
@@ -61,10 +58,6 @@ export class StartComponent {
             .subscribe(game => {
                 this.router.navigateByUrl(`/game/${game.id}`);
             });
-    }
-
-    OnDestroy() {
-        this.ws.unsubscribe();
     }
 
 }

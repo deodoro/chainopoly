@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { NewsService } from './news.service';
 import { BoardService } from './board.service';
 import { GameService } from './game.service';
-import { PlayerService } from './player.service';
 
 import { WebSocketService } from './rest/websocket.service';
 import { SocketService } from './rest/socket.service';
@@ -25,7 +24,6 @@ let w3_enabled = false;
     Web3Service,
     { provide: BoardService, useClass: w3_enabled ? BoardWeb3Service : BoardRESTService },
     { provide: GameService, useClass: w3_enabled ? GameWeb3Service : GameRESTService },
-    { provide: PlayerService, useClass: w3_enabled ? PlayerWeb3Service : PlayerRESTService },
   ],
 })
 export class ServicesModule { }

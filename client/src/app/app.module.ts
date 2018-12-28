@@ -8,7 +8,7 @@ import { BoardModule } from './board/board.module';
 import { PanelModule } from './panel/panel.module';
 import { StartModule } from './start/start.module';
 import { NewsModule } from './news/news.module';
-import { ServicesModule } from '../components/services/chainopoly.services';
+import { ServicesModule } from '../components/services/services.module';
 
 @NgModule({
   declarations: [

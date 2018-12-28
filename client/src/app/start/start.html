@@ -1,6 +1,6 @@
 <div class="row">
     <div class="form-group col-lg-12">
-        <input class="form-control" type="text" [(ngModel)]="data.account" placeholder="Preencha sua conta" (ngModelChange)="saveAccount()" autofocus>
+        <span class="account big">{{data.account}}</span>
     </div>
     <div class="form-group col-lg-12">
         <input class="form-control" type="text" [(ngModel)]="data.username" placeholder="Preencha seu nome" (ngModelChange)="saveUsername()">
@@ -10,11 +10,11 @@
         <div *ngIf="!games || games.length == 0" class="nogames">Não há jogos ativos</div>
         <ul>
             <li *ngFor="let game of games">
-                <a routerLink="" [class.disabled]="isEmpty(data.username) || isEmpty(data.account)" (click)="goToGame(game.id)">{{game.title}}</a> ({{game.players}} jogadores)
+                <a routerLink="" [class.disabled]="isEmpty(data.username)" (click)="goToGame(game.id)">{{game.title}}</a> ({{game.players}} jogadores)
             </li>
         </ul>
         <div>
-            <a routerLink="" [class.disabled]="isEmpty(data.username) || isEmpty(data.account)" (click)="createGame()">Ou crie o seu</a>
+            <a routerLink="" [class.disabled]="isEmpty(data.username)" (click)="createGame()">Ou crie o seu</a>
         </div>
     </div>
 </div>

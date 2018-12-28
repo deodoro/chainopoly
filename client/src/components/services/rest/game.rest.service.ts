@@ -15,10 +15,17 @@ import _ from 'lodash';
 export class GameRESTService extends GameService {
 
     private ws = null;
+    private address: string;
 
     static parameters = [Http, SocketService];
     constructor(private Http: Http, private socketService: SocketService) {
         super();
+        if (localStorage.getItem('account'))
+            this.address = localStorage.getItem('account');
+        else {
+            this.address = this.generateAccount();
+            localStorage.setItem('account', this.address);
+        }
         this.events = Observable.create(observer => {
             this.ws = this.socketService.messages.subscribe(msg => {
                 switch(msg.type) {
@@ -107,6 +114,29 @@ export class GameRESTService extends GameService {
 
     public cancel(account_id): Observable<any> {
         return this.Http.post(e._folder(`/api/game/${this.getId()}/cancel`), account_id)
+                .map(res => res.json());
+    }
+
+    public getAddress(): string {
+        return this.address;
+    }
+
+    private generateAccount(): string {
+        return '0x' + _.join(_.times(40, i => (Math.floor(Math.random() * 16)).toString(16)), '');
+    }
+
+    public getMyColor(game_id, account_id): Observable<string> {
+        return this.Http.get(e._folder(`/api/game/${game_id}/player/${account_id}`))
+                .map(res => res.json());
+    }
+
+    public getBalance(game_id, account_id): Observable<number> {
+        return this.Http.get(e._folder(`/api/game/${game_id}/balance/${account_id}`))
+                .map(res => res.json());
+    }
+
+    public getProperties(game_id, account_id): Observable<Property[]> {
+        return this.Http.get(e._folder(`/api/game/${game_id}/properties/${account_id}`))
                 .map(res => res.json());
     }
 
