@@ -5,3 +5,4 @@ logs/**
 **/logs/**
 server/contents/**
 **/build
+server/server.pid
