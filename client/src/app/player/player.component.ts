@@ -1,6 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
 import { GameService } from '../../components/services/game.service';
-import { BoardService } from '../../components/services/board.service';
 import { NewsService } from '../../components/services/news.service';
 import { NotificationPanelComponent } from '../../components/notification-panel/notification-panel.component';
 import _ from 'lodash';
@@ -21,9 +20,8 @@ export class PlayerComponent {
     private transaction = { target: null, value: null};
     @ViewChild("errorDialog") errorDialog: NotificationPanelComponent;
 
-    static parameters = [GameService, BoardService, NewsService];
+    static parameters = [GameService, NewsService];
     constructor(private gameService: GameService,
-                private boardService: BoardService,
                 private newsService: NewsService) {
         this.data = {
             username: localStorage.getItem("username"),
@@ -76,8 +74,8 @@ export class PlayerComponent {
                        });
     }
 
-    cancel() {
-        this.gameService.cancel(_.assign({source: this.data.account}))
+    decline() {
+        this.gameService.decline(_.assign({source: this.data.account}))
             .subscribe(res => console.log(res));
     }
 
@@ -87,7 +85,7 @@ export class PlayerComponent {
     }
 
     showProperty(p) {
-        this.boardService.getStream().emit({property: p});
+        console.dir(p);
     }
 
     OnDestroy() {

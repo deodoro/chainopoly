@@ -32,31 +32,18 @@ export class BoardComponent {
             });
         });
         this.gameService.on({
-            'move': data => this.renderer.appendChild(this.squareIndex[data.position], this.getPiece(data.color))
+            'move' : data => this.renderer.appendChild(this.squareIndex[data.position], this.getPiece(data.color)),
+            'clear': data => this.clearPieces()
         });
-        this.service.getStream().subscribe(data => {
-            if (data != null) {
-                if (_.has(data, 'property')) {
-                    if (_.has(this.highlightTimers, data.property.id)) {
-                        clearTimeout(this.highlightTimers[data.property.id]);
-                    }
-                    else
-                        this.squares[data.property.position].highlight = true;
-                    this.highlightTimers[data.property.id] = setTimeout(() => {
-                        this.squares[data.property.position].highlight = false;
-                        delete this.highlightTimers[data.property.id];
-                    }, 1000);
-                }
-            }
-            else {
-                _.each(this.pieces, p => this.renderer.removeChild(this.renderer.parentNode(p), p));
-                this.pieces = {};
-            }
-        })
     }
 
     ngAfterViewInit() {
         this.squareDivs.forEach(i => this.squareIndex[i.nativeElement.dataset.index] = i.nativeElement);
+    }
+
+    clearPieces() {
+        _.each(this.pieces, p => this.renderer.removeChild(this.renderer.parentNode(p), p));
+        this.pieces = {};
     }
 
     getPiece(color) {

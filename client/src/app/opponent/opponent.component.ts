@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import { GameService } from "../../components/services/game.service";
-import { BoardService } from "../../components/services/board.service";
 import _ from "lodash";
 
 @Component({
@@ -9,36 +8,31 @@ import _ from "lodash";
     styleUrls: ["./opponent.scss"]
 })
 export class OpponentComponent {
-    public players;
+    public players = [];
     public gameState = null;
     private gameId;
     private n = 0;
 
-    static parameters = [GameService, BoardService];
+    static parameters = [GameService];
     constructor(
         private gameService: GameService,
-        private boardService: BoardService
     ) {
         let myAccount = localStorage.getItem("account");
         this.gameService
             .getStatus()
             .subscribe(status => (this.gameState = status));
         this.gameService.listPlayers().subscribe(players => {
+            players.forEach(p => this.gameService.emit('move', p));
             this.players = players.filter(i => i.account != myAccount);
-            this.players.forEach(p =>
-                this.boardService.getStream().emit({ player: p })
-            );
         });
         this.gameService.on({
-            move: data =>
-                this.players.forEach(p => {
-                    if (p.account == data.account) _.assign(p, data);
-                }),
-            status: data => (this.gameState = data),
-            new_player: data => {
-                this.players.push(data);
-                this.boardService.getStream().emit({ player: data });
-            }
+            'move'      : data => this.players.filter(p => p.account != data.account)
+                                            .forEach(p => _.assign(p, data),
+            'status'    : data => (this.gameState = data),
+            'new_player': data => {
+                            this.players.push(data);
+                            this.gameService.emit('move', data);
+                        }
         });
     }
 

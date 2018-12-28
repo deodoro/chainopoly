@@ -36,11 +36,7 @@ export class GameWeb3Service extends GameService {
         this.web3Ser.getAccounts()
             .subscribe(accounts => {
                 this.address = accounts[0];
-            })
-            .catch(e => {
-                console.log('Não foi possível recuperar a primeira wallet')
-            })
-        );
+            });
     }
 
     public getId() {
@@ -144,7 +140,7 @@ export class GameWeb3Service extends GameService {
         );
     }
 
-    public cancel(account_id): Observable<any> {
+    public decline(account_id): Observable<any> {
         return null;
     }
 

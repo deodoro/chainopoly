@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { BoardService } from '../../components/services/board.service';
 import _ from 'lodash';
 
 class Square {

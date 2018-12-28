@@ -24,7 +24,11 @@ export class Message {
 
 export abstract class GameService {
 
-    protected events: Observable<Message>;
+    protected events: Subject<Message>;
+
+    constructor() {
+        this.events = new Subject();
+    }
 
     public on(args): Subscription {
         return this.events.subscribe(msg => {
@@ -39,6 +43,10 @@ export abstract class GameService {
 
     public setName(value: string) {
         localStorage.setItem('username', value);
+    }
+
+    public emit(evt, payload = null) {
+        this.events.next({'evt': evt, 'data': payload});
     }
 
     public abstract getAddress(): string;
@@ -56,5 +64,5 @@ export abstract class GameService {
     public abstract roll(): Observable<any>;
     public abstract commit(account_id): Observable<any>;
     public abstract transfer(transaction): Observable<any>;
-    public abstract cancel(account_id): Observable<any>;
+    public abstract decline(account_id): Observable<any>;
 }

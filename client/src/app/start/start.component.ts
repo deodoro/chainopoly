@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { GameService } from '../../components/services/game.service';
-import { BoardService } from '../../components/services/board.service';
 import _ from 'lodash';
 
 @Component({
@@ -11,25 +10,22 @@ import _ from 'lodash';
 })
 export class StartComponent {
 
-    public data = {
-        account: '',
-        username: ''
-    }
+    public data = null;
     public games: Array<any> = [];
     public isEmpty = _.isEmpty;
 
-    static parameters = [GameService, BoardService, Router];
-    constructor(private gameService : GameService, private boardService: BoardService, private router: Router) {
+    static parameters = [GameService, Router];
+    constructor(private gameService : GameService, private router: Router) {
         this.data = {
             'account': this.gameService.getAddress(),
             'username': this.gameService.getName()
         };
-        this.boardService.getStream().emit(null);
+        this.gameService.emit('clear');
         this.gameService.listGames().subscribe(games => {
             this.games = games;
         });
         this.gameService.on({
-            'new_game': data => this.games.push(_.assign(data, {players: 0})),
+            'new_game'  : data => this.games.push(_.assign(data, {players: 0})),
             'new_player': data => this.games.forEach(g => {
                                if (g.id == data.game_id) {
                                    g.players++;

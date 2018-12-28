@@ -15,7 +15,7 @@ declare var window: any;
 })
 export class Web3Service {
 
-	public web3: any;
+  public web3: any;
 
   constructor() {
   	this.checkAndInstantiateWeb3();
@@ -38,7 +38,7 @@ export class Web3Service {
         new Web3.providers.HttpProvider("http://localhost:8545")
       );
     }
-  };
+  }
 
   getAccounts(): Observable<any>{
   	return Observable.create(observer => {

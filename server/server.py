@@ -159,7 +159,7 @@ class TransferHandler(tornado.web.RequestHandler):
             self.set_status(400)
             self.write(str(e))
 
-class CancelHandler(tornado.web.RequestHandler):
+class DeclineHandler(tornado.web.RequestHandler):
     def post(self, game_id=-1):
         args = json.loads(self.request.body)
         try:
@@ -169,7 +169,7 @@ class CancelHandler(tornado.web.RequestHandler):
             self.set_header('Content-Type', 'application/json')
             self.write(json.dumps({"result": game.swap.cancel_offer(debitor=game.accounts[args["source"]])}))
         except Exception as e:
-            logger.exception('Cancelling offer %r in game #%s' % (args, game_id))
+            logger.exception('Declining offer %r in game #%s' % (args, game_id))
             self.set_status(400)
             self.write(str(e))
 
@@ -182,7 +182,7 @@ if __name__ == '__main__':
         urls = [
             (r'/api/game/(.+?)/properties/(.+)', PropertiesHandler),
             (r'/api/game/(.+?)/transfer', TransferHandler),
-            (r'/api/game/(.+?)/cancel', CancelHandler),
+            (r'/api/game/(.+?)/decline', DeclineHandler),
             (r'/api/game/(.+?)/balance/(.+)', BalanceHandler),
             (r'/api/game/(.+?)/player/(.+)', PlayerInfoHandler),
             (r'/api/game/(.+)/status', StatusHandler),
