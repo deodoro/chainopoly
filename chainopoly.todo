@@ -2,20 +2,21 @@ Chainopoly:
   ✔ game.w3.service @code @done (18-12-27 14:29)
   ✔ opponent.w3.service @code @done (18-12-26 23:47)
   ✔ player.w3.service @code @done (18-12-26 18:35)
-  ☐ refactor events @code
+  ✔ refactor events @code @done (18-12-29 11:16)
     on(evt, e => handler(e))?
     .subscribe?
     read game info from game service
     read player info from player service
-    news events
-    name per account
-    reset on game or wallet change
-    news -> chat window
+  ☐ redraw interface
+  ☐ show grid
+    Zoom to populated squares [min(x, y), max(x,y)]
+  ☐ name per account @maybe
+  ☐ reset on game or wallet change
+  ☐ news -> chat window
   ☐ detect if network is unreachable/down @code
   ☐ notifications history (interface) @code
   ☐ clear notification history @code
   ☐ refactor contract ownership (resetTo) @code
-  ☐ redraw interface
   ☐ code new interface @code
   ☐ CPU player @code
   ☐ refactor service configuration @code
@@ -31,4 +32,7 @@ Chainopoly:
   ☐ may everyone know everybody else's balance? @later
   ☐ chat @later @code
     news and messages in the same list (news = bot messages)
+  ☐ buy houses and hotels @later
+    user calls transfer(credits, token_id, 'house') to atomic swap, bank is notified and sells the house
+    How to represent house? Another token? Update token attribute?
 

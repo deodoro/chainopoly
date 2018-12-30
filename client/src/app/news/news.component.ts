@@ -8,16 +8,18 @@ import { GameService } from "../../components/services/game.service";
     styleUrls: ["./news.component.scss"]
 })
 export class NewsComponent implements OnInit {
+    private evtSubscription;
     public news = [];
     static parameters = [NewsService, GameService];
+
     constructor(
         private newsService: NewsService,
-        private gameService: GameService,
+        private gameService: GameService
     ) {}
 
     ngOnInit() {
         this.newsService.Stream.subscribe(msg => this.news.push(msg));
-        this.gameService.on({
+        this.evtSubscription = this.gameService.on({
             move: data =>
                 this.newsService.Stream.emit(`Movimenta ${data.alias}`),
             status: data =>
@@ -45,7 +47,8 @@ export class NewsComponent implements OnInit {
         });
     }
 
-    ngDestroy() {
+    OnDestroy() {
+        this.evtSubscription.unsubscribe();
     }
 
     private statusMessage(status: string) {

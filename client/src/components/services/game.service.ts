@@ -1,9 +1,9 @@
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Property } from './board.service';
-import { Subscription } from 'rxjs/Subscription';
-import 'rxjs/add/operator/filter';
-import _ from 'lodash';
+import { Observable } from "rxjs/Observable";
+import { Subject } from "rxjs/Subject";
+import { Property } from "./board.service";
+import { Subscription } from "rxjs/Subscription";
+import "rxjs/add/operator/filter";
+import _ from "lodash";
 
 export class PlayerInfo {
     account: string;
@@ -23,7 +23,6 @@ export class Message {
 }
 
 export abstract class GameService {
-
     protected events: Subject<Message>;
 
     constructor() {
@@ -32,21 +31,20 @@ export abstract class GameService {
 
     public on(args): Subscription {
         return this.events.subscribe(msg => {
-            if(_.includes(_.keys(args), msg.evt))
-                args[msg.evt](msg.data);
+            if (_.includes(_.keys(args), msg.evt)) args[msg.evt](msg.data);
         });
     }
 
     public getName(): string {
-        return localStorage.getItem('username');
+        return localStorage.getItem("username");
     }
 
     public setName(value: string) {
-        localStorage.setItem('username', value);
+        localStorage.setItem("username", value);
     }
 
     public emit(evt, payload = null) {
-        this.events.next({'evt': evt, 'data': payload});
+        this.events.next({ evt: evt, data: payload });
     }
 
     public abstract getAddress(): string;

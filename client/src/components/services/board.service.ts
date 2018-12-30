@@ -1,6 +1,6 @@
-import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs';
-import _ from 'lodash';
+import { Observable } from "rxjs/Observable";
+import { of } from "rxjs";
+import _ from "lodash";
 
 export class Property {
     name: string;
@@ -12,31 +12,25 @@ export class Property {
 }
 
 export abstract class BoardService {
-
     private cache: Property[] = null;
 
-    constructor() {
-    }
+    protected abstract callGetProperties(): Observable<Property[]>;
 
-    private abstract callGetProperties(): Observable<Property[]>;
-
-    getProperties(): Observable<Property[]> {
+    public getProperties(): Observable<Property[]> {
         if (_.isEmpty(this.cache)) {
             return Observable.create(observer => {
                 this.callGetProperties().subscribe(values => {
                     this.cache = values;
                     observer.next(values);
                     observer.complete();
-                })
+                });
             });
-        }
-        else {
+        } else {
             return of(this.cache);
         }
     }
 
-    getTokenInfo(token: number): Property {
-        return _.find(this.cache, ['token', token]);
+    public getTokenInfo(token: number): Property {
+        return _.find(this.cache, ["token", token]);
     }
-
 }

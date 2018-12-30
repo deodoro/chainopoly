@@ -49,7 +49,7 @@ class GameHandler(tornado.web.RequestHandler):
             self.write(json.dumps([{'id': i['id'], 'title': i['title'], 'players': len(i['game'].list_players())} for i in GameCollection.instance().list()]))
 
 class PlayerHandler(tornado.web.RequestHandler):
-    def get(self, id=-1):
+    def get(self, id):
         try:
             game = GameCollection.instance().get(int(id))
             self.set_header('Content-Type', 'application/json')
@@ -59,7 +59,7 @@ class PlayerHandler(tornado.web.RequestHandler):
             self.set_status(400)
             self.write('Invalid game')
 
-    def post(self, id=-1):
+    def post(self, id):
         try:
             args = json.loads(self.request.body)
             game = GameCollection.instance().get(int(id))
@@ -81,7 +81,7 @@ class PlayerHandler(tornado.web.RequestHandler):
             self.write('Invalid game')
 
 class PlayerInfoHandler(tornado.web.RequestHandler):
-    def get(self, game_id=-1, player_id=-1):
+    def get(self, game_id, player_id):
         try:
             game = GameCollection.instance().get(int(game_id))
             self.set_header('Content-Type', 'application/json')
@@ -187,9 +187,9 @@ if __name__ == '__main__':
             (r'/api/game/(.+?)/player/(.+)', PlayerInfoHandler),
             (r'/api/game/(.+)/status', StatusHandler),
             (r'/api/game/(.+)/control', ControlHandler),
-            (r'/api/game', GameHandler),
+            (r'/api/game/(.+)/players', PlayerHandler),
             (r'/api/game/(.+)', GameHandler),
-            (r'/api/players/(.+)', PlayerHandler),
+            (r'/api/game', GameHandler),
             (r'/api/board', BoardHandler),
             (r'/ws', WebSocketHandler),
             (r'/start', tornado.web.StaticFileHandler, {'path': static_path, 'default_filename': 'index.html'}),

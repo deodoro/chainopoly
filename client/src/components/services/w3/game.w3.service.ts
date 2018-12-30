@@ -1,27 +1,26 @@
-import { Observable } from 'rxjs/Observable';
-import { Injectable } from '@angular/core';
-import { Web3Service } from './web3.service'
-import { BoardService, Property } from '../board.service';
-import { GameService, GameInfo, PlayerInfo } from '../game.service';
-import { environment as e } from '../../../environments/environment';
-import { of } from 'rxjs';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import _ from 'lodash';
+import { Observable } from "rxjs/Observable";
+import { Injectable } from "@angular/core";
+import { Web3Service } from "./web3.service";
+import { BoardService, Property } from "../board.service";
+import { GameService, GameInfo, PlayerInfo } from "../game.service";
+import { environment as e } from "../../../environments/environment";
+import { of } from "rxjs";
+import "rxjs/add/operator/map";
+import "rxjs/add/operator/catch";
 
-declare function require(name:string);
-const gameArtifacts = require('../../../../../dapp/build/contracts/Game.json');
-const coinArtifacts = require('../../../../../dapp/build/contracts/ChainopolyCoin.json');
-const propertiesArtifact = require('../../../../../dapp/build/contracts/ChainopolyProperties.json');
-const contract = require('truffle-contract');
+declare function require(name: string);
+const gameArtifacts = require("../../../../../dapp/build/contracts/Game.json");
+const coinArtifacts = require("../../../../../dapp/build/contracts/ChainopolyCoin.json");
+const propertiesArtifact = require("../../../../../dapp/build/contracts/ChainopolyProperties.json");
+const contract = require("truffle-contract");
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: "root"
 })
 export class GameWeb3Service extends GameService {
     private address: string;
     private color_cache = null;
-    private states = ['init', 'move', 'wait', 'finished'];
+    private states = ["init", "move", "wait", "finished"];
     private Game = contract(gameArtifacts);
     private Coin = contract(coinArtifacts);
     private Properties = contract(propertiesArtifact);
@@ -33,18 +32,17 @@ export class GameWeb3Service extends GameService {
         this.Coin.setProvider(web3Ser.web3.currentProvider);
         this.Properties.setProvider(web3Ser.web3.currentProvider);
 
-        this.web3Ser.getAccounts()
-            .subscribe(accounts => {
-                this.address = accounts[0];
-            });
+        this.web3Ser.getAccounts().subscribe(accounts => {
+            this.address = accounts[0];
+        });
     }
 
     public getId() {
-        return '0';
+        return "0";
     }
 
     public listGames(): Observable<GameInfo[]> {
-        return of([{id: '0', title: 'The only game'}]);
+        return of([{ id: "0", title: "The only game" }]);
     }
 
     public listPlayers(): Observable<PlayerInfo[]> {
@@ -52,21 +50,20 @@ export class GameWeb3Service extends GameService {
     }
 
     public newGame(player): Observable<GameInfo> {
-        return of({id: '0', title: 'The only game'});
+        return of({ id: "0", title: "The only game" });
     }
 
     public register(game, player): Observable<any> {
         return Observable.create(observer =>
             this.Game.deployed()
                 .then(instance =>
-                    instance.registerPlayer(player.username)
-                      .then(result => {
-                          observer.next('transação submetida');
-                          observer.complete();
-                      })
+                    instance.registerPlayer(player.username).then(result => {
+                        observer.next("transação submetida");
+                        observer.complete();
+                    })
                 )
                 .catch(e => {
-                  observer.error(e);
+                    observer.error(e);
                 })
         );
     }
@@ -75,15 +72,13 @@ export class GameWeb3Service extends GameService {
         return Observable.create(observer =>
             this.Game.deployed()
                 .then(instance =>
-                    instance.getState
-                      .call()
-                      .then(result => {
-                          observer.next(this.states[result]);
-                          observer.complete();
-                      })
+                    instance.getState.call().then(result => {
+                        observer.next(this.states[result]);
+                        observer.complete();
+                    })
                 )
                 .catch(e => {
-                  observer.error(e);
+                    observer.error(e);
                 })
         );
     }
@@ -96,14 +91,13 @@ export class GameWeb3Service extends GameService {
         return Observable.create(observer =>
             this.Game.deployed()
                 .then(instance =>
-                    instance.roll()
-                      .then(result => {
-                          observer.next('transação submetida');
-                          observer.complete();
-                      })
+                    instance.roll().then(result => {
+                        observer.next("transação submetida");
+                        observer.complete();
+                    })
                 )
                 .catch(e => {
-                  observer.error(e);
+                    observer.error(e);
                 })
         );
     }
@@ -112,14 +106,13 @@ export class GameWeb3Service extends GameService {
         return Observable.create(observer =>
             this.Game.deployed()
                 .then(instance =>
-                    instance.commit()
-                      .then(result => {
-                          observer.next('transação submetida');
-                          observer.complete();
-                      })
+                    instance.commit().then(result => {
+                        observer.next("transação submetida");
+                        observer.complete();
+                    })
                 )
                 .catch(e => {
-                  observer.error(e);
+                    observer.error(e);
                 })
         );
     }
@@ -128,14 +121,15 @@ export class GameWeb3Service extends GameService {
         return Observable.create(observer =>
             this.Coin.deployed()
                 .then(instance =>
-                    instance.transfer(transaction.target, transaction.value)
-                      .then(result => {
-                          observer.next('transação submetida');
-                          observer.complete();
-                      })
+                    instance
+                        .transfer(transaction.target, transaction.value)
+                        .then(result => {
+                            observer.next("transação submetida");
+                            observer.complete();
+                        })
                 )
                 .catch(e => {
-                  observer.error(e);
+                    observer.error(e);
                 })
         );
     }
@@ -148,73 +142,65 @@ export class GameWeb3Service extends GameService {
         return this.address;
     }
 
-    getMyColor(game_id, account_id) : Observable<string> {
+    getMyColor(game_id, account_id): Observable<string> {
         return Observable.create(observer => {
             if (this.color_cache == null) {
-                this.web3Ser.getAccounts()
-                    .subscribe(accounts =>
-                        this.Game
-                            .deployed()
-                            .then(instance =>
-                                instance.getPlayerInfo
-                                  .call(accounts[0])
-                                  .then(results => {
-                                      observer.next(results[2]);
-                                      observer.complete();
-                                  })
-                            )
-                            .catch(e => {
-                              observer.error(e);
-                            })
-                )
-            }
-            else {
+                this.web3Ser.getAccounts().subscribe(accounts =>
+                    this.Game.deployed()
+                        .then(instance =>
+                            instance.getPlayerInfo
+                                .call(accounts[0])
+                                .then(results => {
+                                    observer.next(results[2]);
+                                    observer.complete();
+                                })
+                        )
+                        .catch(e => {
+                            observer.error(e);
+                        })
+                );
+            } else {
                 observer.next(this.color_cache);
                 observer.complete();
             }
         });
     }
 
-    getBalance(game_id, account_id) : Observable<number> {
+    getBalance(game_id, account_id): Observable<number> {
         return Observable.create(observer =>
-            this.web3Ser.getAccounts()
-                .subscribe(accounts =>
-                    this.Coin
-                        .deployed()
-                        .then(instance =>
-                            instance.balanceOf
-                              .call(accounts[0])
-                              .then(balance => {
-                                  observer.next(balance);
-                                  observer.complete();
-                              })
-                        )
-                        .catch(e => {
-                          observer.error(e);
+            this.web3Ser.getAccounts().subscribe(accounts =>
+                this.Coin.deployed()
+                    .then(instance =>
+                        instance.balanceOf.call(accounts[0]).then(balance => {
+                            observer.next(balance);
+                            observer.complete();
                         })
+                    )
+                    .catch(e => {
+                        observer.error(e);
+                    })
             )
         );
     }
 
-    getProperties(game_id, account_id) : Observable<Property[]> {
+    getProperties(game_id, account_id): Observable<Property[]> {
         return Observable.create(observer =>
-            this.web3Ser.getAccounts()
-                .subscribe(accounts =>
-                    this.Properties
-                        .deployed()
-                        .then(instance =>
-                            instance.tokensOf
-                              .call(accounts[0])
-                              .then(properties => {
-                                  observer.next(_.map(_.filter(properties, i => i != 0), i => this.board.getTokenInfo(i)));
-                                  observer.complete();
-                              })
-                        )
-                        .catch(e => {
-                          observer.error(e);
+            this.web3Ser.getAccounts().subscribe(accounts =>
+                this.Properties.deployed()
+                    .then(instance =>
+                        instance.tokensOf.call(accounts[0]).then(properties => {
+                            observer.next(
+                                properties
+                                    .filter(i => i != 0)
+                                    .map(i => this.board.getTokenInfo(i))
+                            );
+                            observer.complete();
                         })
+                    )
+                    .catch(e => {
+                        observer.error(e);
+                    })
             )
         );
     }
-
 }

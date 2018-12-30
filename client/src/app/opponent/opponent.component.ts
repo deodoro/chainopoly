@@ -12,27 +12,28 @@ export class OpponentComponent {
     public gameState = null;
     private gameId;
     private n = 0;
+    private evtSubscription;
 
     static parameters = [GameService];
-    constructor(
-        private gameService: GameService,
-    ) {
-        let myAccount = localStorage.getItem("account");
+    constructor(private gameService: GameService) {
+        let myAccount = this.gameService.getAddress();
         this.gameService
             .getStatus()
             .subscribe(status => (this.gameState = status));
         this.gameService.listPlayers().subscribe(players => {
-            players.forEach(p => this.gameService.emit('move', p));
+            players.forEach(p => this.gameService.emit("move", p));
             this.players = players.filter(i => i.account != myAccount);
         });
-        this.gameService.on({
-            'move'      : data => this.players.filter(p => p.account != data.account)
-                                            .forEach(p => _.assign(p, data),
-            'status'    : data => (this.gameState = data),
-            'new_player': data => {
-                            this.players.push(data);
-                            this.gameService.emit('move', data);
-                        }
+        this.evtSubscription = this.gameService.on({
+            move: data =>
+                this.players
+                    .filter(p => p.account == data.account)
+                    .forEach(p => _.assign(p, data)),
+            status: data => (this.gameState = data),
+            new_player: data => {
+                this.players.push(data);
+                this.gameService.emit("move", data);
+            }
         });
     }
 
@@ -43,5 +44,6 @@ export class OpponentComponent {
     }
 
     OnDestroy() {
+        this.evtSubscription.unsubscribe();
     }
 }
