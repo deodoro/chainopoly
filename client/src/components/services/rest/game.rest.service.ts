@@ -30,9 +30,6 @@ export class GameRESTService extends GameService {
             case "status":
                 this.events.next({ evt: msg.type, data: msg.payload.status });
                 break;
-            case "new_game":
-                this.events.next({ evt: msg.type, data: msg.payload.game });
-                break;
             case "action":
                 this.events.next({ evt: msg.type, data: msg.payload });
                 break;
@@ -56,35 +53,17 @@ export class GameRESTService extends GameService {
         this.events.complete();
     }
 
-    public getId() {
-        return document.location.href.match(/^.+\/(.+)$/)[1];
-    }
-
-    public listGames(): Observable<GameInfo[]> {
-        return this.Http.get(e._folder("/api/game")).map(res => res.json());
-    }
-
     public listPlayers(): Observable<PlayerInfo[]> {
         return this.Http.get(this.urlFor("players")).map(res => res.json());
     }
 
-    public newGame(player): Observable<GameInfo> {
-        return this.Http.post(e._folder("/api/game"), player).map(res =>
-            res.json()
-        );
-    }
-
-    public register(game, player): Observable<any> {
-        return this.Http.post(e._folder(`/api/game/${game}/players`), player)
+    public register(player): Observable<any> {
+        return this.Http.post(e._folder(`/api/game/players`), player)
             .map(res => res.json())
             .catch(err => {
                 console.dir(err);
                 return of(err.json());
             });
-    }
-
-    public getStatus(): Observable<string> {
-        return this.Http.get(this.urlFor("status")).map(res => res.json());
     }
 
     private control(action): Observable<any> {
@@ -96,10 +75,6 @@ export class GameRESTService extends GameService {
                 console.dir(err);
                 return of(err.json());
             });
-    }
-
-    public startGame(): Observable<any> {
-        return this.control({ action: "roll" });
     }
 
     public roll(): Observable<any> {
@@ -136,25 +111,25 @@ export class GameRESTService extends GameService {
         );
     }
 
-    public getMyColor(game_id, account_id): Observable<string> {
+    public getMyColor(account_id): Observable<string> {
         return this.Http.get(this.urlFor(`player/${account_id}`)).map(res =>
             res.json()
         );
     }
 
-    public getBalance(game_id, account_id): Observable<number> {
+    public getBalance(account_id): Observable<number> {
         return this.Http.get(this.urlFor(`balance/${account_id}`)).map(res =>
             res.json()
         );
     }
 
-    public getProperties(game_id, account_id): Observable<Property[]> {
+    public getProperties(account_id): Observable<Property[]> {
         return this.Http.get(this.urlFor(`properties/${account_id}`)).map(res =>
             res.json()
         );
     }
 
     private urlFor(service) {
-        return e._folder(`/api/game/${this.getId()}/${service}`);
+        return e._folder(`/api/game/${service}`);
     }
 }

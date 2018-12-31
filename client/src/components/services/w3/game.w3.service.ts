@@ -37,23 +37,11 @@ export class GameWeb3Service extends GameService {
         });
     }
 
-    public getId() {
-        return "0";
-    }
-
-    public listGames(): Observable<GameInfo[]> {
-        return of([{ id: "0", title: "The only game" }]);
-    }
-
     public listPlayers(): Observable<PlayerInfo[]> {
         return null;
     }
 
-    public newGame(player): Observable<GameInfo> {
-        return of({ id: "0", title: "The only game" });
-    }
-
-    public register(game, player): Observable<any> {
+    public register(player): Observable<any> {
         return Observable.create(observer =>
             this.Game.deployed()
                 .then(instance =>
@@ -66,25 +54,6 @@ export class GameWeb3Service extends GameService {
                     observer.error(e);
                 })
         );
-    }
-
-    public getStatus(): Observable<string> {
-        return Observable.create(observer =>
-            this.Game.deployed()
-                .then(instance =>
-                    instance.getState.call().then(result => {
-                        observer.next(this.states[result]);
-                        observer.complete();
-                    })
-                )
-                .catch(e => {
-                    observer.error(e);
-                })
-        );
-    }
-
-    public startGame(): Observable<any> {
-        return this.roll();
     }
 
     public roll(): Observable<any> {
@@ -142,7 +111,7 @@ export class GameWeb3Service extends GameService {
         return this.address;
     }
 
-    getMyColor(game_id, account_id): Observable<string> {
+    getMyColor(account_id): Observable<string> {
         return Observable.create(observer => {
             if (this.color_cache == null) {
                 this.web3Ser.getAccounts().subscribe(accounts =>
@@ -166,7 +135,7 @@ export class GameWeb3Service extends GameService {
         });
     }
 
-    getBalance(game_id, account_id): Observable<number> {
+    getBalance(account_id): Observable<number> {
         return Observable.create(observer =>
             this.web3Ser.getAccounts().subscribe(accounts =>
                 this.Coin.deployed()
@@ -183,7 +152,7 @@ export class GameWeb3Service extends GameService {
         );
     }
 
-    getProperties(game_id, account_id): Observable<Property[]> {
+    getProperties(account_id): Observable<Property[]> {
         return Observable.create(observer =>
             this.web3Ser.getAccounts().subscribe(accounts =>
                 this.Properties.deployed()

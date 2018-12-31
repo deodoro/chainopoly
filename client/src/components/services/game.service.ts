@@ -48,17 +48,12 @@ export abstract class GameService {
     }
 
     public abstract getAddress(): string;
-    public abstract getMyColor(game_id, account_id): Observable<string>;
-    public abstract getBalance(game_id, account_id): Observable<number>;
-    public abstract getProperties(game_id, account_id): Observable<Property[]>;
+    public abstract getMyColor(account_id): Observable<string>;
+    public abstract getBalance(account_id): Observable<number>;
+    public abstract getProperties(account_id): Observable<Property[]>;
 
-    public abstract getId(): string;
-    public abstract listGames(): Observable<GameInfo[]>;
     public abstract listPlayers(): Observable<PlayerInfo[]>;
-    public abstract newGame(player): Observable<GameInfo>;
-    public abstract register(game, player): Observable<any>;
-    public abstract getStatus(): Observable<string>;
-    public abstract startGame(): Observable<any>;
+    public abstract register(player): Observable<any>;
     public abstract roll(): Observable<any>;
     public abstract commit(account_id): Observable<any>;
     public abstract transfer(transaction): Observable<any>;

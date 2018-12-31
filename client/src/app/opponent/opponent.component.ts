@@ -17,9 +17,6 @@ export class OpponentComponent {
     static parameters = [GameService];
     constructor(private gameService: GameService) {
         let myAccount = this.gameService.getAddress();
-        this.gameService
-            .getStatus()
-            .subscribe(status => (this.gameState = status));
         this.gameService.listPlayers().subscribe(players => {
             players.forEach(p => this.gameService.emit("move", p));
             this.players = players.filter(i => i.account != myAccount);
@@ -38,9 +35,6 @@ export class OpponentComponent {
     }
 
     startGame() {
-        this.gameService.startGame().subscribe(res => {
-            this.gameState = "other";
-        });
     }
 
     OnDestroy() {

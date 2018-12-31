@@ -30,9 +30,6 @@ export class PlayerComponent {
             account: this.gameService.getAddress(),
             username: this.gameService.getName()
         };
-        this.gameService
-            .getStatus()
-            .subscribe(status => (this.gameStatus = status));
         this.evtSubscription = this.gameService.on({
             move: data => {
                 if (this.data.account == data.account) {
@@ -47,7 +44,7 @@ export class PlayerComponent {
 
     ngAfterViewInit() {
         this.gameService
-            .getMyColor(this.gameService.getId(), this.data.account)
+            .getMyColor(this.data.account)
             .subscribe(player => {
                 this.data.player = _.omit(player, "current");
                 this.myTurn = player["current"];
@@ -56,10 +53,10 @@ export class PlayerComponent {
 
     refreshPlayerInfo() {
         this.gameService
-            .getBalance(this.gameService.getId(), this.data.account)
+            .getBalance(this.data.account)
             .subscribe(balance => (this.balance = balance));
         this.gameService
-            .getProperties(this.gameService.getId(), this.data.account)
+            .getProperties(this.data.account)
             .subscribe(properties => (this.properties = properties));
     }
 

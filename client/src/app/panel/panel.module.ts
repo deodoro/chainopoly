@@ -7,7 +7,7 @@ import { NewsModule } from '../news/news.module';
 import { RouterModule, Routes } from '@angular/router';
 
 export const ROUTES: Routes = [
-    { path: 'game/:id', component: PanelComponent },
+    { path: 'game', component: PanelComponent },
 ];
 
 @NgModule({
