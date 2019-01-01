@@ -54,7 +54,14 @@ export class StartComponent {
                 }
             );
         }
-        this.router.navigateByUrl(`/game`);
+        this.router.navigateByUrl(`/dashboard`);
+    }
+
+    buttonLabel() {
+        if (this.participating)
+            return "Go to dashboard";
+        else
+            return "Register";
     }
 
     playersMessage() {

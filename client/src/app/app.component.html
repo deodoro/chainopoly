@@ -2,11 +2,11 @@
     <mat-sidenav-container class="sidenav-container">
       <mat-sidenav mode="push" class="sidenav-menu" #sidenav>
         <ul>
-            <li><span><mat-icon>account_circle</mat-icon> Dashboard</span></li>
-            <li><span><mat-icon>location_city</mat-icon> Assets</span></li>
-            <li><span><mat-icon>place</mat-icon> Map</span></li>
-            <li><span><mat-icon>pie_chart</mat-icon> Stats</span></li>
-            <li><span><mat-icon>exit_to_app</mat-icon> Leave game</span></li>
+            <li><a routerLink="/dashboard" (click)="sideNav.close()"><mat-icon>account_circle</mat-icon> Dashboard</a></li>
+            <li><a routerLink="/assets" (click)="sideNav.close()"><mat-icon>location_city</mat-icon> Assets</a></li>
+            <li><a routerLink="/map" (click)="sideNav.close()"><mat-icon>place</mat-icon> Map</a></li>
+            <li><a routerLink="/stats" (click)="sideNav.close()"><mat-icon>pie_chart</mat-icon> Stats</a></li>
+            <li><a routerLink="/leave" (click)="sideNav.close()"><mat-icon>exit_to_app</mat-icon> Leave game</a></li>
         </ul>
       </mat-sidenav>
       <mat-sidenav-content>

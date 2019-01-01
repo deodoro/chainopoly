@@ -36,7 +36,8 @@ span.application-title {
 
         li {
             margin-bottom: 1.5em;
-            > span {
+            > a {
+                color: white;
                 .mat-icon {
                     line-height: inherit;
                     padding-right: 0.2em;

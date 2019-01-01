@@ -1,15 +1,14 @@
 import { Component, ViewChild } from "@angular/core";
 import { GameService } from "../../components/services/game.service";
 import { NewsService } from "../../components/services/news.service";
-import { NotificationPanelComponent } from "../../components/notification-panel/notification-panel.component";
 import _ from "lodash";
 
 @Component({
-    selector: "player",
-    templateUrl: "./player.html",
-    styleUrls: ["./player.scss"]
+    selector: "dashboard",
+    templateUrl: "./dashboard.html",
+    styleUrls: ["./dashboard.scss"]
 })
-export class PlayerComponent {
+export class DashboardComponent {
     private transaction = { target: null, value: null };
     private evtSubscription;
     public data;
@@ -18,8 +17,6 @@ export class PlayerComponent {
     public gameStatus = "init";
     public myTurn = false;
     public errorMessage = null;
-    @ViewChild("errorDialog")
-    errorDialog: NotificationPanelComponent;
 
     static parameters = [GameService, NewsService];
     constructor(
@@ -40,6 +37,24 @@ export class PlayerComponent {
             status: data => (this.gameStatus = data)
         });
         this.refreshPlayerInfo();
+
+        // let myAccount = this.gameService.getAddress();
+        // this.gameService.listPlayers().subscribe(players => {
+        //     players.forEach(p => this.gameService.emit("move", p));
+        //     this.players = players.filter(i => i.account != myAccount);
+        // });
+        // this.evtSubscription = this.gameService.on({
+        //     move: data =>
+        //         this.players
+        //             .filter(p => p.account == data.account)
+        //             .forEach(p => _.assign(p, data)),
+        //     status: data => (this.gameState = data),
+        //     new_player: data => {
+        //         this.players.push(data);
+        //         this.gameService.emit("move", data);
+        //     }
+        // });
+
     }
 
     ngAfterViewInit() {
@@ -79,7 +94,7 @@ export class PlayerComponent {
                 },
                 error => {
                     this.errorMessage = error._body;
-                    this.errorDialog.open();
+                    // this.errorDialog.open();
                 }
             );
     }

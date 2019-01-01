@@ -3,7 +3,7 @@
     <h2>please sign in below</h2>
     <div class="start-button">
         <button mat-flat-button disabled="{{isEmpty(data.username)}}" (click)="goToGame()">
-            <mat-icon>search</mat-icon> Go to dashboard
+            <mat-icon>account_circle</mat-icon> {{ buttonLabel() }}
         </button>
     </div>
 </div>
