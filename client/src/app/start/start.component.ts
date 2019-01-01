@@ -58,7 +58,18 @@ export class StartComponent {
     }
 
     playersMessage() {
-
+        if (this.playerCount == 0)
+            return "No players registered at the moment";
+        else {
+            if (this.playerCount == 1 && this.participating)
+                return "You are the only registered player";
+            else {
+                if (this.participating)
+                    return `${this.playerCount} players registered (including yourself)`;
+                else
+                    return `${this.playerCount} players registered`;
+            }
+        }
     }
 
     OnDestroy() {

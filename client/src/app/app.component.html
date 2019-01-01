@@ -1,23 +1,23 @@
-<!-- <div class="frame">
-    <div class="container">
-        <div class="row title">
-            <div class="col-lg-12">
-              <h1>Chainopoly</h1>
-            </div>
-        </div>
-        <div class="row body">
-            <router-outlet></router-outlet>
-        </div>
-    </div>
-</div>
- -->
 <div class="container">
-    <mat-toolbar color="primary">
-      <span><mat-icon>menu</mat-icon></span>
+    <mat-sidenav-container class="sidenav-container">
+      <mat-sidenav mode="push" class="sidenav-menu" #sidenav>
+        <ul>
+            <li><span><mat-icon>account_circle</mat-icon> Dashboard</span></li>
+            <li><span><mat-icon>location_city</mat-icon> Assets</span></li>
+            <li><span><mat-icon>place</mat-icon> Map</span></li>
+            <li><span><mat-icon>pie_chart</mat-icon> Stats</span></li>
+            <li><span><mat-icon>exit_to_app</mat-icon> Leave game</span></li>
+        </ul>
+      </mat-sidenav>
+      <mat-sidenav-content>
+        <mat-toolbar color="primary">
+          <span (click)="openSidenav()"><mat-icon>menu</mat-icon></span>
 
-      <!-- This fills the remaining space of the current row -->
-      <span class="application-title">Chainopoly</span>
-    </mat-toolbar>
+          <!-- This fills the remaining space of the current row -->
+          <span class="application-title">Chainopoly</span>
+        </mat-toolbar>
 
-    <router-outlet></router-outlet>
+        <router-outlet></router-outlet>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
 </div>
