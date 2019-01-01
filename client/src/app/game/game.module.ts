@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { PanelComponent } from './panel.component';
+import { GameComponent } from './game.component';
 import { OpponentModule } from '../opponent/opponent.module';
 import { PlayerModule } from '../player/player.module';
-import { NewsModule } from '../news/news.module';
 import { RouterModule, Routes } from '@angular/router';
+import { MaterialModule } from '../../components/material.module';
 
 export const ROUTES: Routes = [
-    { path: 'game', component: PanelComponent },
+    { path: 'game', component: GameComponent },
 ];
 
 @NgModule({
@@ -16,15 +16,15 @@ export const ROUTES: Routes = [
         RouterModule.forChild(ROUTES),
         OpponentModule,
         PlayerModule,
-        NewsModule,
+        MaterialModule,
     ],
     declarations: [
-        PanelComponent,
+        GameComponent,
     ],
     providers: [
     ],
     exports: [
-        PanelComponent,
+        GameComponent,
     ],
 })
-export class PanelModule {}
+export class GameModule {}

@@ -10,6 +10,16 @@ div.container {
     left: 0;
     right: 0;
 }
+
+span.application-title {
+    flex: 1 1 auto;
+    text-align: center;
+    text-transform: none;
+    margin-left: -1.5em;
+    margin-top: -0.3em;
+    font-weight: 300;
+}
+
 // div.frame {
 //     position: absolute;
 //     left: $horz-margin;

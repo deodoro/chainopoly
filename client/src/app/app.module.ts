@@ -6,10 +6,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import { BoardModule } from './board/board.module';
-import { PanelModule } from './panel/panel.module';
+import { GameModule } from './game/game.module';
 import { StartModule } from './start/start.module';
 import { NewsModule } from './news/news.module';
 import { ServicesModule } from '../components/services/services.module';
+import { MaterialModule } from '../components/material.module';
 
 @NgModule({
   declarations: [
@@ -20,11 +21,12 @@ import { ServicesModule } from '../components/services/services.module';
     HttpModule,
     AppRoutingModule,
     BoardModule,
-    PanelModule,
+    GameModule,
     StartModule,
     NewsModule,
     ServicesModule,
     BrowserAnimationsModule,
+    MaterialModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
