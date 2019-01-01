@@ -27,12 +27,20 @@ export class StartComponent {
             this.participating = !_.isUndefined(_.find(players, i => i.account == this.data.account));
         });
         this.evtSubscription = this.gameService.on({
-            new_player: () => this.playerCount++
+            new_player: p => {
+                this.playerCount++;
+                this.participating = this.participating || (p.account == this.data.account);
+            }
         });
     }
 
     saveUsername() {
         this.gameService.setName(this.data.username);
+    }
+
+    clearUsername() {
+        this.data.username = '';
+        return this.saveUsername();
     }
 
     goToGame() {
@@ -47,6 +55,10 @@ export class StartComponent {
             );
         }
         this.router.navigateByUrl(`/game`);
+    }
+
+    playersMessage() {
+
     }
 
     OnDestroy() {

@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { StartComponent } from './start.component';
+import { MaterialModule } from '../../components/material.module';
 
 export const ROUTES: Routes = [
     { path: 'start', component: StartComponent },
@@ -13,6 +14,7 @@ export const ROUTES: Routes = [
         BrowserModule,
         FormsModule,
         RouterModule.forChild(ROUTES),
+        MaterialModule,
     ],
     declarations: [
         StartComponent,

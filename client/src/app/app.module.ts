@@ -2,8 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { AppComponent } from './app.component';
 import { BoardModule } from './board/board.module';
 import { PanelModule } from './panel/panel.module';
 import { StartModule } from './start/start.module';
@@ -23,6 +24,7 @@ import { ServicesModule } from '../components/services/services.module';
     StartModule,
     NewsModule,
     ServicesModule,
+    BrowserAnimationsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

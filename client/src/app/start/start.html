@@ -1,16 +1,24 @@
-<div class="row">
-    <div class="form-group col-lg-12">
-        <span class="account big">{{data.account}}</span>
+<div class="header">
+    <h1>Chainopoly</h1>
+    <h2>distributed monopoly game</h2>
+    <div class="start-button">
+        <button mat-flat-button disabled="{{isEmpty(data.username)}}" (click)="goToGame()">
+            <mat-icon>search</mat-icon> Go to dashboard
+        </button>
     </div>
-    <div class="form-group col-lg-12">
-        <input class="form-control" type="text" [(ngModel)]="data.username" placeholder="Your name please" (ngModelChange)="saveUsername()">
-    </div>
-    <div class="form-group col-lg-12">
-        <div>
-            <span class="playerCount">{{ playerCount }}</span> players partipating<span *ngIf="participating">, including yourself</span>
-        </div>
-        <div>
-            <a routerLink="" [class.disabled]="isEmpty(data.username)" (click)="goToGame()">Go to dashboard</a>
-        </div>
-    </div>
+</div>
+
+<div class="contents">
+    <mat-form-field class="account">
+        <input matInput readonly type="text" [(ngModel)]="data.account" placeholder="Account">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput type="text" [(ngModel)]="data.username" placeholder="Your name please" (ngModelChange)="saveUsername()">
+        <button mat-button *ngIf="data.username" matSuffix mat-icon-button aria-label="Clear" (click)="clearUsername()">
+          <mat-icon>close</mat-icon>
+        </button>
+    </mat-form-field>
+    <section class="mat-typography">
+        <div class="playerCount">{{ playersMessage() }}</div>
+    </section>
 </div>
