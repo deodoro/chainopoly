@@ -1,10 +1,12 @@
 import { Component, Input } from "@angular/core";
+import { PropertyComponent } from '../property/property.component';
+import { MatBottomSheet, MatBottomSheetRef } from '@angular/material';
 
 @Component({
     selector: "app-marker",
-    inputs: ['color'],
+    inputs: ['property'],
     template: `
-<svg [ngClass]='color' width="100%" height="100%" viewBox="0 0 39 61" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+<svg (click)="showCard()" [ngClass]='property.color' width="100%" height="100%" viewBox="0 0 39 61" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
     <symbol id="inner" viewbox="0 0 38 60">
         <circle cx="19.074" cy="19.074" r="16.502" style="stroke:#000;stroke-width:1px;"/>
     </symbol>
@@ -23,6 +25,15 @@ import { Component, Input } from "@angular/core";
              ]
 })
 export class MarkerComponent {
-    @Input() color: string = "black";
-    constructor() {}
+    @Input() property: any;
+
+    static parameters = [MatBottomSheet];
+    constructor(private bottomSheet: MatBottomSheet) {}
+
+    showCard() {
+        const bottomSheetRef = this.bottomSheet.open(PropertyComponent, {
+          ariaLabel: 'Property details',
+          data: { 'property': this.property }
+        });
+    }
 }

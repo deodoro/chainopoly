@@ -53,7 +53,7 @@ export class MapComponent {
             price: 140,
             rent: 10,
             position: 11,
-            geo: { x: 0.41, y: 0.24 }
+            geo: { x: 0.42, y: 0.24 }
         },
         {
             name: "Redhorn Pass",
@@ -61,7 +61,7 @@ export class MapComponent {
             price: 140,
             rent: 10,
             position: 13,
-            geo: { x: 0.43, y: 0.272 }
+            geo: { x: 0.42, y: 0.272 }
         },
         {
             name: "Gates of Moria",
@@ -109,7 +109,7 @@ export class MapComponent {
             price: 220,
             rent: 18,
             position: 23,
-            geo: { x: 0.603, y: 0.345 }
+            geo: { x: 0.603, y: 0.335 }
         },
         {
             name: "Gap of Rohan",
@@ -133,7 +133,7 @@ export class MapComponent {
             price: 260,
             rent: 22,
             position: 27,
-            geo: { x: 0.609, y: 0.358 }
+            geo: { x: 0.609, y: 0.363 }
         },
         {
             name: "Dead Marshes",
@@ -149,7 +149,7 @@ export class MapComponent {
             price: 300,
             rent: 26,
             position: 31,
-            geo: { x: 0.65, y: 0.358 }
+            geo: { x: 0.667, y: 0.358 }
         },
         {
             name: "Minas Tirith",
@@ -181,7 +181,7 @@ export class MapComponent {
             price: 400,
             rent: 50,
             position: 39,
-            geo: { x: 0.737, y: 0.386 }
+            geo: { x: 0.752, y: 0.386 }
         }
     ];
     private zoomLevel = 0.5;

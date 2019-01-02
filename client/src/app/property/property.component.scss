@@ -1,0 +1,11 @@
+.header-color {
+  &.red { background-color: red }
+  &.yellow { background-color: yellow }
+  &.purple { background-color: purple }
+  &.white { background-color: #ddd }
+  &.pink { background-color: pink }
+  &.orange { background-color: orange }
+  &.green { background-color: green }
+  &.blue { background-color: blue }
+  background-size: cover;
+}

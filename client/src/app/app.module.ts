@@ -17,6 +17,7 @@ import { MarkerComponent } from './map/marker.component';
 import { StatsComponent } from './stats/stats.component';
 import { LeaveComponent } from './leave/leave.component';
 import { TransferComponent } from './transfer/transfer.component';
+import { PropertyComponent } from './property/property.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { TransferComponent } from './transfer/transfer.component';
     LeaveComponent,
     TransferComponent,
     MarkerComponent,
+    PropertyComponent,
   ],
   imports: [
     BrowserModule,
@@ -39,6 +41,7 @@ import { TransferComponent } from './transfer/transfer.component';
     MaterialModule,
     FormsModule,
   ],
+  entryComponents: [ PropertyComponent ],
   providers: [],
   bootstrap: [AppComponent]
 })

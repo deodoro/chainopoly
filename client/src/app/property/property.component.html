@@ -1,0 +1,15 @@
+<mat-card class="example-card">
+  <mat-card-header>
+    <div mat-card-avatar class="header-color" [ngClass]="data.property.color"></div>
+    <mat-card-title>{{ data.property.name }}</mat-card-title>
+    <mat-card-subtitle>
+        ${{ data.property.price }} price<br/>
+        ${{ data.property.rent }} rent
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <p>This property is in the market</p>
+    <p>This property is taken</p>
+    <p>Other properties in group: A, B, C</p>
+  </mat-card-content>
+</mat-card>
