@@ -22,7 +22,20 @@ export class StatsComponent {
         "title": "Rounds to salary",
         "expected": 5,
         "max": 10,
-    }]
+    }];
+    private ranking = [{
+        "pos": 1,
+        "alias": "Bob",
+        "net_worth": "$1000"
+    }, {
+        "pos": 2,
+        "alias": "Joe",
+        "net_worth": "$1000"
+    }, {
+        "pos": 3,
+        "alias": "Viv",
+        "net_worth": "$1000"
+    }];
 
     static parameters = [GameService];
     constructor(

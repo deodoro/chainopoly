@@ -19,7 +19,7 @@ const routes: Routes = [
     { path: "map", component: MapComponent },
     { path: "leave", component: LeaveComponent },
     { path: "stats", component: StatsComponent },
-    { path: "assets", component: AssetsComponent }
+    { path: "assets", component: AssetsComponent },
     { path: "transfers", component: TransferComponent }
 ];
 

@@ -21,4 +21,22 @@
       <tr mat-header-row *matHeaderRowDef="['variable', 'max', 'expected']"></tr>
       <tr mat-row *matRowDef="let r; columns: ['variable', 'max', 'expected'];"></tr>
     </table>
+    <h1>Ranking</h1>
+    <table mat-table [dataSource]="ranking">
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef> Pos </th>
+        <td mat-cell *matCellDef="let r"> {{ r.pos }} </td>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let r"> {{ r.alias }} </td>
+      </ng-container>
+      <ng-container matColumnDef="net">
+        <th mat-header-cell *matHeaderCellDef> Net Worth </th>
+        <td mat-cell *matCellDef="let r"> {{ r.net_worth }} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['position', 'name', 'net']"></tr>
+      <tr mat-row *matRowDef="let r; columns: ['position', 'name', 'net'];"></tr>
+    </table>
 </div>

@@ -53,7 +53,6 @@ export class TransferComponent {
         this.gameService
             .getBalance(this.data.account)
             .subscribe(balance => (this.balance = balance));
-        }
     }
 
 }
