@@ -10,9 +10,15 @@ import _ from "lodash";
 export class UserheaderComponent {
     private balance: number;
     private propertyBalance: number;
+    private evtSubscription;
 
     static parameters = [GameService];
     constructor(private gameService: GameService) {
+        this.evtSubscription = this.gameService.on({
+            transaction: data => {
+                if (this.gameService.getAddress() == data.account) this.refresh();
+            },
+        });
         this.refresh();
     }
 
@@ -24,4 +30,9 @@ export class UserheaderComponent {
             .getBalance()
             .subscribe(balance => (this.balance = balance));
     }
+
+    OnDestroy() {
+        this.evtSubscription.unsubscribe();
+    }
+
 }

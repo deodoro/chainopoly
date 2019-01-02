@@ -73,7 +73,6 @@ export abstract class GameService {
     public abstract getAddress(): string;
     public abstract getBalance(): Observable<number>;
     public abstract getProperties(): Observable<Property[]>;
-
     public abstract listPlayers(): Observable<Account[]>;
     public abstract register(player): Observable<any>;
     public abstract transfer(transaction: Transaction): Observable<any>;

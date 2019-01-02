@@ -20,9 +20,6 @@ export class DashboardComponent {
             this.pending = pending;
         });
         this.evtSubscription = this.gameService.on({
-            transaction: data => {
-                if (this.gameService.getAddress() == data.account) this.header.refresh();
-            },
             new_player: data => {
                 this.players.push(data);
             }
