@@ -1,7 +1,7 @@
 <div class="header">
     <h1>Registration</h1>
     <h2>please sign in below</h2>
-    <div class="start-button">
+    <div class="button-input">
         <button mat-flat-button disabled="{{isEmpty(data.username)}}" (click)="goToGame()">
             <mat-icon>account_circle</mat-icon> {{ buttonLabel() }}
         </button>
@@ -9,16 +9,16 @@
 </div>
 
 <div class="contents">
-    <mat-form-field class="account">
+    <mat-form-field class="fullwidth account">
         <input matInput readonly type="text" [(ngModel)]="data.account" placeholder="Account">
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field class="fullwidth">
         <input matInput type="text" [(ngModel)]="data.username" placeholder="Your name please" (ngModelChange)="saveUsername()">
         <button mat-button *ngIf="data.username" matSuffix mat-icon-button aria-label="Clear" (click)="clearUsername()">
           <mat-icon>close</mat-icon>
         </button>
     </mat-form-field>
-    <section class="mat-typography" style="height: 10em">
+    <section class="mat-typography">
         <div class="playerCount">{{ playersMessage() }}</div>
     </section>
 </div>

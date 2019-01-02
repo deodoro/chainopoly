@@ -1,3 +1,8 @@
-<p>
-  map works!
-</p>
+<div class="map-view">
+    <img src="/assets/map.png" [style.zoom]="zoomLevel" #map>
+</div>
+<div class="buttons">
+    <button mat-fab color="accent" (click)="zoomIn()"><mat-icon>zoom_in</mat-icon></button>
+    &nbsp;
+    <button mat-fab color="accent" (click)="zoomOut()"><mat-icon>zoom_out</mat-icon></button>
+</div>

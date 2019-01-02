@@ -1,0 +1,15 @@
+div.map-view {
+    overflow: scroll;
+    position: absolute;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+div.buttons {
+    position: fixed;
+    bottom: 1em;
+    text-align: center;
+    width: 100%;
+}

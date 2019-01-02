@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { NewsService } from './news.service';
 import { BoardService } from './board.service';
 import { GameService } from './game.service';
 
@@ -16,7 +15,6 @@ let w3_enabled = false;
 
 @NgModule({
   providers: [
-    NewsService,
     WebSocketService,
     SocketService,
     Web3Service,

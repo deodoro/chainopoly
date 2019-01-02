@@ -1,3 +1,24 @@
-<p>
-  stats works!
-</p>
+<div class="header">
+    <h1>{{ data.username }}</h1>
+    <h2>${{ balance }}</h2>
+</div>
+<div class="contents">
+    <h1>Estimates for next round</h1>
+    <table mat-table [dataSource]="estimates">
+      <ng-container matColumnDef="variable">
+        <th mat-header-cell *matHeaderCellDef> Variable </th>
+        <td mat-cell *matCellDef="let r"> {{ r.title }} </td>
+      </ng-container>
+      <ng-container matColumnDef="expected">
+        <th mat-header-cell *matHeaderCellDef> Expected </th>
+        <td mat-cell *matCellDef="let r"> {{ r.expected }} </td>
+      </ng-container>
+      <ng-container matColumnDef="max">
+        <th mat-header-cell *matHeaderCellDef> Max </th>
+        <td mat-cell *matCellDef="let r"> {{ r.max }} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['variable', 'max', 'expected']"></tr>
+      <tr mat-row *matRowDef="let r; columns: ['variable', 'max', 'expected'];"></tr>
+    </table>
+</div>

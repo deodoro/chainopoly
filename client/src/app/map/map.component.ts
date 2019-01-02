@@ -1,15 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit {
+export class MapComponent {
 
+  private zoomLevel = 1;
+  @ViewChild("map") sideNav: ElementRef;
   constructor() { }
 
-  ngOnInit() {
+  private zoomIn() {
+    if (this.zoomLevel < 2)
+        this.zoomLevel *= 2;
+  }
+
+  private zoomOut() {
+    if (this.zoomLevel > 0.25)
+        this.zoomLevel /= 2;
   }
 
 }

@@ -1,3 +1,9 @@
-<p>
-  leave works!
-</p>
+<div class="header">
+    <h1>Leaving</h1>
+    <h2>The bank will reclaim<br/>your tokens permanently,<br/> are you sure?</h2>
+    <div class="button-input">
+        <button mat-flat-button [disabled]="buttonDisabled" (click)="leaveGame()" color="warn">
+            <mat-icon>warning</mat-icon> Yes, please, abandon game now
+        </button>
+    </div>
+</div>

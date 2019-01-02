@@ -6,6 +6,7 @@ import { AssetsComponent } from "./assets/assets.component";
 import { LeaveComponent } from "./leave/leave.component";
 import { StatsComponent } from "./stats/stats.component";
 import { MapComponent } from "./map/map.component";
+import { TransferComponent } from "./transfer/transfer.component";
 
 const routes: Routes = [
     {
@@ -19,6 +20,7 @@ const routes: Routes = [
     { path: "leave", component: LeaveComponent },
     { path: "stats", component: StatsComponent },
     { path: "assets", component: AssetsComponent }
+    { path: "transfers", component: TransferComponent }
 ];
 
 @NgModule({

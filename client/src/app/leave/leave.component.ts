@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { GameService } from "../../components/services/game.service";
 
 @Component({
   selector: 'app-leave',
@@ -7,9 +8,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LeaveComponent implements OnInit {
 
-  constructor() { }
+    private buttonDisabled: boolean = true;
 
-  ngOnInit() {
-  }
+    static parameters = [GameService];
+    constructor(
+        private gameService: GameService,
+    ) {
+    }
+
+    ngOnInit() {
+        setTimeout(() => {
+            this.buttonDisabled = false;
+            console.log("toggle");
+        }, 3000);
+    }
+
+    leaveGame() {
+        console.dir("leave");
+    }
 
 }

@@ -1,6 +1,5 @@
-import { Component, ViewChild } from "@angular/core";
+import { Component } from "@angular/core";
 import { GameService } from "../../components/services/game.service";
-import { NewsService } from "../../components/services/news.service";
 import _ from "lodash";
 
 @Component({
@@ -13,29 +12,84 @@ export class DashboardComponent {
     private evtSubscription;
     public data;
     public balance = 0;
-    public properties = [];
-    public gameStatus = "init";
-    public myTurn = false;
+    public properties = 0;
     public errorMessage = null;
+    private pending = {
+        rent: [
+            {
+                src: {
+                    account: "0xf5ac0452ed4ebb92d67e169beaa81d7d3b5a7ccb",
+                    alias: "Alias"
+                },
+                dst: {
+                    account: "0x1234567890123456789012345678901234567890",
+                    alias: "Other"
+                },
+                value: 10,
+                property: {
+                    token: 1,
+                    name: "Wall St.",
+                }
+            },
+            {
+                src: {
+                    account: "0x1234567890123456789012345678901234567890",
+                    alias: "Alias"
+                },
+                dst: {
+                    account: "0x1234567890123456789012345678901234567890",
+                    alias: "Other"
+                },
+                value: 10,
+                property: {
+                    token: 1,
+                    name: "Wall St.",
+                }
+            }
+        ],
+        offer: [
+            {
+                property: {
+                    token: 1,
+                    name: "Wall St.",
+                },
+                value: 10,
+                to: {
+                    account: "0xf5ac0452ed4ebb92d67e169beaa81d7d3b5a7ccb",
+                    alias: "Other"
+                }
+            },
+            {
+                property: {
+                    token: 1,
+                    name: "Wall St.",
+                },
+                value: 10,
+                to: {
+                    account: "0x1234567890123456789012345678901234567890",
+                    alias: "Other"
+                }
+            }
+        ]
+    };
 
-    static parameters = [GameService, NewsService];
+    static parameters = [GameService];
     constructor(
         private gameService: GameService,
-        private newsService: NewsService
     ) {
         this.data = {
             account: this.gameService.getAddress(),
             username: this.gameService.getName()
         };
-        this.evtSubscription = this.gameService.on({
-            move: data => {
-                if (this.data.account == data.account) {
-                    _.assign(this.data.player, data);
-                    this.myTurn = true;
-                } else this.myTurn = false;
-            },
-            status: data => (this.gameStatus = data)
-        });
+        // this.evtSubscription = this.gameService.on({
+        //     move: data => {
+        //         if (this.data.account == data.account) {
+        //             _.assign(this.data.player, data);
+        //             this.myTurn = true;
+        //         } else this.myTurn = false;
+        //     },
+        //     status: data => (this.gameStatus = data)
+        // });
         this.refreshPlayerInfo();
 
         // let myAccount = this.gameService.getAddress();
@@ -54,25 +108,19 @@ export class DashboardComponent {
         //         this.gameService.emit("move", data);
         //     }
         // });
-
     }
 
     ngAfterViewInit() {
-        this.gameService
-            .getMyColor(this.data.account)
-            .subscribe(player => {
-                this.data.player = _.omit(player, "current");
-                this.myTurn = player["current"];
-            });
+        setTimeout(() => window.scroll(0,0), 200);
     }
 
     refreshPlayerInfo() {
         this.gameService
             .getBalance(this.data.account)
             .subscribe(balance => (this.balance = balance));
-        this.gameService
-            .getProperties(this.data.account)
-            .subscribe(properties => (this.properties = properties));
+        // this.gameService
+        //     .getProperties(this.data.account)
+        //     .subscribe(properties => (this.properties = properties));
     }
 
     roll() {
@@ -85,11 +133,6 @@ export class DashboardComponent {
             .subscribe(
                 success => {
                     this.transaction = { target: null, value: null };
-                    this.newsService.Stream.emit(
-                        `${this.data.username} transferiu ${
-                            this.transaction.value
-                        } para a conta ${this.transaction.target}`
-                    );
                     this.refreshPlayerInfo();
                 },
                 error => {

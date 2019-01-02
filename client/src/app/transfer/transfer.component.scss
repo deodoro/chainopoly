@@ -1,0 +1,12 @@
+@import "../../_variables.scss";
+
+section.warning {
+    color: $warn;
+    text-align: center;
+}
+
+div.button-input {
+    margin-top: 1em;
+    margin-bottom: 3em;
+    text-align: center;
+}

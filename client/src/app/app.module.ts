@@ -15,6 +15,7 @@ import { AssetsComponent } from './assets/assets.component';
 import { MapComponent } from './map/map.component';
 import { StatsComponent } from './stats/stats.component';
 import { LeaveComponent } from './leave/leave.component';
+import { TransferComponent } from './transfer/transfer.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { LeaveComponent } from './leave/leave.component';
     StartComponent,
     DashboardComponent,
     LeaveComponent,
+    TransferComponent,
   ],
   imports: [
     BrowserModule,

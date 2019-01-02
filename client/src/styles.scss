@@ -1,21 +1,30 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:100,300,400,600,900|Roboto:100,300,500,700,900|Archivo+Black|Nunito|Montserrat');
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "_variables.scss";
 /*
 Alts:
 @import url('https://fonts.googleapis.com/css?family=Anton||Paytone+One|Bowlby+One+SC|Fascinate|Fascinate+Inline');
 */
 
 /* You can add global styles to this file, and also import other style files */
-// html {
-//     width: 100vw;
-//     height: 100vh;
-// }
+html {
+    min-height: 100%;
+    background-color: #fafafa;
+}
 
 body {
     font-family: Roboto;
     text-transform: uppercase;
-    background-color: #eee;
     color: #666;
+    margin: 0;
+}
+
+a, a:hover {
+    text-decoration: none;
+}
+
+a:focus {
+    outline: none;
 }
 
 span.alias {
@@ -37,7 +46,7 @@ div.header {
     background-color: #3f51b5;
     color: #fff;
     text-align: center;
-    padding-top: 5em;
+    padding: 2em 1em 4em;
 
     h1 {
         font-size: 3em;
@@ -50,9 +59,36 @@ div.header {
         opacity: 0.6;
     }
 
-    div.start-button {
+    div.button-input {
         padding-top: 2em;
-        padding-bottom: 4em;
     }
+
 }
 
+div.contents {
+    margin: 2em 1em 2em;
+}
+
+.small {
+    font-size: 0.5em;
+}
+
+.fullwidth {
+    width: 100%;
+}
+
+.account {
+    font-size: 0.8em;
+    color: orange;
+}
+
+table {
+    width: 100%;
+    tr.mat-row {
+        text-transform: none;
+    }
+
+    tr.highlight td {
+        color: $accent;
+    }
+}
