@@ -13,6 +13,7 @@ import { StartComponent } from './start/start.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AssetsComponent } from './assets/assets.component';
 import { MapComponent } from './map/map.component';
+import { MarkerComponent } from './map/marker.component';
 import { StatsComponent } from './stats/stats.component';
 import { LeaveComponent } from './leave/leave.component';
 import { TransferComponent } from './transfer/transfer.component';
@@ -27,6 +28,7 @@ import { TransferComponent } from './transfer/transfer.component';
     DashboardComponent,
     LeaveComponent,
     TransferComponent,
+    MarkerComponent,
   ],
   imports: [
     BrowserModule,
