@@ -29,9 +29,7 @@ export class GameRESTService extends GameService {
             case "new_player":
                 this.events.next({
                     evt: msg.type,
-                    data: _.assign(msg.payload.player, {
-                        game_id: msg.payload.game_id
-                    })
+                    data: msg.payload.player
                 });
                 break;
             case "status":

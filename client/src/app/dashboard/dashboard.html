@@ -1,10 +1,8 @@
-<div class="header">
-    <h1>{{ data.username }}</h1>
-    <h2>${{ balance }}</h2>
-    <h3>You're raking #{{ ranking() }} of {{ players.length }} playing at the moment</h3>
-</div>
+<app-userheader></app-userheader>
+
 
 <div class="contents">
+    <h3>You're ranking #{{ ranking() }} of {{ players.length }} players</h3>
     <h1>Rents due</h1>
     <table mat-table [dataSource]="pending.rent">
       <ng-container matColumnDef="from">

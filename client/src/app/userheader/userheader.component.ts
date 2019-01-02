@@ -13,6 +13,10 @@ export class UserheaderComponent {
 
     static parameters = [GameService];
     constructor(private gameService: GameService) {
+        this.refresh();
+    }
+
+    public refresh() {
         this.gameService.getProperties().subscribe(p => {
             this.propertyBalance = _.sumBy(p, i => i.price);
         });

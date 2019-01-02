@@ -45,4 +45,10 @@ export class TransferComponent {
             });
     }
 
+    decline() {
+        this.gameService
+            .decline()
+            .subscribe(res => console.log(res));
+    }
+
 }
