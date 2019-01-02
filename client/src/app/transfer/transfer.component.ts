@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { GameService } from "../../components/services/game.service";
+import { GameService, Transaction } from "../../components/services/game.service";
 import _ from "lodash";
 
 @Component({
@@ -9,7 +9,6 @@ import _ from "lodash";
 })
 export class TransferComponent {
 
-    private data;
     private balance;
     private transfer = {
         account: '',
@@ -17,42 +16,33 @@ export class TransferComponent {
     };
     private isEmpty = _.isEmpty;
     private parseInt = Number.parseInt;
-    private history = [{
-            from: {
-                account: "0xf5ac0452ed4ebb92d67e169beaa81d7d3b5a7ccb",
-                alias: "Alias"
-            },
-            to: {
-                account: "0x1234567890123456789012345678901234567890",
-                alias: "Other"
-            },
-            value: 10,
-            date: "Dec 10 2019 10:00"
-        }, {
-            from: {
-                account: "0x1234567890123456789012345678901234567890",
-                alias: "Other"
-            },
-            to: {
-                account: "0xf5ac0452ed4ebb92d67e169beaa81d7d3b5a7ccb",
-                alias: "Alias"
-            },
-            value: 10,
-            date: "Dec 10 2019 10:00"
-        },
-    ];
+    private history: Transaction[] = [];
 
     static parameters = [GameService];
     constructor(
         private gameService: GameService,
     ) {
-        this.data = {
-            account: this.gameService.getAddress(),
-            username: this.gameService.getName()
-        };
         this.gameService
-            .getBalance(this.data.account)
-            .subscribe(balance => (this.balance = balance));
+            .getBalance()
+            .subscribe(balance => this.balance = balance);
+        this.gameService
+            .getHistory()
+            .subscribe(history => this.history = history)
+    }
+
+    doTransfer() {
+        this.gameService
+            .transfer({
+                src: { account: this.gameService.getAddress() },
+                dst: { account: this.transfer.account },
+                value: this.transfer.value,
+                date: null
+            })
+            .subscribe(() => {
+                console.log("transfer OK");
+                this.transfer.account = '';
+                this.transfer.value = 0;
+            });
     }
 
 }

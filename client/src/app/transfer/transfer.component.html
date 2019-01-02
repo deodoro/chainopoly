@@ -1,7 +1,4 @@
-<div class="header">
-    <h1>{{ data.username }}</h1>
-    <h2>${{ balance }}</h2>
-</div>
+<app-userheader></app-userheader>
 
 <div class="contents">
     <mat-form-field class="fullwidth">
@@ -26,11 +23,11 @@
       </ng-container>
       <ng-container matColumnDef="to">
         <th mat-header-cell *matHeaderCellDef> To </th>
-        <td mat-cell *matCellDef="let t"> {{ t.to.account != gameService.getAddress() ? t.to.alias : '' }} </td>
+        <td mat-cell *matCellDef="let t"> {{ t.dst.account != gameService.getAddress() ? t.dst.alias : '' }} </td>
       </ng-container>
       <ng-container matColumnDef="from">
         <th mat-header-cell *matHeaderCellDef> From </th>
-        <td mat-cell *matCellDef="let t"> {{ t.from.account != gameService.getAddress() ? t.from.alias : '' }} </td>
+        <td mat-cell *matCellDef="let t"> {{ t.src.account != gameService.getAddress() ? t.src.alias : '' }} </td>
       </ng-container>
       <ng-container matColumnDef="value">
         <th mat-header-cell *matHeaderCellDef> Value </th>

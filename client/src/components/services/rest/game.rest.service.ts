@@ -2,7 +2,14 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { Http } from "@angular/http";
 import { Message as SocketMessage, SocketService } from "./socket.service";
-import { GameService, GameInfo, PlayerInfo, Message as GameMessage } from "../game.service";
+import {
+    GameService,
+    GameInfo,
+    Account,
+    Message as GameMessage,
+    PendingInfo,
+    Transaction
+} from "../game.service";
 import { Property } from "../board.service";
 import { environment as e } from "../../../environments/environment";
 import { of } from "rxjs";
@@ -53,7 +60,7 @@ export class GameRESTService extends GameService {
         this.events.complete();
     }
 
-    public listPlayers(): Observable<PlayerInfo[]> {
+    public listPlayers(): Observable<Account[]> {
         return this.Http.get(this.urlFor("players")).map(res => res.json());
     }
 
@@ -66,33 +73,14 @@ export class GameRESTService extends GameService {
             });
     }
 
-    private control(action): Observable<any> {
-        return this.Http.post(this.urlFor("control"), action)
-            .map(res => {
-                return res.json();
-            })
-            .catch(err => {
-                console.dir(err);
-                return of(err.json());
-            });
-    }
-
-    public roll(): Observable<any> {
-        return this.control({ action: "roll" });
-    }
-
-    public commit(account_id): Observable<any> {
-        return this.control({ action: "commit", account_id: account_id });
-    }
-
-    public transfer(transaction): Observable<any> {
+    public transfer(transaction: Transaction): Observable<any> {
         return this.Http.post(this.urlFor("transfer"), transaction).map(res =>
             res.json()
         );
     }
 
-    public decline(account_id): Observable<any> {
-        return this.Http.post(this.urlFor("decline"), account_id).map(res =>
+    public decline(): Observable<any> {
+        return this.Http.post(this.urlFor("decline"), this.address).map(res =>
             res.json()
         );
     }
@@ -111,25 +99,147 @@ export class GameRESTService extends GameService {
         );
     }
 
-    public getMyColor(account_id): Observable<string> {
-        return this.Http.get(this.urlFor(`player/${account_id}`)).map(res =>
+    public getBalance(): Observable<number> {
+        return this.Http.get(this.urlFor(`balance/${this.address}`)).map(res =>
             res.json()
         );
     }
 
-    public getBalance(account_id): Observable<number> {
-        return this.Http.get(this.urlFor(`balance/${account_id}`)).map(res =>
-            res.json()
-        );
-    }
-
-    public getProperties(account_id): Observable<Property[]> {
-        return this.Http.get(this.urlFor(`properties/${account_id}`)).map(res =>
-            res.json()
+    public getProperties(): Observable<Property[]> {
+        return this.Http.get(this.urlFor(`properties/${this.address}`)).map(
+            res => {
+                // res.json();
+                return [
+                    {
+                        name: "Wall St.",
+                        color: "blue",
+                        price: 100,
+                        rent: 10,
+                        position: 1,
+                        token: 1
+                    },
+                    {
+                        name: "Beaumont St.",
+                        color: "blue",
+                        price: 100,
+                        rent: 10,
+                        position: 1,
+                        token: 2
+                    }
+                ];
+            }
         );
     }
 
     private urlFor(service) {
         return e._folder(`/api/game/${service}`);
+    }
+
+    public getPending(): Observable<PendingInfo> {
+        return of({
+            rent: [
+                {
+                    src: {
+                        account: "0xf5ac0452ed4ebb92d67e169beaa81d7d3b5a7ccb",
+                        alias: "Alias"
+                    },
+                    dst: {
+                        account: "0x1234567890123456789012345678901234567890",
+                        alias: "Other"
+                    },
+                    value: 10,
+                    property: {
+                        token: 1,
+                        name: "Wall St."
+                    }
+                },
+                {
+                    src: {
+                        account: "0x1234567890123456789012345678901234567890",
+                        alias: "Alias"
+                    },
+                    dst: {
+                        account: "0x1234567890123456789012345678901234567890",
+                        alias: "Other"
+                    },
+                    value: 10,
+                    property: {
+                        token: 1,
+                        name: "Wall St."
+                    }
+                }
+            ],
+            offer: [
+                {
+                    property: {
+                        token: 1,
+                        name: "Wall St.",
+                        color: "blue"
+                    },
+                    value: 10,
+                    to: {
+                        account: "0xf5ac0452ed4ebb92d67e169beaa81d7d3b5a7ccb",
+                        alias: "Other"
+                    }
+                },
+                {
+                    property: {
+                        token: 1,
+                        name: "Wall St.",
+                        color: "blue"
+                    },
+                    value: 10,
+                    to: {
+                        account: "0x1234567890123456789012345678901234567890",
+                        alias: "Other"
+                    }
+                }
+            ]
+        });
+    }
+
+    public unregister(): Observable<boolean> {
+        return of(false);
+    }
+
+    public getHistory(): Observable<Transaction[]> {
+        return of([
+            {
+                src: {
+                    account: "0xf5ac0452ed4ebb92d67e169beaa81d7d3b5a7ccb",
+                    alias: "Alias"
+                },
+                dst: {
+                    account: "0x1234567890123456789012345678901234567890",
+                    alias: "Other"
+                },
+                value: 10,
+                date: new Date()
+            },
+            {
+                src: {
+                    account: "0x1234567890123456789012345678901234567890",
+                    alias: "Other"
+                },
+                dst: {
+                    account: "0xf5ac0452ed4ebb92d67e169beaa81d7d3b5a7ccb",
+                    alias: "Alias"
+                },
+                value: 10,
+                date: new Date()
+            },
+            {
+                src: {
+                    account: "0x1234567890123456789012345678901234567890",
+                    alias: "Other"
+                },
+                dst: {
+                    account: "0xf5ac0452ed4ebb92d67e169beaa81d7d3b5a7ccb",
+                    alias: "Alias"
+                },
+                value: 10,
+                date: new Date()
+            }
+        ]);
     }
 }

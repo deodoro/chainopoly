@@ -93,23 +93,6 @@ class BalanceHandler(tornado.web.RequestHandler):
             self.set_status(400)
             self.write('Invalid game')
 
-class ControlHandler(tornado.web.RequestHandler):
-    def post(self):
-        args = json.loads(self.request.body)
-        try:
-            game = GameCollection.instance().get()
-            self.set_header('Content-Type', 'application/json')
-            if args['action'] == 'roll':
-                game.roll()
-                self.write({'result': 'roll'})
-            elif args['action'] == 'commit':
-                game.commit(args['account_id'])
-                self.write({'result': 'commit'})
-        except Exception as e:
-            logger.exception('Game control action %r' % args)
-            self.set_status(400)
-            self.write('Invalid game')
-
 class TransferHandler(tornado.web.RequestHandler):
     def post(self):
         args = json.loads(self.request.body)
@@ -154,7 +137,6 @@ if __name__ == '__main__':
             (r'/api/game/decline', DeclineHandler),
             (r'/api/game/balance/(.+)', BalanceHandler),
             (r'/api/game/player/(.+)', PlayerInfoHandler),
-            (r'/api/game/control', ControlHandler),
             (r'/api/game/players', PlayerHandler),
             (r'/api/board', BoardHandler),
             (r'/ws', WebSocketHandler),

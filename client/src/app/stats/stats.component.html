@@ -1,9 +1,7 @@
-<div class="header">
-    <h1>{{ data.username }}</h1>
-    <h2>${{ balance }}</h2>
-</div>
+<app-userheader></app-userheader>
+
 <div class="contents">
-    <h1>Estimates for next round</h1>
+    <h2>Income/expense estimates</h2>
     <table mat-table [dataSource]="estimates">
       <ng-container matColumnDef="variable">
         <th mat-header-cell *matHeaderCellDef> Variable </th>
@@ -21,7 +19,25 @@
       <tr mat-header-row *matHeaderRowDef="['variable', 'max', 'expected']"></tr>
       <tr mat-row *matRowDef="let r; columns: ['variable', 'max', 'expected'];"></tr>
     </table>
-    <h1>Ranking</h1>
+    <h2>Next offers</h2>
+    <table mat-table [dataSource]="offers">
+      <ng-container matColumnDef="color">
+        <th mat-header-cell *matHeaderCellDef> Color </th>
+        <td mat-cell *matCellDef="let r"> <div class="color-bubble" [ngClass]="r.color"></div> </td>
+      </ng-container>
+      <ng-container matColumnDef="prob">
+        <th mat-header-cell *matHeaderCellDef> Probability </th>
+        <td mat-cell *matCellDef="let r"> {{ r.prob }} </td>
+      </ng-container>
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef> Avg price </th>
+        <td mat-cell *matCellDef="let r"> {{ r.price }} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['color', 'prob', 'price']"></tr>
+      <tr mat-row *matRowDef="let r; columns: ['color', 'prob', 'price'];"></tr>
+    </table>
+    <h2>Ranking</h2>
     <table mat-table [dataSource]="ranking">
       <ng-container matColumnDef="position">
         <th mat-header-cell *matHeaderCellDef> Pos </th>

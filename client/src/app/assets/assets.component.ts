@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
 import { GameService } from "../../components/services/game.service";
+import { Property } from "../../components/services/board.service";
+import { PropertyComponent } from '../property/property.component';
+import { MatBottomSheet, MatBottomSheetRef } from '@angular/material';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-assets',
@@ -9,30 +13,23 @@ import { GameService } from "../../components/services/game.service";
 export class AssetsComponent {
 
     private balance = 0;
-    private properties = [{
-        "name": "Wall St.",
-        "color": "blue",
-        "price": 100,
-        "rent": 10,
-        "position": 1,
-        "token": 1
-    }, {
-        "name": "Beaumont St.",
-        "color": "blue",
-        "price": 100,
-        "rent": 10,
-        "position": 1,
-        "token": 2
-    }];
+    private properties: Property[] = [];
     private data;
-    static parameters = [GameService];
+    static parameters = [GameService, MatBottomSheet];
+
     constructor(
         private gameService: GameService,
+        private bottomSheet: MatBottomSheet
     ) {
-        this.data = {
-            account: this.gameService.getAddress(),
-            username: this.gameService.getName()
-        };
-        this.balance = 1500;
+        this.gameService.getProperties().subscribe(p => {
+            this.properties = p;
+        });
+    }
+
+    showCard(p) {
+        const bottomSheetRef = this.bottomSheet.open(PropertyComponent, {
+          ariaLabel: 'Property details',
+          data: { 'property': p }
+        });
     }
 }

@@ -21,8 +21,7 @@ import { MatBottomSheet, MatBottomSheetRef } from '@angular/material';
              'svg.pink { fill: pink }',
              'svg.orange { fill: orange }',
              'svg.green { fill: green }',
-             'svg.blue { fill: blue }',
-             ]
+             'svg.blue { fill: blue }',]
 })
 export class MarkerComponent {
     @Input() property: any;

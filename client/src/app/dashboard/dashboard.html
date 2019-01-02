@@ -1,6 +1,7 @@
 <div class="header">
     <h1>{{ data.username }}</h1>
     <h2>${{ balance }}</h2>
+    <h3>You're raking #{{ ranking() }} of {{ players.length }} playing at the moment</h3>
 </div>
 
 <div class="contents">
@@ -41,46 +42,13 @@
         <th mat-header-cell *matHeaderCellDef> Property </th>
         <td mat-cell *matCellDef="let r"> {{ r.property.name }} </td>
       </ng-container>
+      <ng-container matColumnDef="color">
+        <th mat-header-cell *matHeaderCellDef> Color </th>
+        <td mat-cell *matCellDef="let r"> <div class="color-bubble" [ngClass]="r.property.color"></div> </td>
+      </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="['to', 'value', 'property']"></tr>
-      <tr mat-row *matRowDef="let r; columns: ['to', 'value', 'property'];"
+      <tr mat-header-row *matHeaderRowDef="['to', 'value', 'property', 'color']"></tr>
+      <tr mat-row *matRowDef="let r; columns: ['to', 'value', 'property', 'color'];"
           [ngClass]="{'highlight': r.to.account==gameService.getAddress() }"></tr>
   </table>
 </div>
-
-<!-- <div class="player-name">
-    <div class="player-marker" [ngStyle]="{'background': data.player.color}" *ngIf="data.player"></div>
-    {{ data.username }}
-</div>
-<div class="player-info">
-    ${{ balance }}
-</div>
-<div class="player-info">
-    <div class="prop" *ngFor="let property of properties">
-        <div class="contents">
-            <a routerLink="" (mouseenter)="showProperty(property)">{{ property.name }}</a>
-            <div class="color {{property.color}}"></div>
-        </div>
-    </div>
-</div>
-<div class="transaction-form">
-    <div *ngIf="gameStatus == 'move'" >
-        <div class="form-group col-lg-12">
-            <button class="btn btn-primary" (click)="roll()">Roll</button>
-        </div>
-    </div>
-    <div *ngIf="myTurn && gameStatus == 'wait'">
-        <div class="form-group col-lg-12">
-            <input class="form-control" type="text" [(ngModel)]="transaction.target" placeholder="Transferir para">
-        </div>
-        <div class="form-group col-lg-12">
-            <input class="form-control" type="text" [(ngModel)]="transaction.value" placeholder="Valor">
-        </div>
-        <div class="form-group col-lg-12">
-            <button class="btn btn-success" (click)="transfer()">Transferir</button>
-            <button class="btn btn-warning" (click)="decline()">Ignorar</button>
-            <button class="btn btn-primary" (click)="commit()">Continuar</button>
-        </div>
-    </div>
-</div>
- -->

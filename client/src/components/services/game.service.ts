@@ -5,11 +5,9 @@ import { Subscription } from "rxjs/Subscription";
 import "rxjs/add/operator/filter";
 import _ from "lodash";
 
-export class PlayerInfo {
+export class Account {
     account: string;
-    alias: string;
-    position: number;
-    color: string;
+    alias?: string;
 }
 
 export class GameInfo {
@@ -20,6 +18,31 @@ export class GameInfo {
 export class Message {
     evt: string;
     data: any;
+}
+
+export class RentInfo {
+    src: Account;
+    dst: Account;
+    value: number;
+    property: Property;
+}
+
+export class OfferInfo {
+    property: Property;
+    value: number;
+    to: Account;
+}
+
+export class PendingInfo {
+    rent: RentInfo[];
+    offer: OfferInfo[];
+}
+
+export class Transaction {
+    src: Account;
+    dst: Account;
+    value: number;
+    date: Date;
 }
 
 export abstract class GameService {
@@ -48,14 +71,15 @@ export abstract class GameService {
     }
 
     public abstract getAddress(): string;
-    public abstract getMyColor(account_id): Observable<string>;
-    public abstract getBalance(account_id): Observable<number>;
-    public abstract getProperties(account_id): Observable<Property[]>;
+    public abstract getBalance(): Observable<number>;
+    public abstract getProperties(): Observable<Property[]>;
 
-    public abstract listPlayers(): Observable<PlayerInfo[]>;
+    public abstract listPlayers(): Observable<Account[]>;
     public abstract register(player): Observable<any>;
-    public abstract roll(): Observable<any>;
-    public abstract commit(account_id): Observable<any>;
-    public abstract transfer(transaction): Observable<any>;
-    public abstract decline(account_id): Observable<any>;
+    public abstract transfer(transaction: Transaction): Observable<any>;
+    public abstract decline(): Observable<any>;
+    public abstract getPending(): Observable<PendingInfo>;
+    public abstract unregister(): Observable<boolean>;
+    public abstract getHistory(): Observable<Transaction[]>;
+
 }

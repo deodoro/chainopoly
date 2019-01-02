@@ -2,13 +2,19 @@ import { Observable } from "rxjs/Observable";
 import { of } from "rxjs";
 import _ from "lodash";
 
+export class Coord {
+    x: number;
+    y: number;
+}
+
 export class Property {
     name: string;
-    color: string;
-    price: number;
-    rent: number;
-    position: number;
+    color?: string;
+    price?: number;
+    rent?: number;
+    position?: number;
     token: number;
+    geo?: Coord;
 }
 
 export abstract class BoardService {

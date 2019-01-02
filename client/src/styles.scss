@@ -59,6 +59,12 @@ div.header {
         opacity: 0.6;
     }
 
+    h3 {
+        font-size: 1em;
+        margin: 0;
+        opacity: 0.5;
+    }
+
     div.button-input {
         padding-top: 2em;
     }
@@ -91,4 +97,18 @@ table {
     tr.highlight td {
         color: $accent;
     }
+}
+
+div.color-bubble {
+    width: 2em;
+    height: 2em;
+    border-radius: 2em;
+    &.red { background-color: red }
+    &.yellow { background-color: yellow }
+    &.purple { background-color: purple }
+    &.white { background-color: #ddd }
+    &.pink { background-color: pink }
+    &.orange { background-color: orange }
+    &.green { background-color: green }
+    &.blue { background-color: blue }
 }

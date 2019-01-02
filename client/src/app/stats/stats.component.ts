@@ -8,7 +8,6 @@ import { GameService } from "../../components/services/game.service";
 })
 export class StatsComponent {
 
-    private data;
     private balance;
     private estimates = [{
         "title": "Rent to receive",
@@ -36,18 +35,20 @@ export class StatsComponent {
         "alias": "Viv",
         "net_worth": "$1000"
     }];
+    private offers = [{
+        "color": "yellow",
+        "prob": "0.5",
+        "price": 100
+    }, {
+        "color": "red",
+        "prob": "0.5",
+        "price": 100
+    }];
 
     static parameters = [GameService];
     constructor(
         private gameService: GameService,
     ) {
-        this.data = {
-            account: this.gameService.getAddress(),
-            username: this.gameService.getName()
-        };
-        this.gameService
-            .getBalance(this.data.account)
-            .subscribe(balance => (this.balance = balance));
     }
 
 }

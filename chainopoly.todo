@@ -8,19 +8,42 @@ Chainopoly:
     read game info from game service
     read player info from player service
   ☐ redraw interface
+    ☐ new mechanisms for game engine
+      draw dice for all players
+      add notification from swap to game
+      create offers and invoices for round
+      once all pending items are cleared, new players are added, next round is started
+    ☐ service to list pending offers/invoices
+    ☐ service for listing assets
+    ☐ bottom sheet in asset list
+    ☐ load transaction history
+    ☐ hook transfer service
+    ☐ flag owned items in map (hidden flag?)
+    ☐ generate stats from game info
+      write ranking service (list players and decide client side)
+    ☐ click on highlighted (own) items leads to transfer
+    ☐ unregister service
+    ☐ terminate game on players leaving
+    ☐ review color scheme
+      mixin for property colors?
+    ☐ add property color bubble to asset list
+    ☐ add property color bubble to offers pending (dashboard)
+    ☐ calculate asset total price
+    ☐ check if fixed header is feasible
+    ☐ detect non registered game and go to /start if so
   ☐ show grid
     Zoom to populated squares [min(x, y), max(x,y)]
   ☐ name per account @maybe
   ☐ reset on game or wallet change
   ☐ news -> chat window
   ☐ detect if network is unreachable/down @code
-  ☐ notifications history (interface) @code
-  ☐ clear notification history @code
+  ✔ notifications history (interface) @code @done (19-01-02 11:41)
+  ✔ clear notification history @code @done (19-01-02 11:41)
   ☐ refactor contract ownership (resetTo) @code
-  ☐ code new interface @code
+  ✔ code new interface @code @done (19-01-02 11:41)
   ☐ CPU player @code
   ☐ refactor service configuration @code
-  ☐ game instatialization @code
+  ✔ game instatialization @code @done (19-01-02 11:40)
   ☐ add comments
   ☐ "production" network
   ☐ calculate price
@@ -28,7 +51,7 @@ Chainopoly:
   ☐ narrative
   ☐ find new name
   ☐ send links
-  ☐ user may transfer at any time @later
+  ✔ user may transfer at any time @later @done (19-01-02 11:40)
   ☐ may everyone know everybody else's balance? @later
   ☐ chat @later @code
     news and messages in the same list (news = bot messages)

@@ -4,4 +4,4 @@ from engine.entities import Account, Property
 from engine.fungible import Fungible
 from engine.nonfungible import NonFungible
 from engine.atomic_swap import AtomicSwap
-from engine.game import Game, State
+from engine.game import Game

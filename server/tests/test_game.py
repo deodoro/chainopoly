@@ -1,4 +1,4 @@
-from engine import Game, State
+from engine import Game
 import pytest
 
 class MockEE:
@@ -53,22 +53,17 @@ def test_status(game):
     game.set_check_pending(False)
     game.register_player("1", "deodoro")
     game.register_player("2", "mario")
-    assert game.status == State.INIT
     game.roll()
-    assert game.status == State.WAIT
     assert game.get_player("1")["current"]
     assert not game.get_player("2")["current"]
     game.commit("1")
-    assert game.status == State.MOVE
     assert not game.get_player("1")["current"]
     assert not game.get_player("2")["current"]
     game.roll()
     game.commit("1")
-    assert game.status == State.WAIT
     assert not game.get_player("1")["current"]
     assert game.get_player("2")["current"]
     game.commit("2")
-    assert game.status == State.MOVE
     assert not game.get_player("1")["current"]
     assert not game.get_player("2")["current"]
 

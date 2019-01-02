@@ -1,30 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 import { GameService } from "../../components/services/game.service";
+import { Router } from "@angular/router";
+import _ from "lodash";
 
 @Component({
-  selector: 'app-leave',
-  templateUrl: './leave.component.html',
-  styleUrls: ['./leave.component.scss']
+    selector: "app-leave",
+    templateUrl: "./leave.component.html",
+    styleUrls: ["./leave.component.scss"]
 })
 export class LeaveComponent implements OnInit {
-
     private buttonDisabled: boolean = true;
+    private balance: number;
+    private propertyBalance: number;
 
-    static parameters = [GameService];
-    constructor(
-        private gameService: GameService,
-    ) {
+    static parameters = [GameService, Router];
+    constructor(private gameService: GameService, private router: Router) {
     }
 
     ngOnInit() {
         setTimeout(() => {
             this.buttonDisabled = false;
-            console.log("toggle");
         }, 3000);
     }
 
     leaveGame() {
-        console.dir("leave");
+        this.gameService.unregister().subscribe(r => {
+            this.router.navigateByUrl(`/start`);
+        });
     }
-
 }

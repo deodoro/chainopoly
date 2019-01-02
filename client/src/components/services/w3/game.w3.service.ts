@@ -2,7 +2,7 @@ import { Observable } from "rxjs/Observable";
 import { Injectable } from "@angular/core";
 import { Web3Service } from "./web3.service";
 import { BoardService, Property } from "../board.service";
-import { GameService, GameInfo, PlayerInfo } from "../game.service";
+import { GameService, GameInfo, Account, PendingInfo, Transaction } from "../game.service";
 import { environment as e } from "../../../environments/environment";
 import { of } from "rxjs";
 import "rxjs/add/operator/map";
@@ -37,7 +37,15 @@ export class GameWeb3Service extends GameService {
         });
     }
 
-    public listPlayers(): Observable<PlayerInfo[]> {
+    public getPending(): Observable<PendingInfo> {
+        return null;
+    }
+
+    public unregister(): Observable<boolean> {
+        return of(false);
+    }
+
+    public listPlayers(): Observable<Account[]> {
         return null;
     }
 
@@ -103,7 +111,7 @@ export class GameWeb3Service extends GameService {
         );
     }
 
-    public decline(account_id): Observable<any> {
+    public decline(): Observable<any> {
         return null;
     }
 
@@ -111,31 +119,31 @@ export class GameWeb3Service extends GameService {
         return this.address;
     }
 
-    getMyColor(account_id): Observable<string> {
-        return Observable.create(observer => {
-            if (this.color_cache == null) {
-                this.web3Ser.getAccounts().subscribe(accounts =>
-                    this.Game.deployed()
-                        .then(instance =>
-                            instance.getPlayerInfo
-                                .call(accounts[0])
-                                .then(results => {
-                                    observer.next(results[2]);
-                                    observer.complete();
-                                })
-                        )
-                        .catch(e => {
-                            observer.error(e);
-                        })
-                );
-            } else {
-                observer.next(this.color_cache);
-                observer.complete();
-            }
-        });
-    }
+    // getMyColor(account_id): Observable<string> {
+    //     return Observable.create(observer => {
+    //         if (this.color_cache == null) {
+    //             this.web3Ser.getAccounts().subscribe(accounts =>
+    //                 this.Game.deployed()
+    //                     .then(instance =>
+    //                         instance.getPlayerInfo
+    //                             .call(accounts[0])
+    //                             .then(results => {
+    //                                 observer.next(results[2]);
+    //                                 observer.complete();
+    //                             })
+    //                     )
+    //                     .catch(e => {
+    //                         observer.error(e);
+    //                     })
+    //             );
+    //         } else {
+    //             observer.next(this.color_cache);
+    //             observer.complete();
+    //         }
+    //     });
+    // }
 
-    getBalance(account_id): Observable<number> {
+    getBalance(): Observable<number> {
         return Observable.create(observer =>
             this.web3Ser.getAccounts().subscribe(accounts =>
                 this.Coin.deployed()
@@ -152,7 +160,7 @@ export class GameWeb3Service extends GameService {
         );
     }
 
-    getProperties(account_id): Observable<Property[]> {
+    getProperties(): Observable<Property[]> {
         return Observable.create(observer =>
             this.web3Ser.getAccounts().subscribe(accounts =>
                 this.Properties.deployed()
@@ -172,4 +180,9 @@ export class GameWeb3Service extends GameService {
             )
         );
     }
+
+    public getHistory(): Observable<Transaction[]> {
+        return of([]);
+    }
+
 }

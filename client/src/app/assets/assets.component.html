@@ -1,17 +1,14 @@
-<div class="header">
-    <h1>{{ data.username }}</h1>
-    <h2>${{ balance }} <span class='small'> (nominal)</span></h2>
-</div>
+<app-userheader></app-userheader>
 
 <div class="contents">
     <table mat-table [dataSource]="properties">
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> Name </th>
-        <td mat-cell *matCellDef="let p"> {{ p.name }} </td>
+        <td mat-cell *matCellDef="let p"> <div (click)="showCard(p)">{{ p.name }}</div> </td>
       </ng-container>
       <ng-container matColumnDef="color">
         <th mat-header-cell *matHeaderCellDef> Color </th>
-        <td mat-cell *matCellDef="let p"> {{ p.color }} </td>
+        <td mat-cell *matCellDef="let p"> <div class="color-bubble" [ngClass]="p.color"></div> </td>
       </ng-container>
       <ng-container matColumnDef="price">
         <th mat-header-cell *matHeaderCellDef> Price </th>

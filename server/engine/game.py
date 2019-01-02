@@ -5,12 +5,6 @@ from enum import Enum
 from random import randint
 import json
 
-class State(Enum):
-    INIT = 0
-    MOVE = 1
-    WAIT = 2
-    FINISHED = 3
-
 def findOne(l, f):
     filtered = [i for i in l if f(i)]
     return filtered[0] if len(filtered) else None
@@ -26,13 +20,14 @@ class Game(object):
     def get_properties():
         # Carregando propriedades
         if not Game.PROPERTIES:
-            with open('assets/properties.json') as data_file:
+            with open('assets/lotr.json') as data_file:
                 items = json.load(data_file)
                 Game.PROPERTIES = [Property(name=i['name'],
                                        color=i['color'],
                                        price=i['price'],
                                        rent=i['rent'],
-                                       position=i['position']) for i in items]
+                                       position=i['position'],
+                                       geo=i['geo']) for i in items]
         return Game.PROPERTIES
 
     # Inicializando um jogo vazio
@@ -52,8 +47,6 @@ class Game(object):
         self.cur_player_idx = -1
         self._id = game_id
         self.ee = ee
-        self.set_status(State.INIT)
-        self.check_pending = True
 
     def emit(self, type, **kwargs):
         if self.ee:
@@ -61,9 +54,7 @@ class Game(object):
 
     # O jogador se registra no jogo
     def register_player(self, account_id, alias = 'anon'):
-        if self.status == State.INIT and \
-                len(self.players) < Game.MAX_PLAYERS and \
-                account_id not in self.accounts:
+        if len(self.players) < Game.MAX_PLAYERS and account_id not in self.accounts:
             account = Account(account_id)
             self.accounts[account_id] = account
             self.money.transfer(self.money.account, account, Game.INITIAL_BALANCE)
@@ -80,12 +71,6 @@ class Game(object):
         if p:
             return {**p, 'current': self.is_current(account_id)}
         return p
-
-    def cur_player(self):
-        return self.players[self.cur_player_idx]
-
-    def is_current(self, account_id):
-        return self.status == State.WAIT and self.cur_player()['account'] == account_id
 
     def get_player_properties(self, account_id):
         return [json.loads(self.properties.get_uri(i)) for i in self.properties.what_owns(self.accounts[account_id])]
@@ -105,29 +90,21 @@ class Game(object):
         return get_player_action_expectation(self, self.get_player(account_id))
 
     def get_player_action_expectation(self, player):
-        if player == self.cur_player():
-            prop = self.board[self.cur_player()['position']]
-            if prop:
-                owner = self.properties.who_owns(prop._id)
-                if owner:
-                    return {'player': player, 'info': {'action': 'rent', 'owner': self.get_player(owner._id), 'property': prop.to_dict()}}
-                else:
-                    return {'player': player, 'info': {'action': 'buy', 'property': prop.to_dict()}}
+        prop = self.board[self.cur_player()['position']]
+        if prop:
+            owner = self.properties.who_owns(prop._id)
+            if owner:
+                return {'player': player, 'info': {'action': 'rent', 'owner': self.get_player(owner._id), 'property': prop.to_dict()}}
             else:
-                return {'player': player, 'info': {'action': 'parking'}}
+                return {'player': player, 'info': {'action': 'buy', 'property': prop.to_dict()}}
         else:
-            return {'player': player, 'info': {'action': 'wait', 'current': self.cur_player()}}
+            return {'player': player, 'info': {'action': 'parking'}}
 
     def update_player_position(self, dice):
-        if self.status in [State.INIT, State.MOVE]:
-            self.cur_player_idx = (self.cur_player_idx + 1) % len(self.players)
-            self.cur_player()['position'] = \
-                (self.cur_player()['position'] + (dice if dice else randint(2,12))) % len(self.board)
-            self.set_status(State.WAIT)
-            self.emit('move', player=self.cur_player())
-            return True
-        else:
-            return False
+        self.cur_player_idx = (self.cur_player_idx + 1) % len(self.players)
+        self.cur_player()['position'] = \
+            (self.cur_player()['position'] + (dice if dice else randint(2,12))) % len(self.board)
+        self.emit('move', player=self.cur_player())
 
     def prepare_player_action(self):
         action = self.get_player_action_expectation(self.cur_player())
@@ -138,31 +115,7 @@ class Game(object):
         self.emit('action', **action)
 
     def roll(self, dice = None):
+        # roll all dices
+        # create all expectations
         if self.update_player_position(dice):
             self.prepare_player_action()
-
-    def commit(self, account_id):
-        if self.status == State.WAIT and account_id == self.cur_player()['account'] and not (self.check_pending and self.swap.has_pending(self.accounts[account_id])):
-            self.set_status(State.MOVE)
-            return True
-        else:
-            return False
-
-    def get_status(self):
-        if self.status == State.INIT:
-            return 'init'
-        elif self.status == State.WAIT:
-            return 'wait'
-        elif self.status == State.MOVE:
-            return 'move'
-        elif self.status == State.FINISHED:
-            return 'finished'
-        else:
-            return 'invalid'
-
-    def set_status(self, status):
-        self.status = status
-        self.emit('status', status=self.get_status())
-
-    def set_check_pending(self, value):
-        self.check_pending = value

@@ -9,8 +9,8 @@ import _ from "lodash";
     styleUrls: ["./start.scss"]
 })
 export class StartComponent {
+    private data = null;
     private evtSubscription;
-    public data = null;
     public isEmpty = _.isEmpty;
     public playerCount = 0;
     public participating = false;
