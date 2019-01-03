@@ -13,56 +13,56 @@ class NonFungible(object):
         if account not in self.ownership:
             self.ownership[account] = []
 
-    def mint(self, id, uri = None):
-        if id not in self.ownership_reverse:
-            self.ownership[self.account].append(id)
-            self.ownership_reverse[id] = self.account
-            self.set_uri(id, uri)
+    def mint(self, token, uri = None):
+        if token not in self.ownership_reverse:
+            self.ownership[self.account].append(token)
+            self.ownership_reverse[token] = self.account
+            self.set_uri(token, uri)
             return True
         else:
             return False
 
-    def set_uri(self, id, uri):
+    def set_uri(self, token, uri):
         if uri:
-            self.tokenUris[id] = uri
+            self.tokenUris[token] = uri
 
-    def get_uri(self, id):
-        return self.tokenUris[id] if id in self.tokenUris else None
+    def get_uri(self, token):
+        return self.tokenUris[token] if token in self.tokenUris else None
 
     # Transfere de um indivíduo para outro
-    def transfer(self, _to, id):
-        if id in self.ownership_reverse:
-            self.pending.append((self.ownership_reverse[id], _to, id))
+    def transfer(self, _to, token):
+        if token in self.ownership_reverse:
+            self.pending.append((self.ownership_reverse[token], _to, token))
             return True
         else:
             return False
 
-    def confirm(self, _to, id):
-        if id in self.ownership_reverse:
-            _from = self.ownership_reverse[id]
-            if (_from, _to, id) in self.pending:
+    def confirm(self, _to, token):
+        if token in self.ownership_reverse:
+            _from = self.ownership_reverse[token]
+            if (_from, _to, token) in self.pending:
                 self.check_ownership_for_account(_to)
-                self.ownership[_from].remove(id)
-                self.ownership[_to].append(id)
-                self.ownership_reverse[id] = _to
+                self.ownership[_from].remove(token)
+                self.ownership[_to].append(token)
+                self.ownership_reverse[token] = _to
                 return True
         return False
 
-    def cancel(self, _to, id):
-        if id in self.ownership_reverse:
-            _from = self.ownership_reverse[id]
-            if (_from, _to, id) in self.pending:
-                self.pending.remove((_from, _to, id))
+    def cancel(self, _to, token):
+        if token in self.ownership_reverse:
+            _from = self.ownership_reverse[token]
+            if (_from, _to, token) in self.pending:
+                self.pending.remove((_from, _to, token))
                 return True
         return False
 
-    # Quem é dono dessa propriedade?
-    def who_owns(self, id):
-        if id in self.ownership_reverse and self.ownership_reverse[id] != self.account:
-            return self.ownership_reverse[id]
+    # Who owns this token?
+    def who_owns(self, token):
+        if token in self.ownership_reverse and self.ownership_reverse[token] != self.account:
+            return self.ownership_reverse[token]
         else:
             return None
 
-    # Que propriedades esse jogador possui?
+    # Which tokens does this account own?
     def what_owns(self, account):
         return self.ownership[account] if account in self.ownership else []

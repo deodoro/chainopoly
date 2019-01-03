@@ -27,9 +27,16 @@ export class StartComponent {
             this.participating = !_.isUndefined(_.find(players, i => i.account == this.data.account));
         });
         this.evtSubscription = this.gameService.on({
-            new_player: p => {
+            newplayer: p => {
                 this.playerCount++;
                 this.participating = this.participating || (p.account == this.data.account);
+            },
+            leaving: p => {
+                this.playerCount--;
+                this.participating = this.participating && (p != this.data.account);
+                console.dir(`data=${JSON.stringify(p)}`);
+                console.dir(`account=${this.data.account}`);
+                console.dir(`participating=${this.participating}`);
             }
         });
     }
@@ -71,10 +78,11 @@ export class StartComponent {
             if (this.playerCount == 1 && this.participating)
                 return "You are the only registered player";
             else {
+                let playerCountStr = `${this.playerCount} player` + (this.playerCount > 1 ? 's' : '');
                 if (this.participating)
-                    return `${this.playerCount} players registered (including yourself)`;
+                    return `${playerCountStr} registered (including yourself)`;
                 else
-                    return `${this.playerCount} players registered`;
+                    return `${playerCountStr} registered`;
             }
         }
     }

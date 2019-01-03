@@ -12,6 +12,7 @@ class AtomicSwap:
         EventEmitterSingleton.instance().on('transaction', lambda t: self.match_transaction(t['from'], t['to'], t['value']))
 
     def add_invoice(self, debitor, token, value):
+        print("add_invoice")
         creditor = self.nonfungible.who_owns(token)
         print(creditor)
         assert creditor
@@ -20,6 +21,7 @@ class AtomicSwap:
         return True
 
     def add_offer(self, debitor, token, value):
+        print("add_offer %s %s %d" % (debitor, token, value))
         if self.nonfungible.transfer(debitor, token):
             creditor = self.nonfungible.who_owns(token) or self.nonfungible.account
             self.pending_nonfungible.append({"creditor": creditor, "debitor": debitor, "token": token, "value": value, "id": self.last_id})

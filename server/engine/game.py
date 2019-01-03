@@ -75,7 +75,6 @@ class Game(object):
             for p in props:
                 self.properties.transfer(self.properties.account, p)
                 self.properties.confirm(self.properties.account, p)
-            print('leaving')
             emit('leaving', { 'player': account })
 
     def execute_round(self):

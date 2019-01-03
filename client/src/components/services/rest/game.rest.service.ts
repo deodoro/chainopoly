@@ -25,15 +25,9 @@ export class GameRESTService extends GameService {
     private address: string;
     private pullMessage = (msg: SocketMessage) => {
         switch (msg.type) {
-            case "move":
-            case "new_player":
-                this.events.next({
-                    evt: msg.type,
-                    data: msg.payload.player
-                });
-                break;
-            case "status":
-                this.events.next({ evt: msg.type, data: msg.payload.status });
+            case "newplayer":
+            case "leaving":
+                this.events.next({ evt: msg.type, data: msg.payload.player });
                 break;
             case "action":
                 this.events.next({ evt: msg.type, data: msg.payload });
@@ -197,7 +191,9 @@ export class GameRESTService extends GameService {
     }
 
     public unregister(): Observable<boolean> {
-        return of(false);
+        return this.Http.delete(this.urlFor(`player/${this.address}`)).map(
+            res => res["result"] == "ok"
+        );
     }
 
     public getHistory(): Observable<Transaction[]> {
