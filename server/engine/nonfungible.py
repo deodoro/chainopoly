@@ -1,22 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from engine import Account
 
 class NonFungible(object):
     def __init__(self):
-        self.account = Account("0")
-        self.ownership = {self.account._id: []}
+        self.account = "0"
+        self.ownership = {self.account: []}
         self.ownership_reverse = {}
         self.tokenUris = {}
         self.pending = []
 
     def check_ownership_for_account(self, account):
-        if account._id not in self.ownership:
-            self.ownership[account._id] = []
+        if account not in self.ownership:
+            self.ownership[account] = []
 
     def mint(self, id, uri = None):
         if id not in self.ownership_reverse:
-            self.ownership[self.account._id].append(id)
+            self.ownership[self.account].append(id)
             self.ownership_reverse[id] = self.account
             self.set_uri(id, uri)
             return True
@@ -43,8 +42,8 @@ class NonFungible(object):
             _from = self.ownership_reverse[id]
             if (_from, _to, id) in self.pending:
                 self.check_ownership_for_account(_to)
-                self.ownership[_from._id].remove(id)
-                self.ownership[_to._id].append(id)
+                self.ownership[_from].remove(id)
+                self.ownership[_to].append(id)
                 self.ownership_reverse[id] = _to
                 return True
         return False
@@ -59,11 +58,11 @@ class NonFungible(object):
 
     # Quem é dono dessa propriedade?
     def who_owns(self, id):
-        if id in self.ownership_reverse and self.ownership_reverse[id]._id != self.account._id:
+        if id in self.ownership_reverse and self.ownership_reverse[id] != self.account:
             return self.ownership_reverse[id]
         else:
             return None
 
     # Que propriedades esse jogador possui?
     def what_owns(self, account):
-        return self.ownership[account._id] if account._id in self.ownership else []
+        return self.ownership[account] if account in self.ownership else []

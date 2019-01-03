@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from engine import Fungible, NonFungible, Account, Property, AtomicSwap
+from engine import Fungible, NonFungible, Property, AtomicSwap, EventEmitterSingleton, emit
 from enum import Enum
 from random import randint
 import json
@@ -13,7 +13,6 @@ class Game(object):
     INITIAL_BALANCE = 1500
     MAX_BALANCE = 1000000000
     MAX_PLAYERS = 6
-    COLORS = ["blue", "red", "purple", "green", "orange", "darkturquoise"]
     PROPERTIES = None
 
     @staticmethod
@@ -30,92 +29,98 @@ class Game(object):
                                        geo=i['geo']) for i in items]
         return Game.PROPERTIES
 
-    # Inicializando um jogo vazio
-    def __init__(self, game_id, ee = None):
+    # Game init
+    def __init__(self):
         # Tokens
         self.money = Fungible()
         self.properties = NonFungible()
         self.swap = AtomicSwap(self.money, self.properties)
-        # Emissão de tokens e atribuição no tabuleiro
+        # Loading board
         self.board = [None] * (max([i.position for i in Game.get_properties()]) + 1)
         for p in Game.get_properties():
             self.properties.mint(p._id, p.to_json())
             self.board[p.position] = p
-        # Estado Inicial
+        # Initial state
         self.players = []
-        self.accounts = { self.properties.account._id: self.properties.account}
-        self.cur_player_idx = -1
-        self._id = game_id
-        self.ee = ee
+        self.accounts = [ self.properties.account ]
+        self.round = 0
+        # Event handling
+        EventEmitterSingleton.instance().on('match', lambda t: self.check_round_finished())
 
-    def emit(self, type, **kwargs):
-        if self.ee:
-            self.ee.emit(type, game_id=self._id, **kwargs)
+    # May a new player join the game?
+    def new_player_allowed(self, account):
+        return len(self.players) < Game.MAX_PLAYERS and account not in self.accounts
 
-    # O jogador se registra no jogo
-    def register_player(self, account_id, alias = 'anon'):
-        if len(self.players) < Game.MAX_PLAYERS and account_id not in self.accounts:
-            account = Account(account_id)
-            self.accounts[account_id] = account
+    # A player registers
+    def register_player(self, account, alias):
+        if self.new_player_allowed(account):
+            self.accounts.append(account)
             self.money.transfer(self.money.account, account, Game.INITIAL_BALANCE)
-            player = {'account': account_id, 'alias': alias, 'position': 0, 'color': Game.COLORS[len(self.players)]}
-            self.players.append(player)
-            self.emit('newplayer', player=player)
-            return True
+            self.players.append({'account': account, 'alias': alias, 'position': 0})
+            emit('newplayer', {'player': self.players[-1] })
+            if len(self.players) == 2:
+                self.execute_round()
+            else:
+                if len(self.players) > 2 and self.round < 2:
+                    self.roll(self.players[-1])
         else:
-            return False
+            raise Exception("Invalid registration")
 
-    # Lista de jogadores inscritos
-    def get_player(self, account_id):
-        p = findOne(self.players, lambda p: p['account'] == account_id)
+    def execute_round(self):
+        self.round += 1
+        emit('newround', {'round': self.round})
+        for player in self.players:
+            self.roll(player)
+
+    def roll(self, player):
+        player['position'] = (player['position'] + randint(2,12)) % len(self.board)
+        self.prepare_player_action(player)
+
+    # Gets a player info by account
+    def get_player(self, account):
+        p = findOne(self.players, lambda p: p['account'] == account)
         if p:
-            return {**p, 'current': self.is_current(account_id)}
-        return p
+            return {**p}
+        else:
+            return None
 
-    def get_player_properties(self, account_id):
-        return [json.loads(self.properties.get_uri(i)) for i in self.properties.what_owns(self.accounts[account_id])]
+    # Reads player's unfungible tokens
+    def get_player_properties(self, account):
+        return [json.loads(self.properties.get_uri(i)) for i in self.properties.what_owns(account)]
 
-    def get_player_balance(self, account_id):
-        return self.money.balance_of(self.accounts[account_id])
+    # Reads player's fungible token balance
+    def get_player_balance(self, account):
+        return self.money.balance_of(account)
 
-    # Lista de jogadores inscritos
+    # Lists registered players
     def list_players(self):
         return self.players
 
-    # Lista as propriedades (na ordem do tabuleiro)
+    # List all properties
     def list_properties(self):
         return self.board
 
-    def get_player_action_expectation_by_account(self, account):
-        return get_player_action_expectation(self, self.get_player(account_id))
-
     def get_player_action_expectation(self, player):
-        prop = self.board[self.cur_player()['position']]
+        prop = self.board[player['position']]
         if prop:
             owner = self.properties.who_owns(prop._id)
             if owner:
-                return {'player': player, 'info': {'action': 'rent', 'owner': self.get_player(owner._id), 'property': prop.to_dict()}}
-            else:
-                return {'player': player, 'info': {'action': 'buy', 'property': prop.to_dict()}}
+                return {'type': 'rent', 'owner': self.get_player(owner), 'property': prop.to_dict()}
+            elif not any([p for p in self.players if p['account'] != player['account'] and p['position'] == player['position']]):
+                return {'type': 'offer', 'property': prop.to_dict()}
         else:
-            return {'player': player, 'info': {'action': 'parking'}}
+            return None
 
-    def update_player_position(self, dice):
-        self.cur_player_idx = (self.cur_player_idx + 1) % len(self.players)
-        self.cur_player()['position'] = \
-            (self.cur_player()['position'] + (dice if dice else randint(2,12))) % len(self.board)
-        self.emit('move', player=self.cur_player())
+    def prepare_player_action(self, player):
+        action = self.get_player_action_expectation(player)
+        if action:
+            if action['type'] == 'offer':
+               self.swap.add_offer(player['account'], action['property']['id'], action['property']['price'])
+            elif action['type'] == 'rent':
+               self.swap.add_invoice(action['owner']['account'], player['account'], action['property']['rent'])
+            action['from'] = player
+            emit('action', action)
 
-    def prepare_player_action(self):
-        action = self.get_player_action_expectation(self.cur_player())
-        if action['info']['action'] == 'buy':
-           self.swap.add_iofferu(self.accounts[action['player']['account']], action['info']['property']['id'], action['info']['property']['price'])
-        elif action['info']['action'] == 'rent':
-           self.swap.add_iou(self.accounts[action['info']['owner']['account']], self.accounts[action['player']['account']], action['info']['property']['rent'])
-        self.emit('action', **action)
-
-    def roll(self, dice = None):
-        # roll all dices
-        # create all expectations
-        if self.update_player_position(dice):
-            self.prepare_player_action()
+    def check_round_finished(self):
+        if not self.swap.pending():
+            self.execute_round()

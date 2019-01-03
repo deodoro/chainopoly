@@ -1,22 +1,17 @@
 import tornado.ioloop
 import logging
-from pyee import EventEmitter
-from engine import Game
+from engine import Game, EventEmitterSingleton
 from websocket_handler import broadcast
 
 logger = logging.getLogger('game_collection')
 
-def broadcast_new_player(game_id, player):
-    logger.debug('new player game=%d player=%r' % (game_id, player))
-    broadcast('new_player', payload={'game_id': game_id, 'player': player})
+def broadcast_new_player(info):
+    logger.debug('new player player=%r' % player)
+    broadcast('new_player', payload=info)
 
-def broadcast_move(game_id, player):
-    logger.debug('move game=%s player=%r' % (game_id, player))
-    broadcast('move', payload={'game_id': game_id, 'player': player})
-
-def broadcast_action(game_id, player, info):
-    logger.debug('action game=%s player=%s action=%s' % (game_id, player, info))
-    broadcast('action', payload={'game_id': game_id, 'player': player, 'info': info})
+def broadcast_action(info):
+    logger.debug('action action=%r' % info)
+    broadcast('action', payload=info)
 
 class GameCollection:
     # Here will be the instance stored.
@@ -36,11 +31,10 @@ class GameCollection:
         else:
             GameCollection.__instance = self
         self.games = []
-        self.ee = EventEmitter(tornado.ioloop.IOLoop.current().asyncio_loop)
+        self.ee = EventEmitterSingleton.instance()
         self.ee.on('newplayer', broadcast_new_player)
-        self.ee.on('move', broadcast_move)
         self.ee.on('action', broadcast_action)
-        self.games = [{'id': 1, 'title': 'Chainopoly', 'game': Game(1, self.ee)}]
+        self.games = [{'title': 'Chainopoly', 'game': Game()}]
 
     def get(self):
         return self.games[0]['game']

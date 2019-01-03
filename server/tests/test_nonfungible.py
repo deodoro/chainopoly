@@ -18,13 +18,12 @@ def test_mint():
     assert t.what_owns(t.account) == [1]
 
 def test_transfer(token):
-    a = Account(1)
-    assert token.transfer(a, 1)
+    assert token.transfer('1', 1)
     assert token.what_owns(token.account) == [1]
-    assert token.what_owns(a) == []
+    assert token.what_owns('1') == []
     assert token.who_owns(1) == None
-    assert token.confirm(a, 1)
-    assert token.who_owns(1)._id == 1
+    assert token.confirm('1', 1)
+    assert token.who_owns(1) == '1'
 
 def test_uri(token):
     assert token.get_uri(1) == None

@@ -2,17 +2,6 @@
 # -*- coding: utf-8 -*-
 import json
 
-class Account:
-    def __init__(self, id):
-        self._id = id
-        self.balance = 0
-
-    def to_dict(self):
-        return {'account': self._id}
-
-    def to_json(self):
-        return json.dumps(self.to_dict())
-
 class Property:
     LAST_ID = 1
 
