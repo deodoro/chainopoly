@@ -51,7 +51,7 @@ class Game(object):
     def new_player_allowed(self, account):
         return len(self.players) < Game.MAX_PLAYERS and account not in self.accounts
 
-    # A player registers
+    # A player registers herself
     def register_player(self, account, alias):
         if self.new_player_allowed(account):
             self.accounts.append(account)
@@ -65,6 +65,18 @@ class Game(object):
                     self.roll(self.players[-1])
         else:
             raise Exception("Invalid registration")
+
+    def unregister_player(self, account):
+        if account in self.accounts:
+            del self.players[[i["account"] for i in self.players].index(account)]
+            self.accounts.remove(account)
+            self.money.transfer(account, self.money.account, self.money.balance_of(account))
+            props = self.properties.what_owns(account)
+            for p in props:
+                self.properties.transfer(self.properties.account, p)
+                self.properties.confirm(self.properties.account, p)
+            print('leaving')
+            emit('leaving', { 'player': account })
 
     def execute_round(self):
         self.round += 1

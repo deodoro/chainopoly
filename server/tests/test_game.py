@@ -37,7 +37,7 @@ def game():
     event_queue = deque()
     ee = EventEmitterSingleton.instance()
     ee.remove_all_listeners()
-    for e in ['transaction', 'newplayer', 'newround', 'action', 'match']:
+    for e in ['transaction', 'newplayer', 'newround', 'action', 'match', 'leaving']:
         ee.on(e, queue_event(e))
     return Game()
 
@@ -60,6 +60,32 @@ def test_register(game):
         assert False
     except Exception as e:
         assert True
+
+def test_unregister(game):
+    game.register_player("1", "deodoro")
+    game.register_player("2", "mario")
+    game.register_player("3", "jiji")
+    assert check_event({"event": "transaction"})
+    assert check_event({"event": "newplayer"})
+    assert check_event({"event": "transaction"})
+    assert check_event({"event": "newplayer"})
+    assert check_event({"event": "newround"})
+    assert check_event({"event": "action"})
+    assert check_event({"event": "transaction"})
+    assert check_event({"event": "newplayer"})
+    players = game.list_players()
+    assert len(players) == 3
+    assert len([i for i in players if i["alias"] == "deodoro"]) == 1
+    assert len([i for i in players if i["alias"] == "mario"]) == 1
+    assert len([i for i in players if i["alias"] == "jiji"]) == 1
+    game.unregister_player("2")
+    assert check_event({"event": "transaction"})
+    assert check_event({"event": "leaving", "player": "2"})
+    players = game.list_players()
+    assert len(players) == 2
+    assert len([i for i in players if i["alias"] == "deodoro"]) == 1
+    assert len([i for i in players if i["alias"] == "mario"]) == 0
+    assert len([i for i in players if i["alias"] == "jiji"]) == 1
 
 def test_move_events(game):
     # players are registered
