@@ -69,12 +69,39 @@ class Game(object):
     def execute_round(self):
         self.round += 1
         emit('newround', {'round': self.round})
-        for player in self.players:
-            self.roll(player)
+        while not self.swap.pending():
+            for player in self.players:
+                self.roll(player)
 
     def roll(self, player):
         player['position'] = (player['position'] + randint(2,12)) % len(self.board)
-        self.prepare_player_action(player)
+        self.emit_player_events(player)
+
+    def emit_player_events(self, player):
+        action = self.get_action_expectation(player)
+        if action:
+            if action['type'] == 'offer':
+               self.swap.add_offer(player['account'], action['property']['id'], action['property']['price'])
+            elif action['type'] == 'rent':
+               self.swap.add_invoice(player['account'], action['property']['id'], action['property']['rent'])
+            action['from'] = player
+            emit('action', action)
+
+    def get_action_expectation(self, player):
+        prop = self.board[player['position']]
+        if prop:
+            owner = self.properties.who_owns(prop._id)
+            if owner:
+                if owner != player['account']:
+                    return {'type': 'rent', 'owner': self.get_player(owner), 'property': prop.to_dict()}
+            elif not any([p for p in self.players if p['account'] != player['account'] and p['position'] == player['position']]):
+                return {'type': 'offer', 'property': prop.to_dict()}
+        else:
+            return None
+
+    def check_round_finished(self):
+        if not self.swap.pending():
+            self.execute_round()
 
     # Gets a player info by account
     def get_player(self, account):
@@ -100,27 +127,3 @@ class Game(object):
     def list_properties(self):
         return self.board
 
-    def get_player_action_expectation(self, player):
-        prop = self.board[player['position']]
-        if prop:
-            owner = self.properties.who_owns(prop._id)
-            if owner:
-                return {'type': 'rent', 'owner': self.get_player(owner), 'property': prop.to_dict()}
-            elif not any([p for p in self.players if p['account'] != player['account'] and p['position'] == player['position']]):
-                return {'type': 'offer', 'property': prop.to_dict()}
-        else:
-            return None
-
-    def prepare_player_action(self, player):
-        action = self.get_player_action_expectation(player)
-        if action:
-            if action['type'] == 'offer':
-               self.swap.add_offer(player['account'], action['property']['id'], action['property']['price'])
-            elif action['type'] == 'rent':
-               self.swap.add_invoice(action['owner']['account'], player['account'], action['property']['rent'])
-            action['from'] = player
-            emit('action', action)
-
-    def check_round_finished(self):
-        if not self.swap.pending():
-            self.execute_round()

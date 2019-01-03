@@ -8,6 +8,7 @@ def info():
     fungible = Fungible()
     nonfungible = NonFungible()
     nonfungible.mint(1)
+    nonfungible.mint(2)
     swap = AtomicSwap(fungible, nonfungible)
     return (fungible, nonfungible, swap)
 
@@ -16,8 +17,10 @@ def test_fungible(info):
     a = "0"
     o = "1"
     d = "2"
+    nonfungible.transfer('1', 1)
+    nonfungible.confirm('1', 1)
     fungible.transfer(a, d, 10)
-    swap.add_invoice(o, d, 5)
+    swap.add_invoice(d, 1, 5)
     assert swap.has_pending(d)
     fungible.transfer(d, o, 5)
     assert not swap.has_pending(d)
@@ -48,9 +51,11 @@ def test_pending(info):
     a = "0"
     o = "1"
     d = "2"
+    nonfungible.transfer('1', 1)
+    nonfungible.confirm('1', 1)
     fungible.transfer(a, d, 10)
-    swap.add_invoice(o, d, 5)
-    swap.add_offer(d, token=1, value=5)
+    swap.add_invoice(d, 1, 5)
+    swap.add_offer(d, token=2, value=5)
     assert swap.pending()
     fungible.transfer(d, o, 5)
     assert swap.pending()

@@ -11,8 +11,11 @@ class AtomicSwap:
         self.last_id = 0
         EventEmitterSingleton.instance().on('transaction', lambda t: self.match_transaction(t['from'], t['to'], t['value']))
 
-    def add_invoice(self, creditor, debitor, value):
-        self.pending_fungible.append({"creditor": creditor, "debitor": debitor, "value": value, "id": self.last_id})
+    def add_invoice(self, debitor, token, value):
+        creditor = self.nonfungible.who_owns(token)
+        print(creditor)
+        assert creditor
+        self.pending_fungible.append({"creditor": creditor, "debitor": debitor, "token": token, "value": value, "id": self.last_id})
         self.last_id += 1
         return True
 
