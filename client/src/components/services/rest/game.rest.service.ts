@@ -81,6 +81,10 @@ export class GameRESTService extends GameService {
         return this.address;
     }
 
+    public setAddress(address) {
+        this.address = address;
+    }
+
     private generateAccount(): string {
         return (
             "0x" +

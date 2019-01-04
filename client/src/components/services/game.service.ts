@@ -71,6 +71,7 @@ export abstract class GameService {
     }
 
     public abstract getAddress(): string;
+    public abstract setAddress(account: string);
     public abstract getBalance(): Observable<number>;
     public abstract getProperties(): Observable<Property[]>;
     public abstract listPlayers(): Observable<Account[]>;

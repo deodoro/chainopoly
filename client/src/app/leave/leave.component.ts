@@ -25,7 +25,7 @@ export class LeaveComponent implements OnInit {
 
     leaveGame() {
         this.gameService.unregister().subscribe(r => {
-            this.router.navigateByUrl(`/start`);
+            this.router.navigateByUrl("/start");
         });
     }
 }

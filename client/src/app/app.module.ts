@@ -19,6 +19,7 @@ import { LeaveComponent } from './leave/leave.component';
 import { TransferComponent } from './transfer/transfer.component';
 import { PropertyComponent } from './property/property.component';
 import { UserheaderComponent } from './userheader/userheader.component';
+import { TestpanelComponent } from './testpanel/testpanel.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { UserheaderComponent } from './userheader/userheader.component';
     MarkerComponent,
     PropertyComponent,
     UserheaderComponent,
+    TestpanelComponent,
   ],
   imports: [
     BrowserModule,

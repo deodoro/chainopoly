@@ -1,0 +1,13 @@
+<div class="container">
+    <input type="text" [(ngModel)]="data.account" placeholder="Account">
+    <input type="text" [(ngModel)]="data.username" placeholder="Alias">
+    <button (click)="generateAccount()">Generate account</button>
+    <button (click)="register()">Register</button>
+    <button (click)="unRegister()">Unregister</button>
+</div>
+<div class="container">
+    <div *ngFor="let p of players" class="player">
+        <span>{{ p.account }}</span>
+        <span>{{ p.alias }}</span>
+    </div>
+</div>

@@ -119,6 +119,9 @@ export class GameWeb3Service extends GameService {
         return this.address;
     }
 
+    public setAddress(address) {
+    }
+
     // getMyColor(account_id): Observable<string> {
     //     return Observable.create(observer => {
     //         if (this.color_cache == null) {
