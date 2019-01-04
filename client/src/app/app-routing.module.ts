@@ -21,7 +21,7 @@ const routes: Routes = [
     { path: "leave", component: LeaveComponent },
     { path: "stats", component: StatsComponent },
     { path: "assets", component: AssetsComponent },
-    { path: "transfers", component: TransferComponent }
+    { path: "transfers", component: TransferComponent },
     { path: "testpanel", component: TestpanelComponent }
 ];
 

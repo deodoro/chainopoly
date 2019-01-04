@@ -34,9 +34,6 @@ export class StartComponent {
             leaving: p => {
                 this.playerCount--;
                 this.participating = this.participating && (p != this.data.account);
-                console.dir(`data=${JSON.stringify(p)}`);
-                console.dir(`account=${this.data.account}`);
-                console.dir(`participating=${this.participating}`);
             }
         });
     }

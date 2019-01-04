@@ -25,8 +25,6 @@ export class DashboardComponent {
                 this.players.push(player);
             },
             leaving: account => {
-                console.dir(this.players);
-                console.dir(account);
                 this.players = this.players.filter(i => i.account != account)
                 if (account == this.gameService.getAddress())
                     this.router.navigateByUrl("/start");

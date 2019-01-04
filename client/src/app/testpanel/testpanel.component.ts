@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { GameService } from "../../components/services/game.service";
+import _ from "lodash";
 
 @Component({
     selector: "app-testpanel",
@@ -8,6 +9,8 @@ import { GameService } from "../../components/services/game.service";
 })
 export class TestpanelComponent {
     private data = { account: "", username: "" };
+    private players;
+
     static parameters = [GameService];
     constructor(private gameService: GameService) {
         this.gameService.listPlayers().subscribe(p => this.players = p);
@@ -28,6 +31,6 @@ export class TestpanelComponent {
 
     private unRegister() {
         this.gameService.setAddress(this.data.account);
-        this.gameService.unregister(this.data.account).subscribe(r => console.dir(r));
+        this.gameService.unregister().subscribe(r => console.dir(r));
     }
 }
