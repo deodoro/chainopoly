@@ -18,6 +18,6 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         ws.remove(self)
         logger.debug('WebSocket closed')
 
-def broadcast(type, player_id = None, game_id = None, payload = None):
+def broadcast(type, player_id = None, payload = None):
     for socket in ws:
-        socket.write_message(json.dumps({'type': type, 'player': player_id, 'game': game_id, 'payload': payload}))
+        socket.write_message(json.dumps({'type': type, 'player': player_id, 'payload': payload}))

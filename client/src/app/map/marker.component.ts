@@ -30,7 +30,7 @@ export class MarkerComponent {
     constructor(private bottomSheet: MatBottomSheet) {}
 
     showCard() {
-        const bottomSheetRef = this.bottomSheet.open(PropertyComponent, {
+        this.bottomSheet.open(PropertyComponent, {
           ariaLabel: 'Property details',
           data: { 'property': this.property }
         });

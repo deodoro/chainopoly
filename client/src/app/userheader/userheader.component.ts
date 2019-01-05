@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { GameService } from "../../components/services/game.service";
 import { PlayerService } from "../../components/services/player.service";
+import { EventsService } from "../../components/services/events.service";
 import _ from "lodash";
 
 @Component({
@@ -13,9 +14,9 @@ export class UserheaderComponent {
     private propertyBalance: number;
     private evtSubscription;
 
-    static parameters = [GameService, PlayerService];
-    constructor(private gameService: GameService, private playerService: PlayerService) {
-        this.evtSubscription = this.gameService.on({
+    static parameters = [GameService, PlayerService, EventsService];
+    constructor(private gameService: GameService, private playerService: PlayerService, private eventsService: EventsService) {
+        this.evtSubscription = this.eventsService.on({
             transaction: data => {
                 if (this.playerService.getAddress() == data.account) this.refresh();
             },
@@ -30,6 +31,11 @@ export class UserheaderComponent {
         this.gameService
             .getBalance()
             .subscribe(balance => (this.balance = balance));
+    }
+
+    ngAfterViewInit() {
+        // Move up, default is to the bottom
+        setTimeout(() => window.scroll(0, 0), 200);
     }
 
     OnDestroy() {

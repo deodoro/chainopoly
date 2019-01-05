@@ -20,6 +20,7 @@ import { TransferComponent } from './transfer/transfer.component';
 import { PropertyComponent } from './property/property.component';
 import { UserheaderComponent } from './userheader/userheader.component';
 import { TestpanelComponent } from './testpanel/testpanel.component';
+import { ErrorComponent } from './error/error.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { TestpanelComponent } from './testpanel/testpanel.component';
     PropertyComponent,
     UserheaderComponent,
     TestpanelComponent,
+    ErrorComponent,
   ],
   imports: [
     BrowserModule,
@@ -45,7 +47,7 @@ import { TestpanelComponent } from './testpanel/testpanel.component';
     MaterialModule,
     FormsModule,
   ],
-  entryComponents: [ PropertyComponent ],
+  entryComponents: [PropertyComponent, ErrorComponent],
   providers: [],
   bootstrap: [AppComponent]
 })

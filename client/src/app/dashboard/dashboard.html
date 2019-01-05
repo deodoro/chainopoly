@@ -1,10 +1,9 @@
 <app-userheader></app-userheader>
 
-
 <div class="contents">
     <h3>You're ranking #{{ ranking() }} of {{ players.length }} players</h3>
     <h1>Rents due</h1>
-    <table mat-table [dataSource]="pending.rent">
+    <table mat-table [dataSource]="pendingRent" #rentTable>
       <ng-container matColumnDef="from">
         <th mat-header-cell *matHeaderCellDef> From </th>
         <td mat-cell *matCellDef="let r"> {{ r.src.alias }} </td>
@@ -27,7 +26,7 @@
           [ngClass]="{'highlight': r.src.account==playerService.getAddress() }"></tr>
     </table>
     <h1>Offers pending</h1>
-    <table mat-table [dataSource]="pending.offer">
+    <table mat-table [dataSource]="pendingOffer" #offerTable>
       <ng-container matColumnDef="dst">
         <th mat-header-cell *matHeaderCellDef> To </th>
         <td mat-cell *matCellDef="let r"> {{ r.dst.alias }} </td>
@@ -47,6 +46,7 @@
 
       <tr mat-header-row *matHeaderRowDef="['dst', 'value', 'property', 'color']"></tr>
       <tr mat-row *matRowDef="let r; columns: ['dst', 'value', 'property', 'color'];"
-          [ngClass]="{'highlight': r.dst.account==playerService.getAddress() }"></tr>
+          [ngClass]="{'highlight': offersMe(r) }"
+          (click)="goToOffer(r)"></tr>
   </table>
 </div>

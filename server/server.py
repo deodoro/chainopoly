@@ -10,6 +10,7 @@ import sys
 from pyee import EventEmitter
 from engine import Game, EventEmitterSingleton
 from websocket_handler import WebSocketHandler, broadcast
+from random import seed
 
 # Boilerplate - configurar um logger global para console e para arquivo
 log_format = '%(asctime)s %(levelname)s:%(name)s:%(message)s'
@@ -100,16 +101,16 @@ class TransferHandler(tornado.web.RequestHandler):
         args = json.loads(self.request.body)
         try:
             global game
-            if args["source"] not in game.accounts:
+            if args["src"] not in game.accounts:
                 raise Exception('Invalid debit account')
-            if args["target"] not in game.accounts:
+            if args["dst"] not in game.accounts:
                 raise Exception('Invalid credit account')
             if int(args["value"]) <= 0:
                 raise Exception('Invalid value')
             self.set_header('Content-Type', 'application/json')
-            self.write(json.dumps({"result": game.money.transfer(game.accounts[args["source"]], game.accounts[args["target"]], int(args["value"]))}))
+            self.write(json.dumps({"result": game.money.transfer(args["src"], args["dst"], int(args["value"]))}))
         except Exception as e:
-            logger.exception('Making transaction %r in game #%s' % (args, game_id))
+            logger.exception('Submitting transaction %r' % args)
             self.set_status(400)
             self.write(str(e))
 
@@ -132,7 +133,6 @@ class PendingHandler(tornado.web.RequestHandler):
         try:
             global game
             self.set_header('Content-Type', 'application/json')
-            print(game.swap.get_pending())
             self.write(json.dumps({"pending": game.swap.get_pending()}))
         except Exception as e:
             logger.exception('Declining retrieving pending actions')
@@ -165,7 +165,7 @@ if __name__ == '__main__':
         # These hooks propagate events to websockets
         def do_broadcast(e):
             def f(info):
-                print("broadcasting %s payload=%r" % (e, info))
+                logger.debug("broadcasting %s payload=%r" % (e, info))
                 broadcast(e, payload=info)
             return f
         for e in ['transaction', 'newplayer', 'newround', 'offer', 'invoice', 'match', 'leaving']:
@@ -179,5 +179,7 @@ if __name__ == '__main__':
         # Startup
         logger.info('Webserver is listening to port %s' % webServerPort)
         tornado.ioloop.IOLoop.instance().start()
+
+        seed(0)
     except Exception as e:
         logger.exception('Webserver fatal error')
