@@ -132,7 +132,8 @@ class PendingHandler(tornado.web.RequestHandler):
         try:
             global game
             self.set_header('Content-Type', 'application/json')
-            self.write(json.dumps({"pending": json.dumps(game.swap.get_pending())}))
+            print(game.swap.get_pending())
+            self.write(json.dumps({"pending": game.swap.get_pending()}))
         except Exception as e:
             logger.exception('Declining retrieving pending actions')
             self.set_status(400)

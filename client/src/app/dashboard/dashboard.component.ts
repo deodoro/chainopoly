@@ -18,9 +18,7 @@ export class DashboardComponent {
 
     static parameters = [GameService, PlayerService, Router];
     constructor(private gameService: GameService, private playerService: PlayerService, private router: Router) {
-        this.gameService.getPending().subscribe(pending => {
-            this.pending = pending;
-        });
+        this.gameService.getPending().subscribe(pending => this.pending = pending);
         this.evtSubscription = this.gameService.on({
             newplayer: player => {
                 this.players.push(player);

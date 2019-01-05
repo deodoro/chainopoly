@@ -94,66 +94,58 @@ export class GameRESTService extends GameService {
     }
 
     public getPending(): Observable<PendingInfo> {
-        return of({
-            rent: [
-                {
-                    src: {
-                        account: "0xf5ac0452ed4ebb92d67e169beaa81d7d3b5a7ccb",
-                        alias: "Alias"
-                    },
-                    dst: {
-                        account: "0x1234567890123456789012345678901234567890",
-                        alias: "Other"
-                    },
-                    value: 10,
-                    property: {
-                        token: 1,
-                        name: "Wall St."
-                    }
-                },
-                {
-                    src: {
-                        account: "0x1234567890123456789012345678901234567890",
-                        alias: "Alias"
-                    },
-                    dst: {
-                        account: "0x1234567890123456789012345678901234567890",
-                        alias: "Other"
-                    },
-                    value: 10,
-                    property: {
-                        token: 1,
-                        name: "Wall St."
-                    }
-                }
-            ],
-            offer: [
-                {
-                    property: {
-                        token: 1,
-                        name: "Wall St.",
-                        color: "blue"
-                    },
-                    value: 10,
-                    to: {
-                        account: "0xf5ac0452ed4ebb92d67e169beaa81d7d3b5a7ccb",
-                        alias: "Other"
-                    }
-                },
-                {
-                    property: {
-                        token: 1,
-                        name: "Wall St.",
-                        color: "blue"
-                    },
-                    value: 10,
-                    to: {
-                        account: "0x1234567890123456789012345678901234567890",
-                        alias: "Other"
-                    }
-                }
-            ]
-        });
+        console.log("getPending");
+        return Observable.create(observer => {
+            return this.Http.get(this.urlFor("pending")).map(res => res.json().pending)
+                    .subscribe(pending => {
+                        let accounts = _.concat(pending.map(i => i["_from"]), pending.map(i => i["_to"]));
+                        let tokens = _.concat(pending.map(i => i["token"]));
+                        this.playerService.getPlayerInfo(accounts).subscribe(p => {
+                            this.boardService.getTokenInfo(tokens).subscribe(t => {
+                                let m = i => {
+                                    return {
+                                        "src": i["type"] == "rent" ? p.find(i["_from"]) : null,
+                                        "dst": p.find(i["_to"]),
+                                        "property": t.find(i["token"]),
+                                        "value": i["value"]
+                                    }
+                                };
+                                observer.next({rent: pending.filter(i => i.type == "invoice").map(m),
+                                               offer: pending.filter(i => i.type == "offer").map(m)});
+                                observer.complete()
+                            });
+                        });
+                    })
+                });
+                    // res => {
+                    //     console.log(res);
+                    //     // let pending = res.json().pending;
+                    //     // let accounts = _.concat(pending.map(i => i["_from"]), pending.map(i => i["_to"]));
+                    //     // let tokens = _.concat(pending.map(i => i["token"]));
+                    //     // console.log("to call");
+                    //     // this.playerService.getPlayerInfo(accounts).subscribe(p => {
+                    //     //     console.dir(accounts);
+                    //     //     this.boardService.getTokenInfo(tokens).subscribe(t => {
+                    //     //         console.dir(tokens);
+                    //     //         let items = pending.map(i => {
+                    //     //             return {
+                    //     //                 "src": i["type"] == "rent" ? p.find(i["_from"]) : null,
+                    //     //                 "dst": p.find(i["_to"]),
+                    //     //                 "property": t.find(i["token"]),
+                    //     //                 "value": i["value"]
+                    //     //             }
+                    //     //         });
+                    //     //         console.dir(items);
+                    //     //         observer.next({ 'rent': items.filter(i => i.type == 'invoice'),
+                    //     //                         'offer': items.filter(i => i.type == 'offer') });
+                    //     //         observer.complete();
+                    //     //     })
+                    //     // });
+                    //     observer.next(null);
+                    //     observer.complete()
+        //             }
+        //         );
+        // });
     }
 
     public getHistory(): Observable<Transaction[]> {
