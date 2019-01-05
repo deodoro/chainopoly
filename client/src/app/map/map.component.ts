@@ -7,7 +7,9 @@ import { BoardService, Property } from "../../components/services/board.service"
     styleUrls: ["./map.component.scss"]
 })
 export class MapComponent {
-    private zoomLevel = 0.5;
+    private MAX_ZOOM = 4;
+    private MIN_ZOOM = 0.52;
+    private zoomLevel = 0.52;
     private properties : Property[] = [];
 
     static parameters = [BoardService];
@@ -16,10 +18,10 @@ export class MapComponent {
     }
 
     private zoomIn() {
-        if (this.zoomLevel < 2) this.zoomLevel *= 2;
+        this.zoomLevel = Math.min(this.zoomLevel * 2, this.MAX_ZOOM)
     }
 
     private zoomOut() {
-        if (this.zoomLevel > 0.25) this.zoomLevel /= 2;
+        this.zoomLevel = Math.max(this.zoomLevel / 2, this.MIN_ZOOM)
     }
 }

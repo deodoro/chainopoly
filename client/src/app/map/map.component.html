@@ -1,7 +1,7 @@
 <div class="map-view">
     <div [style.zoom]="zoomLevel">
         <img src="/assets/map.png" #map>
-        <div class="marker" *ngFor="let p of properties" [style.top]="(p.geo.y * 2672 - 50) + 'px'" [style.left]="(p.geo.x * 1503) + 'px'">
+        <div class="marker" *ngFor="let p of properties" [style.top]="(p.geo.y * 1288 - 85) + 'px'" [style.left]="(p.geo.x * 725 - 30) + 'px'">
             <app-marker [property]="p"></app-marker>
         </div>
 

@@ -5,7 +5,7 @@
         "price": 60,
         "rent": 2,
         "position": 1,
-        "geo": { "x": 0.19, "y": 0.26 }
+        "geo": { "x": 0.267, "y": 0.143 }
     },
     {
         "name": "Bree",
@@ -13,7 +13,7 @@
         "price": 60,
         "rent": 4,
         "position": 3,
-        "geo": { "x": 0.23, "y": 0.265 }
+        "geo": { "x": 0.310, "y": 0.183 }
     },
     {
         "name": "Weathertop",
@@ -21,23 +21,23 @@
         "price": 100,
         "rent": 6,
         "position": 6,
-        "geo": { "x": 0.273, "y": 0.265 }
+        "geo": { "x": 0.370, "y": 0.219 }
     },
     {
-        "name": "Last Bridge of Mitheinel",
+        "name": "Last Bridge",
         "color": "white",
         "price": 100,
         "rent": 6,
         "position": 8,
-        "geo": { "x": 0.34, "y": 0.25 }
+        "geo": { "x": 0.491, "y": 0.263 }
     },
     {
-        "name": "Ford of Bruinen",
+        "name": "Bruinen Ford",
         "color": "white",
         "price": 120,
         "rent": 8,
         "position": 9,
-        "geo": { "x": 0.384, "y": 0.24 }
+        "geo": { "x": 0.580, "y": 0.289 }
     },
     {
         "name": "Rivendell",
@@ -45,7 +45,7 @@
         "price": 140,
         "rent": 10,
         "position": 11,
-        "geo": { "x": 0.42, "y": 0.24 }
+        "geo": { "x": 0.618, "y": 0.323 }
     },
     {
         "name": "Redhorn Pass",
@@ -53,7 +53,7 @@
         "price": 140,
         "rent": 10,
         "position": 13,
-        "geo": { "x": 0.42, "y": 0.272 }
+        "geo": { "x": 0.554, "y": 0.370 }
     },
     {
         "name": "Gates of Moria",
@@ -61,7 +61,7 @@
         "price": 160,
         "rent": 12,
         "position": 14,
-        "geo": { "x": 0.4, "y": 0.29 }
+        "geo": { "x": 0.475, "y": 0.380 }
     },
     {
         "name": "Celebdil",
@@ -69,7 +69,7 @@
         "price": 180,
         "rent": 14,
         "position": 16,
-        "geo": { "x": 0.455, "y": 0.28 }
+        "geo": { "x": 0.510, "y": 0.415 }
     },
     {
         "name": "Mirrormere",
@@ -77,7 +77,7 @@
         "price": 180,
         "rent": 14,
         "position": 18,
-        "geo": { "x": 0.485, "y": 0.29 }
+        "geo": { "x": 0.585, "y": 0.441 }
     },
     {
         "name": "Lothlórien",
@@ -85,7 +85,7 @@
         "price": 200,
         "rent": 16,
         "position": 19,
-        "geo": { "x": 0.541, "y": 0.295 }
+        "geo": { "x": 0.642, "y": 0.498 }
     },
     {
         "name": "Fangorn",
@@ -93,7 +93,7 @@
         "price": 220,
         "rent": 18,
         "position": 21,
-        "geo": { "x": 0.495, "y": 0.317 }
+        "geo": { "x": 0.519, "y": 0.486 }
     },
     {
         "name": "Nen Hithoel",
@@ -101,7 +101,7 @@
         "price": 220,
         "rent": 18,
         "position": 23,
-        "geo": { "x": 0.603, "y": 0.335 }
+        "geo": { "x": 0.586, "y": 0.610 }
     },
     {
         "name": "Gap of Rohan",
@@ -109,7 +109,7 @@
         "price": 240,
         "rent": 20,
         "position": 24,
-        "geo": { "x": 0.42, "y": 0.345 }
+        "geo": { "x": 0.336, "y": 0.455 }
     },
     {
         "name": "Edoras",
@@ -117,7 +117,7 @@
         "price": 260,
         "rent": 22,
         "position": 26,
-        "geo": { "x": 0.48, "y": 0.363 }
+        "geo": { "x": 0.367, "y": 0.535 }
     },
     {
         "name": "Emyn Mull",
@@ -125,7 +125,7 @@
         "price": 260,
         "rent": 22,
         "position": 27,
-        "geo": { "x": 0.609, "y": 0.363 }
+        "geo": { "x": 0.550, "y": 0.648 }
     },
     {
         "name": "Dead Marshes",
@@ -133,7 +133,7 @@
         "price": 280,
         "rent": 24,
         "position": 29,
-        "geo": { "x": 0.637, "y": 0.35 }
+        "geo": { "x": 0.619, "y": 0.656 }
     },
     {
         "name": "Morannon",
@@ -141,7 +141,7 @@
         "price": 300,
         "rent": 26,
         "position": 31,
-        "geo": { "x": 0.667, "y": 0.358 }
+        "geo": { "x": 0.613, "y": 0.703 }
     },
     {
         "name": "Minas Tirith",
@@ -149,7 +149,7 @@
         "price": 300,
         "rent": 26,
         "position": 32,
-        "geo": { "x": 0.65, "y": 0.393 }
+        "geo": { "x": 0.513, "y": 0.725 }
     },
     {
         "name": "Minas Morgul",
@@ -157,7 +157,7 @@
         "price": 320,
         "rent": 28,
         "position": 34,
-        "geo": { "x": 0.688, "y": 0.393 }
+        "geo": { "x": 0.556, "y": 0.760 }
     },
     {
         "name": "Mount Doom",
@@ -165,7 +165,7 @@
         "price": 350,
         "rent": 35,
         "position": 37,
-        "geo": { "x": 0.722, "y": 0.395 }
+        "geo": { "x": 0.606, "y": 0.783 }
     },
     {
         "name": "Barad Dûr",
@@ -173,6 +173,6 @@
         "price": 400,
         "rent": 50,
         "position": 39,
-        "geo": { "x": 0.752, "y": 0.386 }
+        "geo": { "x": 0.680, "y": 0.815 }
     }
 ]
