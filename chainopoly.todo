@@ -13,8 +13,9 @@ Chainopoly:
       add notification from swap to game
       create offers and invoices for round
       once all pending items are cleared, new players are added, next round is started
-    ☐ service to list pending offers/invoices
-    ☐ service for listing assets
+    ✔ service to list pending offers/invoices @done (19-01-02 17:25)
+    ☐ decline offer form
+    ✔ service for listing assets @done (19-01-02 17:25)
     ☐ bottom sheet in asset list
     ☐ load transaction history
     ☐ hook transfer service
@@ -22,15 +23,18 @@ Chainopoly:
     ☐ generate stats from game info
       write ranking service (list players and decide client side)
     ☐ click on highlighted (own) items leads to transfer
-    ☐ unregister service
+    ✔ unregister service @done (19-01-02 17:25)
     ☐ terminate game on players leaving
     ☐ review color scheme
       mixin for property colors?
-    ☐ add property color bubble to asset list
-    ☐ add property color bubble to offers pending (dashboard)
+    ✔ add property color bubble to asset list @done (19-01-02 17:25)
+    ✔ add property color bubble to offers pending (dashboard) @done (19-01-02 18:08)
     ☐ calculate asset total price
     ☐ check if fixed header is feasible
     ☐ detect non registered game and go to /start if so
+    ☐ on successful transfer, go to the bottom, show "waiting" message and highlight transfer
+    ☐ remove pending actions from players that leave
+  ☐ Fix production build
   ☐ show grid
     Zoom to populated squares [min(x, y), max(x,y)]
   ☐ name per account @maybe

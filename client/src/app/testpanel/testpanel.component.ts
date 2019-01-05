@@ -9,19 +9,19 @@ import _ from "lodash";
     styleUrls: ["./testpanel.component.scss"]
 })
 export class TestpanelComponent {
-    private data = { account: "", username: "" };
-    private players;
+    public data = { account: "", username: "" };
+    public players;
 
     static parameters = [GameService];
     constructor(private gameService: GameService, private playerService: PlayerService) {
         this.playerService.getPlayers().subscribe(p => this.players = p);
     }
 
-    private register() {
+    public register() {
         this.playerService.register(this.data).subscribe(r => console.dir(r));
     }
 
-    private generateAccount() {
+    public generateAccount() {
         this.data.account =
             "0x" +
             _.join(
@@ -30,7 +30,7 @@ export class TestpanelComponent {
             );
     }
 
-    private unRegister() {
+    public unRegister() {
         this.playerService.setAddress(this.data.account);
         this.playerService.unregister().subscribe(r => console.dir(r));
     }

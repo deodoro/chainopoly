@@ -8,8 +8,8 @@ import { MAT_BOTTOM_SHEET_DATA } from '@angular/material';
 })
 export class ErrorComponent {
 
-  private errorMessage: string;
-  private details: string;
+  public errorMessage: string;
+  public details: string;
 
   constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: any) {
     this.errorMessage = data.errorMessage;

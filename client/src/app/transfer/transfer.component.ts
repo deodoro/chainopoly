@@ -15,14 +15,14 @@ import _ from "lodash";
     styleUrls: ["./transfer.component.scss"]
 })
 export class TransferComponent {
-    private balance;
-    private transfer = {
+    public balance;
+    public transfer = {
         account: "",
         value: 0
     };
-    private isEmpty = _.isEmpty;
-    private parseInt = Number.parseInt;
-    private history: Transaction[] = [];
+    public isEmpty = _.isEmpty;
+    public parseInt = Number.parseInt;
+    public history: Transaction[] = [];
 
     static parameters = [GameService, PlayerService, ActivatedRoute, MatBottomSheet];
     constructor(

@@ -20,10 +20,10 @@ import _ from "lodash";
     styleUrls: ["./dashboard.scss"]
 })
 export class DashboardComponent {
-    private evtSubscription;
-    private pendingRent: PendingInfo[];
-    private pendingOffer: PendingInfo[];
-    private players: Player[] = [];
+    public evtSubscription;
+    public pendingRent: PendingInfo[];
+    public pendingOffer: PendingInfo[];
+    public players: Player[] = [];
     @ViewChild("offerTable")
     offerTable: MatTable<any>;
     @ViewChild("rentTable")
@@ -80,7 +80,7 @@ export class DashboardComponent {
             .subscribe(players => (this.players = players));
     }
 
-    private ranking() {
+    public ranking() {
         return 0;
     }
 

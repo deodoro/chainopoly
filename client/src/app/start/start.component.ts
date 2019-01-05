@@ -11,15 +11,15 @@ import _ from "lodash";
     styleUrls: ["./start.scss"]
 })
 export class StartComponent {
-    private data = null;
-    private evtSubscription;
+    public data = null;
+    public evtSubscription;
     public isEmpty = _.isEmpty;
     public playerCount = 0;
     public participating = false;
 
     static parameters = [GameService, PlayerService, EventsService, Router];
     constructor(
-        private gameService: GameService,
+        public gameService: GameService,
         private playerService: PlayerService,
         private eventsService: EventsService,
         private router: Router

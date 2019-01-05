@@ -8,8 +8,8 @@ import { GameService } from "../../components/services/game.service";
 })
 export class StatsComponent {
 
-    private balance;
-    private estimates = [{
+    public balance;
+    public estimates = [{
         "title": "Rent to receive",
         "expected": 10,
         "max": 10,
@@ -22,7 +22,7 @@ export class StatsComponent {
         "expected": 5,
         "max": 10,
     }];
-    private ranking = [{
+    public ranking = [{
         "pos": 1,
         "alias": "Bob",
         "net_worth": "$1000"
@@ -35,7 +35,7 @@ export class StatsComponent {
         "alias": "Viv",
         "net_worth": "$1000"
     }];
-    private offers = [{
+    public offers = [{
         "color": "yellow",
         "prob": "0.5",
         "price": 100

@@ -9,9 +9,7 @@ import _ from "lodash";
     styleUrls: ["./leave.component.scss"]
 })
 export class LeaveComponent implements OnInit {
-    private buttonDisabled: boolean = true;
-    private balance: number;
-    private propertyBalance: number;
+    public buttonDisabled: boolean = true;
 
     static parameters = [PlayerService, Router];
     constructor(private playerService: PlayerService, private router: Router) {

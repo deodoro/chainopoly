@@ -12,9 +12,9 @@ import _ from 'lodash';
 })
 export class AssetsComponent {
 
-    private balance = 0;
-    private properties: Property[] = [];
-    private data;
+    public balance = 0;
+    public properties: Property[] = [];
+    public data;
     static parameters = [GameService, MatBottomSheet];
 
     constructor(

@@ -11,7 +11,7 @@
         <div>All transfers are final</div>
     </section>
     <div class="button-input">
-        <button mat-flat-button disabled="{{isEmpty(transfer.account) || isEmpty(transfer.value) || parseInt(transfer.value) <= 0}}" (click)="doTransfer()" color="primary">
+        <button mat-flat-button disabled="{{isEmpty(transfer.account) || isEmpty(transfer.value) || transfer.value <= 0}}" (click)="doTransfer()" color="primary">
             <mat-icon>done</mat-icon> Do transfer
         </button>
     </div>

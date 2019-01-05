@@ -10,12 +10,12 @@ import _ from "lodash";
     styleUrls: ["./userheader.component.scss"]
 })
 export class UserheaderComponent {
-    private balance: number;
-    private propertyBalance: number;
-    private evtSubscription;
+    public balance: number;
+    public propertyBalance: number;
+    public evtSubscription;
 
     static parameters = [GameService, PlayerService, EventsService];
-    constructor(private gameService: GameService, private playerService: PlayerService, private eventsService: EventsService) {
+    constructor(private gameService: GameService, public playerService: PlayerService, private eventsService: EventsService) {
         this.evtSubscription = this.eventsService.on({
             transaction: data => {
                 if (this.playerService.getAddress() == data.account) this.refresh();
