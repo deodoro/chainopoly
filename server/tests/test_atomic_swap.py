@@ -57,6 +57,10 @@ def test_pending(info):
     swap.add_invoice(d, 1, 5)
     swap.add_offer(d, token=2, value=5)
     assert swap.pending()
+    p = swap.get_pending()
+    assert len(p) == 2
+    assert any([i for i in p if i['type'] == 'offer' and i['_from'] == '0' and i['_to'] == '2' and i['token'] == 2 and i['value'] == 5])
+    assert any([i for i in p if i['type'] == 'invoice' and i['_from'] == '1' and i['_to'] == '2' and i['token'] == 1 and i['value'] == 5])
     fungible.transfer(d, o, 5)
     assert swap.pending()
     fungible.transfer(d, a, 5)

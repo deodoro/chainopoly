@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { GameService } from "../../components/services/game.service";
+import { PlayerService } from "../../components/services/player.service";
 import { Router } from "@angular/router";
 import _ from "lodash";
 
@@ -13,8 +13,8 @@ export class LeaveComponent implements OnInit {
     private balance: number;
     private propertyBalance: number;
 
-    static parameters = [GameService, Router];
-    constructor(private gameService: GameService, private router: Router) {
+    static parameters = [PlayerService, Router];
+    constructor(private playerService: PlayerService, private router: Router) {
     }
 
     ngOnInit() {
@@ -24,7 +24,7 @@ export class LeaveComponent implements OnInit {
     }
 
     leaveGame() {
-        this.gameService.unregister().subscribe(r => {
+        this.playerService.unregister().subscribe(r => {
             this.router.navigateByUrl("/start");
         });
     }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { GameService } from "../../components/services/game.service";
+import { PlayerService } from "../../components/services/player.service";
 import _ from "lodash";
 
 @Component({
@@ -12,12 +13,12 @@ export class TestpanelComponent {
     private players;
 
     static parameters = [GameService];
-    constructor(private gameService: GameService) {
-        this.gameService.listPlayers().subscribe(p => this.players = p);
+    constructor(private gameService: GameService, private playerService: PlayerService) {
+        this.playerService.getPlayers().subscribe(p => this.players = p);
     }
 
     private register() {
-        this.gameService.register(this.data).subscribe(r => console.dir(r));
+        this.playerService.register(this.data).subscribe(r => console.dir(r));
     }
 
     private generateAccount() {
@@ -30,7 +31,7 @@ export class TestpanelComponent {
     }
 
     private unRegister() {
-        this.gameService.setAddress(this.data.account);
-        this.gameService.unregister().subscribe(r => console.dir(r));
+        this.playerService.setAddress(this.data.account);
+        this.playerService.unregister().subscribe(r => console.dir(r));
     }
 }

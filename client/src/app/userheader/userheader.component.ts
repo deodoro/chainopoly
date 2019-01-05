@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { GameService } from "../../components/services/game.service";
+import { PlayerService } from "../../components/services/player.service";
 import _ from "lodash";
 
 @Component({
@@ -12,11 +13,11 @@ export class UserheaderComponent {
     private propertyBalance: number;
     private evtSubscription;
 
-    static parameters = [GameService];
-    constructor(private gameService: GameService) {
+    static parameters = [GameService, PlayerService];
+    constructor(private gameService: GameService, private playerService: PlayerService) {
         this.evtSubscription = this.gameService.on({
             transaction: data => {
-                if (this.gameService.getAddress() == data.account) this.refresh();
+                if (this.playerService.getAddress() == data.account) this.refresh();
             },
         });
         this.refresh();

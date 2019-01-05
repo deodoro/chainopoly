@@ -123,15 +123,27 @@ class DeclineHandler(tornado.web.RequestHandler):
             self.set_header('Content-Type', 'application/json')
             self.write(json.dumps({"result": game.swap.reject(debitor=game.accounts[args["source"]])}))
         except Exception as e:
-            logger.exception('Declining offer %r in game #%s' % (args, game_id))
+            logger.exception('Declining offer %r' % args)
             self.set_status(400)
             self.write(str(e))
 
-# Framework do servidor
+class PendingHandler(tornado.web.RequestHandler):
+    def get(self):
+        try:
+            global game
+            self.set_header('Content-Type', 'application/json')
+            self.write(json.dumps({"pending": json.dumps(game.swap.get_pending())}))
+        except Exception as e:
+            logger.exception('Declining retrieving pending actions')
+            self.set_status(400)
+            self.write(str(e))
+
+# API server boot
 if __name__ == '__main__':
     try:
         logger.info('Webserver boot')
 
+        # Associating URI handers
         static_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "contents", "client")
         urls = [
             (r'/api/game/properties/(.+)', PropertiesHandler),
@@ -140,6 +152,7 @@ if __name__ == '__main__':
             (r'/api/game/balance/(.+)', BalanceHandler),
             (r'/api/game/player/(.+)', PlayerInfoHandler),
             (r'/api/game/players', PlayerHandler),
+            (r'/api/game/pending', PendingHandler),
             (r'/api/board', BoardHandler),
             (r'/ws', WebSocketHandler),
             (r'/start', tornado.web.StaticFileHandler, {'path': static_path, 'default_filename': 'index.html'}),
@@ -148,7 +161,7 @@ if __name__ == '__main__':
         ]
         logger.info('Static files from %s' % static_path)
 
-        # Hooks to propagate events to websockets
+        # These hooks propagate events to websockets
         def do_broadcast(e):
             def f(info):
                 print("broadcasting %s payload=%r" % (e, info))
@@ -157,12 +170,12 @@ if __name__ == '__main__':
         for e in ['transaction', 'newplayer', 'newround', 'offer', 'invoice', 'match', 'leaving']:
             EventEmitterSingleton.instance().on(e, do_broadcast(e))
 
-        # Server initialization
+        # Tornado initialization
         webServerPort = os.getenv('PORT') or 8080
         application = tornado.web.Application(urls, autoreload=True, debug=True, static_path=".")
         application.listen(webServerPort)
 
-        # Event loop initialization
+        # Startup
         logger.info('Webserver is listening to port %s' % webServerPort)
         tornado.ioloop.IOLoop.instance().start()
     except Exception as e:

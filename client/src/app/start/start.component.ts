@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { Router } from "@angular/router";
 import { GameService } from "../../components/services/game.service";
+import { PlayerService } from "../../components/services/player.service";
 import _ from "lodash";
 
 @Component({
@@ -15,14 +16,14 @@ export class StartComponent {
     public playerCount = 0;
     public participating = false;
 
-    static parameters = [GameService, Router];
-    constructor(private gameService: GameService, private router: Router) {
+    static parameters = [GameService, PlayerService, Router];
+    constructor(private gameService: GameService, private playerService: PlayerService, private router: Router) {
         this.data = {
-            account: this.gameService.getAddress(),
-            username: this.gameService.getName()
+            account: this.playerService.getAddress(),
+            username: this.playerService.getName()
         };
         this.gameService.emit("clear");
-        this.gameService.listPlayers().subscribe(players => {
+        this.playerService.getPlayers().subscribe(players => {
             this.playerCount = players ? players.length : 0;
             this.participating = !_.isUndefined(_.find(players, i => i.account == this.data.account));
         });
@@ -39,7 +40,7 @@ export class StartComponent {
     }
 
     saveUsername() {
-        this.gameService.setName(this.data.username);
+        this.playerService.setName(this.data.username);
     }
 
     clearUsername() {
@@ -49,7 +50,7 @@ export class StartComponent {
 
     goToGame() {
         if (!this.participating) {
-            this.gameService.register(this.data).subscribe(
+            this.playerService.register(this.data).subscribe(
                 message => {
                     console.log(message);
                 },

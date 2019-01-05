@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
-import { Account, PendingInfo, GameService } from "../../components/services/game.service";
+import { Player, PlayerService } from "../../components/services/player.service";
+import { PendingInfo, GameService } from "../../components/services/game.service";
 import { UserheaderComponent } from "../userheader/userheader.component";
 import _ from "lodash";
 
@@ -12,11 +13,11 @@ import _ from "lodash";
 export class DashboardComponent {
     private evtSubscription;
     private pending = {};
-    private players: Account[] = [];
+    private players: Player[] = [];
     @ViewChild("header") header: UserheaderComponent;
 
-    static parameters = [GameService, Router];
-    constructor(private gameService: GameService, private router: Router) {
+    static parameters = [GameService, PlayerService, Router];
+    constructor(private gameService: GameService, private playerService: PlayerService, private router: Router) {
         this.gameService.getPending().subscribe(pending => {
             this.pending = pending;
         });
@@ -26,12 +27,12 @@ export class DashboardComponent {
             },
             leaving: account => {
                 this.players = this.players.filter(i => i.account != account)
-                if (account == this.gameService.getAddress())
+                if (account == this.playerService.getAddress())
                     this.router.navigateByUrl("/start");
             }
         });
-        this.gameService
-            .listPlayers()
+        this.playerService
+            .getPlayers()
             .subscribe(players => this.players = players);
     }
 

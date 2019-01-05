@@ -5,12 +5,12 @@ import { Message as SocketMessage, SocketService } from "./socket.service";
 import {
     GameService,
     GameInfo,
-    Account,
     Message as GameMessage,
     PendingInfo,
     Transaction
 } from "../game.service";
-import { Property } from "../board.service";
+import { PlayerService, Player } from "../player.service";
+import { BoardService, Property } from "../board.service";
 import { environment as e } from "../../../environments/environment";
 import { of } from "rxjs";
 import "rxjs/add/operator/map";
@@ -22,7 +22,6 @@ import _ from "lodash";
 })
 export class GameRESTService extends GameService {
     private ws = null;
-    private address: string;
     private pullMessage = (msg: SocketMessage) => {
         switch (msg.type) {
             case "newplayer":
@@ -35,34 +34,15 @@ export class GameRESTService extends GameService {
         }
     };
 
-    static parameters = [Http, SocketService];
-    constructor(private Http: Http, private socketService: SocketService) {
+    static parameters = [Http, SocketService, BoardService, PlayerService];
+    constructor(private Http: Http, private socketService: SocketService, private boardService: BoardService, private playerService: PlayerService) {
         super();
-        if (localStorage.getItem("account"))
-            this.address = localStorage.getItem("account");
-        else {
-            this.address = this.generateAccount();
-            localStorage.setItem("account", this.address);
-        }
         this.ws = this.socketService.messages.subscribe(this.pullMessage);
     }
 
     ngDestroy() {
         this.ws.unsubscribe();
         this.events.complete();
-    }
-
-    public listPlayers(): Observable<Account[]> {
-        return this.Http.get(this.urlFor("players")).map(res => res.json());
-    }
-
-    public register(player): Observable<any> {
-        return this.Http.post(e._folder(`/api/game/players`), player)
-            .map(res => res.json())
-            .catch(err => {
-                console.dir(err);
-                return of(err.json());
-            });
     }
 
     public transfer(transaction: Transaction): Observable<any> {
@@ -72,37 +52,19 @@ export class GameRESTService extends GameService {
     }
 
     public decline(): Observable<any> {
-        return this.Http.post(this.urlFor("decline"), this.address).map(res =>
+        return this.Http.post(this.urlFor("decline"), this.playerService.getAddress()).map(res =>
             res.json()
         );
     }
 
-    public getAddress(): string {
-        return this.address;
-    }
-
-    public setAddress(address) {
-        this.address = address;
-    }
-
-    private generateAccount(): string {
-        return (
-            "0x" +
-            _.join(
-                _.times(40, i => Math.floor(Math.random() * 16).toString(16)),
-                ""
-            )
-        );
-    }
-
     public getBalance(): Observable<number> {
-        return this.Http.get(this.urlFor(`balance/${this.address}`)).map(res =>
+        return this.Http.get(this.urlFor(`balance/${this.playerService.getAddress()}`)).map(res =>
             res.json()
         );
     }
 
     public getProperties(): Observable<Property[]> {
-        return this.Http.get(this.urlFor(`properties/${this.address}`)).map(
+        return this.Http.get(this.urlFor(`properties/${this.playerService.getAddress()}`)).map(
             res => {
                 // res.json();
                 return [
@@ -192,12 +154,6 @@ export class GameRESTService extends GameService {
                 }
             ]
         });
-    }
-
-    public unregister(): Observable<boolean> {
-        return this.Http.delete(this.urlFor(`player/${this.address}`)).map(
-            res => res["result"] == "ok"
-        );
     }
 
     public getHistory(): Observable<Transaction[]> {

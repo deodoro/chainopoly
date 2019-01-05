@@ -2,7 +2,8 @@ import { Observable } from "rxjs/Observable";
 import { Injectable } from "@angular/core";
 import { Web3Service } from "./web3.service";
 import { BoardService, Property } from "../board.service";
-import { GameService, GameInfo, Account, PendingInfo, Transaction } from "../game.service";
+import { PlayerService } from "../player.service";
+import { GameService, GameInfo, PendingInfo, Transaction } from "../game.service";
 import { environment as e } from "../../../environments/environment";
 import { of } from "rxjs";
 import "rxjs/add/operator/map";
@@ -18,7 +19,6 @@ const contract = require("truffle-contract");
     providedIn: "root"
 })
 export class GameWeb3Service extends GameService {
-    private address: string;
     private color_cache = null;
     private states = ["init", "move", "wait", "finished"];
     private Game = contract(gameArtifacts);
@@ -26,42 +26,19 @@ export class GameWeb3Service extends GameService {
     private Properties = contract(propertiesArtifact);
 
     static parameters = [Web3Service, BoardService];
-    constructor(private web3Ser: Web3Service, private board: BoardService) {
+    constructor(private web3Ser: Web3Service, private boardService: BoardService, private playerService: PlayerService) {
         super();
         this.Game.setProvider(web3Ser.web3.currentProvider);
         this.Coin.setProvider(web3Ser.web3.currentProvider);
         this.Properties.setProvider(web3Ser.web3.currentProvider);
 
         this.web3Ser.getAccounts().subscribe(accounts => {
-            this.address = accounts[0];
+            this.playerService.setAddress(accounts[0]);
         });
     }
 
     public getPending(): Observable<PendingInfo> {
         return null;
-    }
-
-    public unregister(): Observable<boolean> {
-        return of(false);
-    }
-
-    public listPlayers(): Observable<Account[]> {
-        return null;
-    }
-
-    public register(player): Observable<any> {
-        return Observable.create(observer =>
-            this.Game.deployed()
-                .then(instance =>
-                    instance.registerPlayer(player.username).then(result => {
-                        observer.next("transação submetida");
-                        observer.complete();
-                    })
-                )
-                .catch(e => {
-                    observer.error(e);
-                })
-        );
     }
 
     public roll(): Observable<any> {
@@ -115,37 +92,6 @@ export class GameWeb3Service extends GameService {
         return null;
     }
 
-    public getAddress() {
-        return this.address;
-    }
-
-    public setAddress(address) {
-    }
-
-    // getMyColor(account_id): Observable<string> {
-    //     return Observable.create(observer => {
-    //         if (this.color_cache == null) {
-    //             this.web3Ser.getAccounts().subscribe(accounts =>
-    //                 this.Game.deployed()
-    //                     .then(instance =>
-    //                         instance.getPlayerInfo
-    //                             .call(accounts[0])
-    //                             .then(results => {
-    //                                 observer.next(results[2]);
-    //                                 observer.complete();
-    //                             })
-    //                     )
-    //                     .catch(e => {
-    //                         observer.error(e);
-    //                     })
-    //             );
-    //         } else {
-    //             observer.next(this.color_cache);
-    //             observer.complete();
-    //         }
-    //     });
-    // }
-
     getBalance(): Observable<number> {
         return Observable.create(observer =>
             this.web3Ser.getAccounts().subscribe(accounts =>
@@ -172,7 +118,7 @@ export class GameWeb3Service extends GameService {
                             observer.next(
                                 properties
                                     .filter(i => i != 0)
-                                    .map(i => this.board.getTokenInfo(i))
+                                    .map(i => this.boardService.getTokenInfo(i))
                             );
                             observer.complete();
                         })
