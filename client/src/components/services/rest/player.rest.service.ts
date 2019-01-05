@@ -1,19 +1,19 @@
-import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import { Player, PlayerService } from '../player.service';
-import { environment as e } from '../../../environments/environment';
+import { Injectable } from "@angular/core";
+import { Http } from "@angular/http";
+import { Observable } from "rxjs/Observable";
+import { Player, PlayerService } from "../player.service";
+import { EventsService } from "../events.service";
+import { environment as e } from "../../../environments/environment";
 import { of } from "rxjs";
-import 'rxjs/add/operator/map';
+import "rxjs/add/operator/map";
 import _ from "lodash";
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: "root"
 })
 export class PlayerRESTService extends PlayerService {
-
-    static parameters = [Http];
-    constructor(private Http: Http) {
+    static parameters = [EventsService, Http];
+    constructor(protected eventsService: EventsService, private Http: Http) {
         super();
         if (localStorage.getItem("account"))
             this.address = localStorage.getItem("account");
@@ -41,13 +41,15 @@ export class PlayerRESTService extends PlayerService {
     }
 
     public callGetPlayers(): Observable<Player[]> {
-        return this.Http.get(e._folder("/api/game/players")).map(res => res.json());
+        return this.Http.get(e._folder("/api/game/players")).map(res =>
+            res.json()
+        );
     }
 
     public unregister(): Observable<boolean> {
-        return this.Http.delete(e._folder(`/api/game/player/${this.address}`)).map(
-            res => res["result"] == "ok"
-        );
+        return this.Http.delete(
+            e._folder(`/api/game/player/${this.address}`)
+        ).map(res => res["result"] == "ok");
     }
 
     public register(player): Observable<any> {
@@ -58,5 +60,4 @@ export class PlayerRESTService extends PlayerService {
                 return of(err.json());
             });
     }
-
 }

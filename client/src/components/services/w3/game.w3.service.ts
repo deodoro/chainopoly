@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { Web3Service } from "./web3.service";
 import { BoardService, Property } from "../board.service";
 import { PlayerService } from "../player.service";
-import { GameService, GameInfo, PendingInfo, Transaction } from "../game.service";
+import { GameService, PendingInfo, Transaction } from "../game.service";
 import { environment as e } from "../../../environments/environment";
 import { of } from "rxjs";
 import "rxjs/add/operator/map";
@@ -37,7 +37,7 @@ export class GameWeb3Service extends GameService {
         });
     }
 
-    public getPending(): Observable<PendingInfo> {
+    public getPending(): Observable<PendingInfo[]> {
         return null;
     }
 
@@ -71,7 +71,7 @@ export class GameWeb3Service extends GameService {
         );
     }
 
-    public transfer(transaction): Observable<any> {
+    public submit(transaction): Observable<any> {
         return Observable.create(observer =>
             this.Coin.deployed()
                 .then(instance =>

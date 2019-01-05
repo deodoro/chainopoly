@@ -1,20 +1,19 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { Web3Service } from './web3.service'
-import { PlayerService, Player } from '../player.service';
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs/Observable";
+import { Web3Service } from "./web3.service";
+import { PlayerService, Player } from "../player.service";
 import { of } from "rxjs";
-import 'rxjs/add/operator/catch';
-import _ from 'lodash';
+import "rxjs/add/operator/catch";
+import _ from "lodash";
 
-declare function require(name:string);
+declare function require(name: string);
 const gameArtifacts = require("../../../../../dapp/build/contracts/Game.json");
-const contract = require('truffle-contract');
+const contract = require("truffle-contract");
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: "root"
 })
 export class PlayerWeb3Service extends PlayerService {
-
     private game = contract(gameArtifacts);
 
     static parameters = [Web3Service];
@@ -33,7 +32,8 @@ export class PlayerWeb3Service extends PlayerService {
 
     public register(player): Observable<any> {
         return Observable.create(observer =>
-            this.game.deployed()
+            this.game
+                .deployed()
                 .then(instance =>
                     instance.registerPlayer(player.username).then(result => {
                         observer.next("transação submetida");
@@ -50,7 +50,5 @@ export class PlayerWeb3Service extends PlayerService {
         return this.address;
     }
 
-    public setAddress(address) {
-    }
-
+    public setAddress(address) {}
 }

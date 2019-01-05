@@ -1,13 +1,11 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { Http } from "@angular/http";
-import { Message as SocketMessage, SocketService } from "./socket.service";
 import {
     GameService,
-    GameInfo,
-    Message as GameMessage,
     PendingInfo,
-    Transaction
+    Transaction,
+    TransactionForm
 } from "../game.service";
 import { PlayerService, Player } from "../player.service";
 import { BoardService, Property } from "../board.service";
@@ -21,31 +19,13 @@ import _ from "lodash";
     providedIn: "root"
 })
 export class GameRESTService extends GameService {
-    private ws = null;
-    private pullMessage = (msg: SocketMessage) => {
-        switch (msg.type) {
-            case "newplayer":
-            case "leaving":
-                this.events.next({ evt: msg.type, data: msg.payload.player });
-                break;
-            case "action":
-                this.events.next({ evt: msg.type, data: msg.payload });
-                break;
-        }
-    };
 
-    static parameters = [Http, SocketService, BoardService, PlayerService];
-    constructor(private Http: Http, private socketService: SocketService, private boardService: BoardService, private playerService: PlayerService) {
+    static parameters = [Http, BoardService, PlayerService];
+    constructor(private Http: Http, private boardService: BoardService, private playerService: PlayerService) {
         super();
-        this.ws = this.socketService.messages.subscribe(this.pullMessage);
     }
 
-    ngDestroy() {
-        this.ws.unsubscribe();
-        this.events.complete();
-    }
-
-    public transfer(transaction: Transaction): Observable<any> {
+    public submit(transaction: TransactionForm): Observable<any> {
         return this.Http.post(this.urlFor("transfer"), transaction).map(res =>
             res.json()
         );
@@ -93,8 +73,7 @@ export class GameRESTService extends GameService {
         return e._folder(`/api/game/${service}`);
     }
 
-    public getPending(): Observable<PendingInfo> {
-        console.log("getPending");
+    public getPending(): Observable<PendingInfo[]> {
         return Observable.create(observer => {
             return this.Http.get(this.urlFor("pending")).map(res => res.json().pending)
                     .subscribe(pending => {
@@ -102,50 +81,21 @@ export class GameRESTService extends GameService {
                         let tokens = _.concat(pending.map(i => i["token"]));
                         this.playerService.getPlayerInfo(accounts).subscribe(p => {
                             this.boardService.getTokenInfo(tokens).subscribe(t => {
-                                let m = i => {
-                                    return {
-                                        "src": i["type"] == "rent" ? p.find(i["_from"]) : null,
+                                observer.next(pending.map(i => {
+                                        return {
+                                        "id": i.id,
+                                        "type": i.type,
+                                        "src": p.find(i["_from"]),
                                         "dst": p.find(i["_to"]),
                                         "property": t.find(i["token"]),
                                         "value": i["value"]
                                     }
-                                };
-                                observer.next({rent: pending.filter(i => i.type == "invoice").map(m),
-                                               offer: pending.filter(i => i.type == "offer").map(m)});
+                                }));
                                 observer.complete()
                             });
                         });
                     })
                 });
-                    // res => {
-                    //     console.log(res);
-                    //     // let pending = res.json().pending;
-                    //     // let accounts = _.concat(pending.map(i => i["_from"]), pending.map(i => i["_to"]));
-                    //     // let tokens = _.concat(pending.map(i => i["token"]));
-                    //     // console.log("to call");
-                    //     // this.playerService.getPlayerInfo(accounts).subscribe(p => {
-                    //     //     console.dir(accounts);
-                    //     //     this.boardService.getTokenInfo(tokens).subscribe(t => {
-                    //     //         console.dir(tokens);
-                    //     //         let items = pending.map(i => {
-                    //     //             return {
-                    //     //                 "src": i["type"] == "rent" ? p.find(i["_from"]) : null,
-                    //     //                 "dst": p.find(i["_to"]),
-                    //     //                 "property": t.find(i["token"]),
-                    //     //                 "value": i["value"]
-                    //     //             }
-                    //     //         });
-                    //     //         console.dir(items);
-                    //     //         observer.next({ 'rent': items.filter(i => i.type == 'invoice'),
-                    //     //                         'offer': items.filter(i => i.type == 'offer') });
-                    //     //         observer.complete();
-                    //     //     })
-                    //     // });
-                    //     observer.next(null);
-                    //     observer.complete()
-        //             }
-        //         );
-        // });
     }
 
     public getHistory(): Observable<Transaction[]> {
