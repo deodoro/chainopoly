@@ -121,7 +121,7 @@ class DeclineHandler(tornado.web.RequestHandler):
             if args["source"] not in game.accounts:
                 raise Exception('Invalid debit account')
             self.set_header('Content-Type', 'application/json')
-            self.write(json.dumps({"result": game.swap.cancel_offer(debitor=game.accounts[args["source"]])}))
+            self.write(json.dumps({"result": game.swap.reject(debitor=game.accounts[args["source"]])}))
         except Exception as e:
             logger.exception('Declining offer %r in game #%s' % (args, game_id))
             self.set_status(400)
@@ -154,7 +154,7 @@ if __name__ == '__main__':
                 print("broadcasting %s payload=%r" % (e, info))
                 broadcast(e, payload=info)
             return f
-        for e in ['transaction', 'newplayer', 'newround', 'action', 'match', 'leaving']:
+        for e in ['transaction', 'newplayer', 'newround', 'offer', 'invoice', 'match', 'leaving']:
             EventEmitterSingleton.instance().on(e, do_broadcast(e))
 
         # Server initialization

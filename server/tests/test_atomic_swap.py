@@ -42,7 +42,7 @@ def test_nonfungible_cancel(info):
     fungible.transfer(a, d, 10)
     swap.add_offer(d, token=1, value=5)
     assert swap.has_pending(d)
-    assert swap.cancel_offer(token=1)
+    assert swap.reject(token=1)
     assert fungible.balance_of(d) == 10
     assert not nonfungible.who_owns(1)
 

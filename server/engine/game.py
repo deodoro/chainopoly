@@ -86,29 +86,19 @@ class Game(object):
 
     def roll(self, player):
         player['position'] = (player['position'] + randint(2,12)) % len(self.board)
-        self.emit_player_events(player)
+        self.process_player_position(player)
 
-    def emit_player_events(self, player):
-        action = self.get_action_expectation(player)
-        if action:
-            if action['type'] == 'offer':
-               self.swap.add_offer(player['account'], action['property']['id'], action['property']['price'])
-            elif action['type'] == 'rent':
-               self.swap.add_invoice(player['account'], action['property']['id'], action['property']['rent'])
-            action['from'] = player
-            emit('action', action)
-
-    def get_action_expectation(self, player):
+    def process_player_position(self, player):
         prop = self.board[player['position']]
         if prop:
             owner = self.properties.who_owns(prop._id)
-            if owner:
-                if owner != player['account']:
-                    return {'type': 'rent', 'owner': self.get_player(owner), 'property': prop.to_dict()}
-            elif not any([p for p in self.players if p['account'] != player['account'] and p['position'] == player['position']]):
-                return {'type': 'offer', 'property': prop.to_dict()}
-        else:
-            return None
+            # Player visits property owned by another player -> rent
+            if owner and owner != player['account']:
+                self.swap.add_invoice(_to = player['account'], token = prop._id, value = prop.rent)
+            # Player visits bank property and there is no one previously in that spot -> offer
+            elif not owner and \
+                 not any([p for p in self.players if p['account'] != player['account'] and p['position'] == player['position']]):
+                self.swap.add_offer(player['account'], prop._id, prop.price)
 
     def check_round_finished(self):
         if not self.swap.pending():
