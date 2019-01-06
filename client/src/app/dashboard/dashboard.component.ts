@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
+import { Component, ViewChild, OnDestroy } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { Router } from "@angular/router";
 import {
@@ -19,7 +19,7 @@ import _ from "lodash";
     templateUrl: "./dashboard.html",
     styleUrls: ["./dashboard.scss"]
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnDestroy {
     public evtSubscription;
     public pendingRent: PendingInfo[];
     public pendingOffer: PendingInfo[];
@@ -87,7 +87,7 @@ export class DashboardComponent {
         return 0;
     }
 
-    OnDestroy() {
+    ngOnDestroy() {
         this.evtSubscription.unsubscribe();
     }
 

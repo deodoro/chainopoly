@@ -15,8 +15,8 @@
             <mat-icon>done</mat-icon> Do transfer
         </button>
     </div>
-    <h1>History</h1>
-    <table mat-table [dataSource]="history">
+    <h1 (click)="toBottom()">History</h1>
+    <table mat-table [dataSource]="history" #transTable>
       <ng-container matColumnDef="date">
         <th mat-header-cell *matHeaderCellDef> Date </th>
         <td mat-cell *matCellDef="let t" class="date"> {{ t.date }} </td>
@@ -35,6 +35,7 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="['date', 'from', 'to', 'value']"></tr>
-      <tr mat-row *matRowDef="let p; columns: ['date', 'from', 'to', 'value'];"></tr>
+      <tr mat-row *matRowDef="let p; columns: ['date', 'from', 'to', 'value'];" [@state]></tr>
     </table>
+    <div #pageBottom></div>
 </div>

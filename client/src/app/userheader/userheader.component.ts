@@ -18,7 +18,7 @@ export class UserheaderComponent {
     constructor(private gameService: GameService, public playerService: PlayerService, private eventsService: EventsService) {
         this.evtSubscription = this.eventsService.on({
             transaction: data => {
-                if (this.playerService.getAddress() == data.account) this.refresh();
+                if ((this.playerService.getAddress() == data._from) || (this.playerService.getAddress() == data._to)) this.refresh();
             },
         });
         this.refresh();

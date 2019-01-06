@@ -19,13 +19,14 @@ class Fungible(object):
 
     def transfer(self, _from, _to, value):
         if _from != _to and _from in self.balances and self.balances[_from] >= value:
-            self.history.append((datetime.now().isoformat(), _from, _to, value))
+            values = (datetime.now().isoformat(), _from, _to, value)
+            self.history.append(values)
             self.balances[_from] -= value
             if _to not in self.balances:
                 self.balances[_to] = value
             else:
                 self.balances[_to] += value
-            emit('transaction', {'from': _from, 'to': _to, 'value': value})
+            emit("transaction", dict(zip(['date', '_from', '_to', 'value'], values)))
             return True
         else:
             return False

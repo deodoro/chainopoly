@@ -94,7 +94,6 @@ export class GameRESTService extends GameService {
             return this.Http.get(this.urlFor(`history/${this.playerService.getAddress()}`))
                 .map(res => res.json().history)
                 .subscribe(history => {
-                    console.dir(history);
                     let accounts = _.concat(
                         history.map(i => i["_from"]),
                         history.map(i => i["_to"])
