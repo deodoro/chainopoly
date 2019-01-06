@@ -16,7 +16,7 @@ class Property:
         Property.LAST_ID += 1
 
     def to_dict(self):
-        return {'name': self.name, 'color': self.color, 'price': self.price, 'rent': self.rent, 'id': self._id, 'position': self.position, 'geo': self.geo}
+        return {'name': self.name, 'color': self.color, 'price': self.price, 'rent': self.rent, 'token': self._id, 'position': self.position, 'geo': self.geo}
 
     def to_json(self):
         return json.dumps(self.to_dict())

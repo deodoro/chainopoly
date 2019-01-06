@@ -14,14 +14,13 @@ export class PlayerLookup {
 
     public find(account) {
         var p = _.find(this.players, ["account", account]);
-        return _.isUndefined(p) ? { account: account } : p;
+        return _.isUndefined(p) ? { "account": account, "alias": "bank" } : p;
     }
 }
 
 export abstract class PlayerService {
     private cache: Player[] = null;
     protected address: string;
-    protected eventsService: EventsService;
 
     protected abstract callGetPlayers(): Observable<Player[]>;
     public abstract register(player): Observable<any>;
@@ -29,15 +28,15 @@ export abstract class PlayerService {
     public abstract getAddress(): string;
     public abstract setAddress(account: string);
 
-    public constructor() {
-        // this.gameService.on({
-        //     "newplayer": player => {
-        //         if (this.cache) this.cache.push(player);
-        //     },
-        //     "leaving": account => {
-        //         if (this.cache) this.cache.filter(i => i.account != account);
-        //     }
-        // })
+    public constructor(public eventsService: EventsService) {
+        this.eventsService.on({
+            "newplayer": player => {
+                if (this.cache) this.cache.push(player);
+            },
+            "leaving": account => {
+                if (this.cache) this.cache.filter(i => i.account != account);
+            }
+        })
     }
 
     public getName(): string {

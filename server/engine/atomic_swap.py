@@ -11,9 +11,9 @@ class AtomicSwap:
         self.last_id = 0
         EventEmitterSingleton.instance().on('transaction', lambda t: self.match_transaction(t['from'], t['to'], t['value']))
 
-    def add_invoice(self, _to, token, value):
-        _from = self.nonfungible.who_owns(token)
-        assert _from
+    def add_invoice(self, _from, token, value):
+        _to = self.nonfungible.who_owns(token)
+        assert _to
         self.last_id += 1
         record = {"_from": _from, "_to": _to, "token": token, "value": value, "id": self.last_id}
         self.pending_invoices.append(record)

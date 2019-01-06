@@ -34,7 +34,7 @@ export abstract class BoardService {
         if (_.isEmpty(this.cache)) {
             return Observable.create(observer => {
                 this.callGetProperties().subscribe(values => {
-                    this.cache = values.map(i => _.assign(i, {'token': i['id']}));
+                    this.cache = values;
                     observer.next(this.cache);
                     observer.complete();
                 });

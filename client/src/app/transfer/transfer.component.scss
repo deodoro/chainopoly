@@ -1,5 +1,13 @@
 @import "../../_variables.scss";
 
+.date {
+    font-size: 0.8em;
+}
+
+.value {
+    text-align: right;
+}
+
 section.warning {
     color: $warn;
     text-align: center;

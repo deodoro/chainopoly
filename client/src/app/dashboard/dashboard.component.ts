@@ -44,7 +44,7 @@ export class DashboardComponent {
         private router: Router
     ) {
         this.gameService.getPending().subscribe(pending => {
-            this.pendingRent = pending.filter(i => i.type == "rent");
+            this.pendingRent = pending.filter(i => i.type == "invoice");
             this.pendingOffer = pending.filter(i => i.type == "offer");
         });
         this.evtSubscription = this.eventsService.on({
@@ -69,6 +69,9 @@ export class DashboardComponent {
                 });
             },
             match: id => {
+                console.log(`id=${id}`);
+                console.dir(this.pendingOffer);
+                console.dir(this.pendingRent);
                 this.pendingOffer = this.pendingOffer.filter(i => i.id != id);
                 this.pendingRent = this.pendingRent.filter(i => i.id != id);
                 this.rentTable.renderRows();
@@ -88,14 +91,23 @@ export class DashboardComponent {
         this.evtSubscription.unsubscribe();
     }
 
-    goToOffer(t) {
-        if (this.offersMe(t))
+    inv(t) {
+        return { "src": t.dst, "value": t.value };
+    }
+
+    goToTransfer(t) {
+        if (t != null) {
             this.router.navigate(["/transfers"], {
                 queryParams: { to: t.src.account, value: t.value }
             });
+        }
     }
 
-    offersMe(t) {
+    fromMe(t) {
+        return t.src.account == this.playerService.getAddress();
+    }
+
+    toMe(t) {
         return t.dst.account == this.playerService.getAddress();
     }
 

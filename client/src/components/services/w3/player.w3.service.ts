@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { Web3Service } from "./web3.service";
 import { PlayerService, Player } from "../player.service";
+import { EventsService } from "../events.service";
 import { of } from "rxjs";
 import "rxjs/add/operator/catch";
 import _ from "lodash";
@@ -16,9 +17,8 @@ const contract = require("truffle-contract");
 export class PlayerWeb3Service extends PlayerService {
     private game = contract(gameArtifacts);
 
-    static parameters = [Web3Service];
-    constructor(private web3Ser: Web3Service) {
-        super();
+    constructor(public eventsService: EventsService, private web3Ser: Web3Service) {
+        super(eventsService);
         this.game.setProvider(web3Ser.web3.currentProvider);
     }
 

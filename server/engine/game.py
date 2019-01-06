@@ -85,7 +85,9 @@ class Game(object):
                 self.roll(player)
 
     def roll(self, player):
-        player['position'] = (player['position'] + randint(2,12)) % len(self.board)
+        dice = randint(2,12)
+        print("dice=%d" % dice)
+        player['position'] = (player['position'] + dice) % len(self.board)
         self.process_player_position(player)
 
     def process_player_position(self, player):
@@ -94,7 +96,7 @@ class Game(object):
             owner = self.properties.who_owns(prop._id)
             # Player visits property owned by another player -> rent
             if owner and owner != player['account']:
-                self.swap.add_invoice(_to = player['account'], token = prop._id, value = prop.rent)
+                self.swap.add_invoice(_from = player['account'], token = prop._id, value = prop.rent)
             # Player visits bank property and there is no one previously in that spot -> offer
             elif not owner and \
                  not any([p for p in self.players if p['account'] != player['account'] and p['position'] == player['position']]):

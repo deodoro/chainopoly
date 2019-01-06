@@ -23,7 +23,8 @@
 
       <tr mat-header-row *matHeaderRowDef="['from', 'to', 'value', 'property']"></tr>
       <tr mat-row *matRowDef="let r; columns: ['from', 'to', 'value', 'property'];"
-          [ngClass]="{'highlight': r.src.account==playerService.getAddress() }"></tr>
+          [ngClass]="{'highlight': fromMe(r) }"
+          (click)="goToTransfer(fromMe(r) ? inv(r): null)"></tr>
     </table>
     <h1>Offers pending</h1>
     <table mat-table [dataSource]="pendingOffer" #offerTable>
@@ -46,7 +47,7 @@
 
       <tr mat-header-row *matHeaderRowDef="['dst', 'value', 'property', 'color']"></tr>
       <tr mat-row *matRowDef="let r; columns: ['dst', 'value', 'property', 'color'];"
-          [ngClass]="{'highlight': offersMe(r) }"
-          (click)="goToOffer(r)"></tr>
+          [ngClass]="{'highlight': toMe(r) }"
+          (click)="goToTransfer(toMe(r) ? r : null)"></tr>
   </table>
 </div>

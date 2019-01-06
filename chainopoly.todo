@@ -8,46 +8,43 @@ Chainopoly:
     read game info from game service
     read player info from player service
   ☐ redraw interface
-    ☐ new mechanisms for game engine
+    ☐ on successful transfer, go to the bottom, show "waiting" message and highlight transfer
+    ☐ decline offer form
+    ☐ live property values (owner, stats etc)
+    ☐ flag owned items in map (hidden flag?)
+    ☐ Loading and empty table notification
+    ☐ generate stats
+    ☐ check if fixed header is feasible
+    ☐ review color scheme
+      mixin for property colors?
+    ☐ detect non registered game and go to /start if so
+    ☐ remove pending actions from players that leave
+    ✔ load transaction history @done (19-01-06 14:02)
+    ✔ new mechanisms for game engine @done (19-01-06 13:07)
       draw dice for all players
       add notification from swap to game
       create offers and invoices for round
       once all pending items are cleared, new players are added, next round is started
     ✔ service to list pending offers/invoices @done (19-01-02 17:25)
-    ☐ decline offer form
     ✔ service for listing assets @done (19-01-02 17:25)
-    ☐ bottom sheet in asset list
-    ☐ load transaction history
-    ☐ hook transfer service
-    ☐ flag owned items in map (hidden flag?)
-    ☐ generate stats from game info
+    ✔ bottom sheet in asset list @done (19-01-06 13:03)
+    ✔ hook transfer service @done (19-01-06 12:22)
       write ranking service (list players and decide client side)
-    ☐ click on highlighted (own) items leads to transfer
+    ✔ click on highlighted (own) items leads to transfer @done (19-01-06 12:22)
     ✔ unregister service @done (19-01-02 17:25)
-    ☐ terminate game on players leaving
-    ☐ review color scheme
-      mixin for property colors?
+    ✔ terminate game on players leaving @done (19-01-06 12:22)
     ✔ add property color bubble to asset list @done (19-01-02 17:25)
     ✔ add property color bubble to offers pending (dashboard) @done (19-01-02 18:08)
-    ☐ calculate asset total price
-    ☐ check if fixed header is feasible
-    ☐ detect non registered game and go to /start if so
-    ☐ on successful transfer, go to the bottom, show "waiting" message and highlight transfer
-    ☐ remove pending actions from players that leave
-  ☐ Fix production build
-  ☐ show grid
-    Zoom to populated squares [min(x, y), max(x,y)]
+    ✔ calculate asset total price @done (19-01-06 13:07)
+  ☐ map does not appear on hosted service
   ☐ name per account @maybe
   ☐ reset on game or wallet change
   ☐ news -> chat window
   ☐ detect if network is unreachable/down @code
-  ✔ notifications history (interface) @code @done (19-01-02 11:41)
-  ✔ clear notification history @code @done (19-01-02 11:41)
   ☐ refactor contract ownership (resetTo) @code
-  ✔ code new interface @code @done (19-01-02 11:41)
   ☐ CPU player @code
   ☐ refactor service configuration @code
-  ✔ game instatialization @code @done (19-01-02 11:40)
+    i.e. do not load w3 unecessarily
   ☐ add comments
   ☐ "production" network
   ☐ calculate price
@@ -55,11 +52,16 @@ Chainopoly:
   ☐ narrative
   ☐ find new name
   ☐ send links
-  ✔ user may transfer at any time @later @done (19-01-02 11:40)
   ☐ may everyone know everybody else's balance? @later
   ☐ chat @later @code
     news and messages in the same list (news = bot messages)
   ☐ buy houses and hotels @later
     user calls transfer(credits, token_id, 'house') to atomic swap, bank is notified and sells the house
     How to represent house? Another token? Update token attribute?
+  ✔ Fix production build @done (19-01-05 20:47)
+  ✔ notifications history (interface) @code @done (19-01-02 11:41)
+  ✔ clear notification history @code @done (19-01-02 11:41)
+  ✔ code new interface @code @done (19-01-02 11:41)
+  ✔ game instatialization @code @done (19-01-02 11:40)
+  ✔ user may transfer at any time @later @done (19-01-02 11:40)
 

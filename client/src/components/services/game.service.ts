@@ -16,7 +16,7 @@ export class Transaction {
     src: Player;
     dst: Player;
     value: number;
-    date: Date;
+    date: String;
 }
 
 export class TransactionForm {

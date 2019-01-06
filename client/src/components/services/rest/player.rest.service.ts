@@ -12,9 +12,10 @@ import _ from "lodash";
     providedIn: "root"
 })
 export class PlayerRESTService extends PlayerService {
+
     static parameters = [EventsService, Http];
-    constructor(protected eventsService: EventsService, private Http: Http) {
-        super();
+    constructor(public eventsService: EventsService, private Http: Http) {
+        super(eventsService);
         if (localStorage.getItem("account"))
             this.address = localStorage.getItem("account");
         else {
@@ -22,6 +23,7 @@ export class PlayerRESTService extends PlayerService {
             localStorage.setItem("account", this.address);
         }
     }
+
     public getAddress(): string {
         return this.address;
     }

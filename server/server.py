@@ -53,46 +53,46 @@ class PlayerHandler(tornado.web.RequestHandler):
             self.write('Invalid game')
 
 class PlayerInfoHandler(tornado.web.RequestHandler):
-    def get(self, player_id):
+    def get(self, account):
         try:
             global game
             self.set_header('Content-Type', 'application/json')
-            self.write(json.dumps(game.get_player(player_id)))
+            self.write(json.dumps(game.get_player(account)))
         except Exception as e:
-            logger.exception('Retrieving player %s' % player_id)
+            logger.exception('Retrieving player %s' % account)
             self.set_status(400)
             self.write('Invalid game')
 
-    def delete(self, player_id):
+    def delete(self, account):
         try:
             global game
             self.set_header('Content-Type', 'application/json')
-            game.unregister_player(player_id)
+            game.unregister_player(account)
             self.write({'result': 'ok'})
         except Exception as e:
-            logger.exception('Retrieving player %s' % player_id)
+            logger.exception('Retrieving player %s' % account)
             self.set_status(400)
             self.write('Invalid game')
 
 class PropertiesHandler(tornado.web.RequestHandler):
-    def get(self, player_id=-1):
+    def get(self, account):
         try:
             global game
             self.set_header('Content-Type', 'application/json')
-            self.write(json.dumps(game.get_player_properties(player_id)))
+            self.write(json.dumps(game.get_player_properties(account)))
         except Exception as e:
-            logger.exception('Retrieving properties for player %s' % player_id)
+            logger.exception('Retrieving properties for player %s' % account)
             self.set_status(400)
             self.write('Invalid game')
 
 class BalanceHandler(tornado.web.RequestHandler):
-    def get(self, player_id=-1):
+    def get(self, account):
         try:
             global game
             self.set_header('Content-Type', 'application/json')
-            self.write(json.dumps(game.get_player_balance(player_id)))
+            self.write(json.dumps(game.get_player_balance(account)))
         except Exception as e:
-            logger.exception('Retrieving balance for player %s' % player_id)
+            logger.exception('Retrieving balance for player %s' % account)
             self.set_status(400)
             self.write('Invalid game')
 
@@ -135,7 +135,18 @@ class PendingHandler(tornado.web.RequestHandler):
             self.set_header('Content-Type', 'application/json')
             self.write(json.dumps({"pending": game.swap.get_pending()}))
         except Exception as e:
-            logger.exception('Declining retrieving pending actions')
+            logger.exception('Error retrieving pending actions')
+            self.set_status(400)
+            self.write(str(e))
+
+class HistoryHandler(tornado.web.RequestHandler):
+    def get(self, account):
+        try:
+            global game
+            self.set_header('Content-Type', 'application/json')
+            self.write(json.dumps({"history": game.money.get_history(account)}))
+        except Exception as e:
+            logger.exception('Error retrieving history')
             self.set_status(400)
             self.write(str(e))
 
@@ -143,6 +154,7 @@ class PendingHandler(tornado.web.RequestHandler):
 if __name__ == '__main__':
     try:
         logger.info('Webserver boot')
+        seed(0)
 
         # Associating URI handers
         static_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "contents", "client")
@@ -152,6 +164,7 @@ if __name__ == '__main__':
             (r'/api/game/decline', DeclineHandler),
             (r'/api/game/balance/(.+)', BalanceHandler),
             (r'/api/game/player/(.+)', PlayerInfoHandler),
+            (r'/api/game/history/(.+)', HistoryHandler),
             (r'/api/game/players', PlayerHandler),
             (r'/api/game/pending', PendingHandler),
             (r'/api/board', BoardHandler),
@@ -180,6 +193,5 @@ if __name__ == '__main__':
         logger.info('Webserver is listening to port %s' % webServerPort)
         tornado.ioloop.IOLoop.instance().start()
 
-        seed(0)
     except Exception as e:
         logger.exception('Webserver fatal error')
