@@ -15,7 +15,6 @@ export class AppComponent {
     }
 
     openSidenav() {
-        console.dir("click");
         this.sideNav.open();
     }
 }

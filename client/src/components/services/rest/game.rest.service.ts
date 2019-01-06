@@ -99,6 +99,7 @@ export class GameRESTService extends GameService {
                         history.map(i => i["_to"])
                     );
                     this.playerService.getPlayerInfo(accounts).subscribe(p => {
+                        console.dir(p);
                         observer.next(
                             history.map(i => {
                                 return {
