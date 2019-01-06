@@ -1,7 +1,7 @@
 <app-userheader></app-userheader>
 
 <div class="contents">
-    <h3>You're ranking #{{ ranking() }} of {{ players.length }} players</h3>
+    <!-- <h3>#{{ ranking() }} of {{ players.length }} players in ${{ round() }} rounds</h3> -->
     <h1>Rents due</h1>
     <table mat-table [dataSource]="pendingRent" #rentTable>
       <ng-container matColumnDef="from">
@@ -24,7 +24,7 @@
       <tr mat-header-row *matHeaderRowDef="['from', 'to', 'value', 'property']"></tr>
       <tr mat-row *matRowDef="let r; columns: ['from', 'to', 'value', 'property'];"
           [ngClass]="{'highlight': fromMe(r) }"
-          (click)="goToTransfer(fromMe(r) ? inv(r): null)"></tr>
+          (click)="goToTransfer(fromMe(r) ? inv(r) : null)"></tr>
     </table>
     <h1>Offers pending</h1>
     <table mat-table [dataSource]="pendingOffer" #offerTable>

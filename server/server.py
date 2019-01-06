@@ -119,10 +119,10 @@ class DeclineHandler(tornado.web.RequestHandler):
         args = json.loads(self.request.body)
         try:
             global game
-            if args["source"] not in game.accounts:
+            if args["account"] not in game.accounts:
                 raise Exception('Invalid debit account')
             self.set_header('Content-Type', 'application/json')
-            self.write(json.dumps({"result": game.swap.reject(debitor=game.accounts[args["source"]])}))
+            self.write(json.dumps({"result": game.swap.reject(_to=args["account"])}))
         except Exception as e:
             logger.exception('Declining offer %r' % args)
             self.set_status(400)

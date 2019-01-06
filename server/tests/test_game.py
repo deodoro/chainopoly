@@ -176,7 +176,7 @@ def test_a_few_rounds(game):
     assert check_event({"event": "transaction"})
     assert check_event({"event": "match"})
     assert check_event({"event": "newround"})
-    assert check_event({"event": "invoice", "_from": "1", "_to": "2", "token": 21})
+    assert check_event({"event": "invoice", "_from": "2", "_to": "1", "token": 21})
     game.money.transfer("2", "1", 35)
     assert check_event({"event": "transaction"})
     assert check_event({"event": "match"})

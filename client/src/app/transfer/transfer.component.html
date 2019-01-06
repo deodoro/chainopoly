@@ -1,18 +1,26 @@
 <app-userheader></app-userheader>
 
 <div class="contents">
+    <div *ngIf="property" class="property small">
+        <div class="color-bubble" [ngClass]="property.color"></div>
+        <div class="name" (click)="showProperty(property)">{{property.name}}</div>
+    </div>
     <mat-form-field class="fullwidth">
         <input matInput type="text" [(ngModel)]="transfer.account" placeholder="Transfer to">
     </mat-form-field>
     <mat-form-field class="fullwidth">
         <input matInput type="text" [(ngModel)]="transfer.value" placeholder="Value">
     </mat-form-field>
-    <section class="mat-typography warning">
-        <div>All transfers are final</div>
+    <section class="mat-typography warning small">
+        <div>REMINDER: All transfers are final</div>
     </section>
     <div class="button-input">
         <button mat-flat-button disabled="{{isEmpty(transfer.account) || isEmpty(transfer.value) || transfer.value <= 0}}" (click)="doTransfer()" color="primary">
-            <mat-icon>done</mat-icon> Do transfer
+            <mat-icon>assignment_turned_in</mat-icon> Do transfer
+        </button>
+        &nbsp;
+        <button mat-flat-button *ngIf="property" (click)="declineTransfer()" color="warn">
+            <mat-icon>cancel</mat-icon> Decline offer
         </button>
     </div>
     <h1 (click)="toBottom()">History</h1>

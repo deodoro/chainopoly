@@ -18,3 +18,16 @@ div.button-input {
     margin-bottom: 3em;
     text-align: center;
 }
+
+div.property {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2em;
+    color: #999999;
+
+    div {
+        &:first-child { margin-right: 0.5em; }
+        flex: 0 1 auto;
+    }
+}

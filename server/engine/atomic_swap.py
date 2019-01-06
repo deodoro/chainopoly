@@ -18,7 +18,6 @@ class AtomicSwap:
         record = {"_from": _from, "_to": _to, "token": token, "value": value, "id": self.last_id}
         self.pending_invoices.append(record)
         emit('invoice', record)
-        return True
 
     def add_offer(self, _to, token, value):
         assert self.nonfungible.transfer(_to, token)
@@ -30,7 +29,7 @@ class AtomicSwap:
 
     def match_transaction(self, _from, _to, value):
         for t in self.pending_invoices:
-            if t["_from"] == _to and t["_to"] == _from and t["value"] == value:
+            if t["_from"] == _from and t["_to"] == _to and t["value"] == value:
                 self.pending_invoices.remove(t)
                 emit('match', {'id': t['id']})
                 return
@@ -46,11 +45,12 @@ class AtomicSwap:
             if (token and t["token"] == token) or (_to and t["_to"] == _to):
                 self.pending_offers.remove(t)
                 self.nonfungible.cancel(t['_to'], t['token'])
+                emit('match', {'id': t['id']})
                 return True
         return False
 
     def has_pending(self, account):
-        return len([i for i in self.pending_invoices if i["_to"] == account]) > 0 or \
+        return len([i for i in self.pending_invoices if i["_from"] == account]) > 0 or \
                len([i for i in self.pending_offers if i["_to"] == account]) > 0
 
     def pending(self):

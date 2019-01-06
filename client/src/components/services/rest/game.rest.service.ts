@@ -36,10 +36,10 @@ export class GameRESTService extends GameService {
     }
 
     public decline(): Observable<any> {
-        return this.Http.post(
-            this.urlFor("decline"),
-            this.playerService.getAddress()
-        ).map(res => res.json());
+        return this.Http.post(this.urlFor("decline"),
+                              {"account": this.playerService.getAddress()}).map(
+            res => res.json()
+        );
     }
 
     public getBalance(): Observable<number> {

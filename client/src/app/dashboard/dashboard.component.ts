@@ -92,13 +92,14 @@ export class DashboardComponent implements OnDestroy {
     }
 
     inv(t) {
-        return { "src": t.dst, "value": t.value };
+        return { "src": t.dst, "value": t.value, "property": t.property };
     }
 
     goToTransfer(t) {
         if (t != null) {
+            console.dir(t);
             this.router.navigate(["/transfers"], {
-                queryParams: { to: t.src.account, value: t.value }
+                queryParams: { to: t.src.account, value: t.value, token: t.property.token }
             });
         }
     }
