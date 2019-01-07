@@ -13,7 +13,7 @@ import { environment as e } from "../../../environments/environment";
 import { of } from "rxjs";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
-import moment from "moment";
+import * as moment from "moment";
 import _ from "lodash";
 
 @Injectable({
