@@ -8,8 +8,8 @@ Chainopoly:
     read game info from game service
     read player info from player service
   ☐ redraw interface
-    ☐ on successful transfer, go to the bottom, show "waiting" message and highlight transfer
-    ☐ decline offer form
+    ✔ on successful transfer, go to the bottom, show "waiting" message and highlight transfer @done (19-01-08 21:14)
+    ✔ decline offer form @done (19-01-08 21:14)
     ☐ live property values (owner, stats etc)
     ☐ flag owned items in map (hidden flag?)
     ☐ Loading and empty table notification
