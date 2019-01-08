@@ -3,98 +3,50 @@ By deodoro.filho@gmail.com. Please see LICENSE.txt attached.
 
 # Introduction
 
-This is work in progress, it is meant to used as an example project in a series of lectures about blockchain use cases. Right now it is basically a frontend connected to REST services which mock the API that will be provided by DApp.
+This is work in progress, it is meant to used as an example project in a series of lectures about blockchain use cases.
 
-I always clone my projects inside a dev directory for organization's sake:
+In order to build the UI, I wrote a python backend server that emulates the blockchain calls.
 
-```shell
-mkdir ~/dev
-cd ~/dev
-clone https://gitlab.com/deodoro/chainopoly.git
-```
+# The game
 
-Thus, from here on, in doubt, always `cd` into the the project root:
+This is a modified version of the classic monopoly board game, differences being:
 
-```shell
-cd ~/dev/chainopoly
-```
+* Players register in the game using an ethereum wallet;
+* Once the second player is registered, the game starts;
+* Additional players may join in at any round;
+* At the beginning of the round, dices are rolled for each registered player, their positions are updated, and a set of invoices (i.e. a player landed in a property owned by another player) and offers (i.e. a player landed in a property owned by the bank) are created;
+* Offers may be declined;
+* Once players create transactions (or declinations) that clear all rents and offers in a round, a new round is automatically fired;
+* Any player may leave at any times, her properties and credits are transferred back to the bank
 
-# What you need to build
+# Screenshots
 
-In a Linux box:
+### Player registration
+![Player registration](img/screenshot_1.png)
 
-```shell
-# python 3
-apt-get install python3 pip3
-# node.js and npm
-apt-get install nodejs
-```
+### Players may access functionalities at any time
+![Menu](img/screenshot_2.png)
 
-In a Mac (with Homebrew):
+### The dashboard presents which offers and invoices are pending at any moment
+![Dashboard](img/screenshot_3.png)
 
-```shell
-# python 3
-brew install python3 pip3
-# node.js and npm (I use 8.x, I suggest sticking to the same)
-brew install node@8
-```
+### If a user touches an offer to her or an invoice of a rent she owes, transaction data is automatically filled
+![Transactions](img/screenshot_4.png)
 
-In a Windows box:
+### A map shows all properties
+![Map](img/screenshot_5.png)
 
-Life is too short: download VirtualBox, build a Ubuntu VM and go to the linux instructions.
+### The list of properties the player owns, one may touch a property to view its information
+![Properties](img/screenshot_6.png)
 
-Then install prerequisites:
+### This screen shows some useful statistics about what may happen in the next round
+![Statistics](img/screenshot_7.png)
 
-```shell
-cd ~/dev/chainopoly/client
-npm install
-# Go make coffe or something, this usually takes long
-cd ~/dev/chainopoly/server
-pip3 install -r requirements.txt
-```
+### A player may leave the game at any time
+![Logout](img/screenshot_8.png)
 
-# Docker container
+# A few details
 
-To build a docker image, start with the angular client:
-
-```shell
-cd ~/dev/chainopoly/client
-npx ng build --configuration production --base-href /chainopoly/
-```
-
-Then build the image from the project root:
-
-```shell
-cd ~/dev/chainopoly/
-docker build -t chainopoly -f docker/Dockerfile .
-```
-
-*(these commands are in the `build_container.sh` script)*
-
-I run it like this to avoid "leaking" the 8080 port:
-
-```shell
-docker run -d --rm -p 127.0.0.1:8080:8080 --name chainopoly chainopoly
-```
-
-The UI will be available at http://localhost:8080
-
-*(and this is in `run_container.sh`)*
-
-# This is how I develop
-
-I start an Angular dev server in a terminal tab:
-
-```shell
-cd ~/dev/chainopoly/
-sh start_angular.sh
-```
-
-Then a Tornado server in another tab:
-
-```shell
-cd ~/dev/chainopoly/
-sh start_server.sh
-```
-
-Then the UI will be available at http://localhost:4200, and both frontend and backends will autorefresh if you edit the code.
+* Properties are declared in a JSON file (server/assets). Right now, their names are taken from locations in the *Lord of the Rings* world;
+* In the DAPP version, each property info is stored in a separate smart contract, which is connected at deploy to its unfungible token;
+* By creating offers, the bank temporality transfers property ownership the the atomic_swap contract;
