@@ -10,8 +10,16 @@ import {
 import { PlayerService, Player } from "../player.service";
 import { BoardService, Property } from "../board.service";
 import { environment as e } from "../../../environments/environment";
-import { from, of } from "rxjs";
-import { tap, map, catchError, mergeMap } from "rxjs/operators";
+import { forkJoin, from, of } from "rxjs";
+import {
+    tap,
+    map,
+    catchError,
+    mergeMap,
+    zip,
+    concatAll,
+    mergeAll
+} from "rxjs/operators";
 import * as moment from "moment";
 import _ from "lodash";
 
@@ -35,10 +43,9 @@ export class GameRESTService extends GameService {
     }
 
     public decline(): Observable<any> {
-        return this.Http.post(this.urlFor("decline"),
-                              {"account": this.playerService.getAddress()}).map(
-            res => res.json()
-        );
+        return this.Http.post(this.urlFor("decline"), {
+            account: this.playerService.getAddress()
+        }).map(res => res.json());
     }
 
     public getBalance(): Observable<number> {
@@ -57,72 +64,55 @@ export class GameRESTService extends GameService {
         return e._folder(`/api/game/${service}`);
     }
 
+    private mapAndJoin = (f, u) => {
+        return i =>
+            forkJoin(i.map(j => u(j).pipe(map(k => _.assign(j, { [f]: k })))));
+    };
+
     public getPending(): Observable<PendingInfo[]> {
         return this.Http.get(this.urlFor("pending")).pipe(
-                    map(res => res.json().pending),
-                    tap(i => console.dir(i)),
-                    mergeMap(i => from(i)),
-                    // mergeMap(i => from(i).pipe(
-                    //                 tap(i => console.dir(i)),
-                    //                 mergeMap(j => this.playerService.getPlayerI(i._from).pipe(map(j => _.assign(j, {'src': j})))),
-                    //                 mergeMap(j => this.playerService.getPlayerI(i._to).pipe(map(j => _.assign(j, {'dst': j})))),
-                    //                 mergeMap(j => this.boardService.getTokenI(i.token).pipe(map(j => _.assign(j, {'property': j})))),
-                    //               )
-                    //         ),
-                    tap(i => console.dir(i)),
-                );
-
-            //        .map(res => res.json().pending)
-            //        .subscribe(pending => {
-            //     let accounts = _.concat(
-            //         pending.map(i => i["_from"]),
-            //         pending.map(i => i["_to"])
-            //     );
-            //     let tokens = _.concat(pending.map(i => i["token"]));
-            //     this.playerService.getPlayerInfo(accounts).subscribe(p => {
-            //         this.boardService.getTokenInfo(tokens).subscribe(t => {
-            //             observer.next(
-            //                 pending.map(i => {
-            //                     return {
-            //                         id: i.id,
-            //                         type: i.type,
-            //                         src: p.find(i["_from"]),
-            //                         dst: p.find(i["_to"]),
-            //                         property: t.find(i["token"]),
-            //                         value: i["value"]
-            //                     };
-            //                 })
-            //             );
-            //             observer.complete();
-            //         });
-            //     });
-            // });
+            map(res => res.json().pending),
+            mergeMap(
+                this.mapAndJoin("dst", i =>
+                    this.playerService.getPlayerI(i._to)
+                )
+            ),
+            mergeMap(
+                this.mapAndJoin("src", i =>
+                    this.playerService.getPlayerI(i._from)
+                )
+            ),
+            mergeMap(
+                this.mapAndJoin("property", i =>
+                    this.boardService.getTokenI(i.token)
+                )
+            )
+        );
     }
 
     public getHistory(): Observable<Transaction[]> {
-        return Observable.create(observer => {
-            return this.Http.get(this.urlFor(`history/${this.playerService.getAddress()}`))
-                .map(res => res.json().history)
-                .subscribe(history => {
-                    let accounts = _.concat(
-                        history.map(i => i["_from"]),
-                        history.map(i => i["_to"])
-                    );
-                    this.playerService.getPlayerInfo(accounts).subscribe(p => {
-                        console.dir(p);
-                        observer.next(
-                            history.map(i => {
-                                return {
-                                    date:  moment(i["date"]).format("YYYY-MM-DD HH:mm"),
-                                    src:   p.find(i["_from"]),
-                                    dst:   p.find(i["_to"]),
-                                    value: i["value"],
-                                };
-                            })
-                        );
-                        observer.complete();
-                    });
-                });
-        });
+        return this.Http.get(
+            this.urlFor(`history/${this.playerService.getAddress()}`)
+        ).pipe(
+            map(res =>
+                res
+                    .json()
+                    .history.map(i =>
+                        _.assign(i, {
+                            date: moment(i["date"]).format("YYYY-MM-DD HH:mm")
+                        })
+                    )
+            ),
+            mergeMap(
+                this.mapAndJoin("dst", i =>
+                    this.playerService.getPlayerI(i._to)
+                )
+            ),
+            mergeMap(
+                this.mapAndJoin("src", i =>
+                    this.playerService.getPlayerI(i._from)
+                )
+            )
+        );
     }
 }

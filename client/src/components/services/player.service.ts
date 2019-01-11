@@ -29,7 +29,6 @@ export abstract class PlayerService {
     public abstract setAddress(account: string);
 
     public constructor(public eventsService: EventsService) {
-        console.dir("player.service constructor");
         this.eventsService.on({
             "newplayer": player => {
                 if (this.cache) this.cache.push(player);

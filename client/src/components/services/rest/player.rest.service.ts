@@ -43,10 +43,7 @@ export class PlayerRESTService extends PlayerService {
     }
 
     public callGetPlayers(): Observable<Player[]> {
-        return this.Http.get(e._folder("/api/game/players")).pipe(
-                tap(_ => console.log("get /api/game/players")),
-                map(res => res.json()),
-            );
+        return this.Http.get(e._folder("/api/game/players")).pipe(map(res => res.json()));
     }
 
     public unregister(): Observable<boolean> {

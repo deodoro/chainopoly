@@ -30,7 +30,6 @@ export class StartComponent {
             username: this.playerService.getName()
         };
         this.playerService.getPlayers()
-            .pipe(tap(_ => console.log("start.component contructor")))
             .subscribe(players => {
                 this.playerCount = players ? players.length : 0;
                 this.participating = !_.isUndefined(
