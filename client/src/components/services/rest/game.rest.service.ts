@@ -18,7 +18,8 @@ import {
     mergeMap,
     zip,
     concatAll,
-    mergeAll
+    mergeAll,
+    defaultIfEmpty
 } from "rxjs/operators";
 import * as moment from "moment";
 import _ from "lodash";
@@ -72,22 +73,26 @@ export class GameRESTService extends GameService {
     public getPending(): Observable<PendingInfo[]> {
         return this.Http.get(this.urlFor("pending")).pipe(
             map(res => res.json().pending),
+            tap(() => console.log("getPending starting")),
             mergeMap(
                 this.mapAndJoin("dst", i =>
-                    this.playerService.getPlayerI(i._to)
+                    this.playerService.getPlayerInfo(i._to)
                 )
             ),
+            tap(() => console.log("getPending next")),
+            defaultIfEmpty([]),
             mergeMap(
                 this.mapAndJoin("src", i =>
-                    this.playerService.getPlayerI(i._from)
+                    this.playerService.getPlayerInfo(i._from)
                 )
             ),
             mergeMap(
                 this.mapAndJoin("property", i =>
-                    this.boardService.getTokenI(i.token)
+                    this.boardService.getTokenInfo(i.token)
                 )
-            )
-        );
+            ),
+            tap(() => console.log("getPending ending"))
+        ) as Observable<PendingInfo[]>;
     }
 
     public getHistory(): Observable<Transaction[]> {
@@ -105,14 +110,14 @@ export class GameRESTService extends GameService {
             ),
             mergeMap(
                 this.mapAndJoin("dst", i =>
-                    this.playerService.getPlayerI(i._to)
+                    this.playerService.getPlayerInfo(i._to)
                 )
             ),
             mergeMap(
                 this.mapAndJoin("src", i =>
-                    this.playerService.getPlayerI(i._from)
+                    this.playerService.getPlayerInfo(i._from)
                 )
             )
-        );
+        ) as Observable<Transaction[]>;
     }
 }

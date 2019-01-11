@@ -18,14 +18,6 @@ export class Property {
     geo?: Coord;
 }
 
-export class TokenLookup {
-    public constructor(private tokens: Property[]) { }
-
-    public find(token) {
-        return _.find(this.tokens, ["token", token]);
-    }
-}
-
 export abstract class BoardService {
     private cache$;
 
@@ -37,16 +29,7 @@ export abstract class BoardService {
         return this.cache$;
     }
 
-    public getTokenInfo(tokens: number[]): Observable<TokenLookup> {
-        return Observable.create(observer => {
-                    this.getProperties().subscribe(p => {
-                        observer.next(new TokenLookup(p.filter(i => _.includes(tokens, i.token))));
-                        observer.complete();
-                    })
-                });
-    }
-
-    public getTokenI(token: number): Observable<Property> {
+    public getTokenInfo(token: number): Observable<Property> {
         return this.getProperties().pipe(map(i => i.find(i => i.token == token)));
     }
 }

@@ -1,5 +1,5 @@
 import { Component, ViewChild, OnDestroy } from "@angular/core";
-import { Observable } from "rxjs/Observable";
+import { Observable, of } from "rxjs";
 import { Router } from "@angular/router";
 import {
     Player,
@@ -12,7 +12,7 @@ import {
 import { BoardService } from "../../components/services/board.service";
 import { EventsService } from "../../components/services/events.service";
 import { MatTable } from "@angular/material/table";
-import { tap } from "rxjs/operators";
+import { mergeMap, map } from "rxjs/operators";
 import _ from "lodash";
 
 @Component({
@@ -22,8 +22,8 @@ import _ from "lodash";
 })
 export class DashboardComponent implements OnDestroy {
     public evtSubscription;
-    public pendingRent: PendingInfo[];
-    public pendingOffer: PendingInfo[];
+    public pendingRent: PendingInfo[] = [];
+    public pendingOffer: PendingInfo[] = [];
     public players: Player[] = [];
     @ViewChild("offerTable")
     offerTable: MatTable<any>;
@@ -44,14 +44,16 @@ export class DashboardComponent implements OnDestroy {
         private eventsService: EventsService,
         private router: Router
     ) {
+        // TODO: event handling should start only after initialization to avoid
+        // duplicate entries
         this.gameService.getPending().subscribe(pending => {
+            console.dir("getPending");
             this.pendingRent = pending.filter(i => i.type == "invoice");
             this.pendingOffer = pending.filter(i => i.type == "offer");
-
-            // this.playerService.getPlayerI(this.pendingOffer[0].src.account).subscribe(i => console.dir(`data._to=${JSON.stringify(i)}`));
-            // this.playerService.getPlayerI(this.pendingOffer[0].dst.account).subscribe(i => console.dir(`data._from=${JSON.stringify(i)}`));
-
         });
+        this.playerService
+            .getPlayers()
+            .subscribe(players => (this.players = players));
         this.evtSubscription = this.eventsService.on({
             newplayer: player => {
                 this.players.push(player);
@@ -74,18 +76,12 @@ export class DashboardComponent implements OnDestroy {
                 });
             },
             match: id => {
-                console.log(`id=${id}`);
-                console.dir(this.pendingOffer);
-                console.dir(this.pendingRent);
                 this.pendingOffer = this.pendingOffer.filter(i => i.id != id);
                 this.pendingRent = this.pendingRent.filter(i => i.id != id);
                 this.rentTable.renderRows();
                 this.offerTable.renderRows();
             }
         });
-        this.playerService
-            .getPlayers()
-            .subscribe(players => (this.players = players));
     }
 
     public ranking() {
@@ -102,7 +98,6 @@ export class DashboardComponent implements OnDestroy {
 
     goToTransfer(t) {
         if (t != null) {
-            console.dir(t);
             this.router.navigate(["/transfers"], {
                 queryParams: { to: t.src.account, value: t.value, token: t.property.token }
             });
@@ -118,25 +113,14 @@ export class DashboardComponent implements OnDestroy {
     }
 
     makePendingInfo(pendingType, data): Observable<PendingInfo> {
-        return Observable.create(observer => {
-            this.playerService
-                .getPlayerInfo([data._to, data._from])
-                .pipe(tap(_ => console.log("from makePendingInfo")))
-                .subscribe(p => {
-                    this.boardService
-                        .getTokenInfo([data.token])
-                        .subscribe(t => {
-                            observer.next({
-                                type: pendingType,
-                                id: data.id,
-                                src: p.find(data._from),
-                                dst: p.find(data._to),
-                                property: t.find(data.token),
-                                value: data.value
-                            });
-                            observer.complete();
-                        });
-                });
-        });
+        let merger = (v, f) =>
+            (d => this.playerService.getPlayerInfo(v).pipe(map(u => _.assign(d, {[f]: u}))));
+        let mergerProperty = (v, f) =>
+            (d => this.boardService.getTokenInfo(v).pipe(map(u => _.assign(d, {[f]: u}))));
+        return of(_.assign(data, { type: pendingType })).pipe(
+            mergeMap(merger(data._from, 'src')),
+            mergeMap(merger(data._to, 'dst')),
+            mergeMap(mergerProperty(data.token, 'property')),
+        );
     }
 }

@@ -22,6 +22,8 @@ import {
 } from "../../components/services/board.service";
 import { PlayerService } from "../../components/services/player.service";
 import { EventsService } from "../../components/services/events.service";
+import { of } from "rxjs";
+import { mergeMap, map } from "rxjs/operators";
 import * as moment from "moment";
 import _ from "lodash";
 
@@ -82,29 +84,22 @@ export class TransferComponent implements OnDestroy {
             let token = parseInt(params.token);
             this.transfer = { account: params.to, value: params.value };
             if (token > 0)
-                boardService.getTokenInfo([token]).subscribe(p => {
-                    this.property = p.find(token);
-                });
+                boardService.getTokenInfo(token).subscribe(p => this.property = p);
         });
         this.evtSubscription = this.eventsService.on({
             transaction: data => {
-                if (
-                    this.playerService.getAddress() == data._to ||
-                    this.playerService.getAddress() == data._from
-                ) {
-                    this.playerService
-                        .getPlayerInfo([data._to, data._from])
-                        .subscribe(p => {
-                            this.history.push({
-                                date: moment(data["date"]).format(
-                                    "YYYY-MM-DD HH:mm"
-                                ),
-                                src: p.find(data["_from"]),
-                                dst: p.find(data["_to"]),
-                                value: data["value"]
-                            });
-                            this.transTable.renderRows();
-                        });
+                if (_.includes([data._to, data._from], this.playerService.getAddress())) {
+                    let merger = (v, f) =>
+                        (d => this.playerService.getPlayerInfo(v).pipe(map(u => _.assign(d, {[f]: u}))));
+                    of(data).pipe(
+                        mergeMap(merger(data._from, 'src')),
+                        mergeMap(merger(data._to, 'dst')),
+                    ).subscribe(t => {
+                        this.history.push(_.assign(t, {
+                            date: moment(data["date"]).format("YYYY-MM-DD HH:mm"),
+                        }));
+                        this.transTable.renderRows();
+                    });
                 }
             }
         });
@@ -118,7 +113,7 @@ export class TransferComponent implements OnDestroy {
                 value: this.transfer.value
             })
             .subscribe(
-                () => {
+                _ => {
                     console.log("transfer OK");
                     this.property = null;
                     this.transfer.account = "";

@@ -8,18 +8,8 @@ export class Player {
     alias?: string;
 }
 
-export class PlayerLookup {
-    constructor(private players: Player[]) {
-    }
-
-    public find(account) {
-        var p = _.find(this.players, ["account", account]);
-        return _.isUndefined(p) ? { "account": account, "alias": "bank" } : p;
-    }
-}
-
 export abstract class PlayerService {
-    private cache: Player[] = null;
+    private cache$;
     protected address: string;
 
     protected abstract callGetPlayers(): Observable<Player[]>;
@@ -31,10 +21,10 @@ export abstract class PlayerService {
     public constructor(public eventsService: EventsService) {
         this.eventsService.on({
             "newplayer": player => {
-                if (this.cache) this.cache.push(player);
+                // if (this.cache) this.cache.push(player);
             },
             "leaving": account => {
-                if (this.cache) this.cache.filter(i => i.account != account);
+                // if (this.cache) this.cache.filter(i => i.account != account);
             }
         })
     }
@@ -47,26 +37,13 @@ export abstract class PlayerService {
         localStorage.setItem("username", value);
     }
 
-    private pending: any = null;
-    private cache$;
-
-    public getPlayers(): Observable<Array<Player>> {
+    public getPlayers(): Observable<Player[]> {
         if (!this.cache$)
             this.cache$ = this.callGetPlayers().pipe(shareReplay(1));
         return this.cache$;
     }
 
-    public getPlayerInfo(accounts: string[]): Observable<PlayerLookup> {
-        return Observable.create(observer => {
-            this.getPlayers()
-                .subscribe(p => {
-                observer.next(new PlayerLookup(p.filter(i => _.includes(accounts, i.account))));
-                observer.complete();
-            })
-        });
-    }
-
-    public getPlayerI(account: string): Observable<Player> {
+    public getPlayerInfo(account: string): Observable<Player> {
         return this.getPlayers().pipe(
                 map(i => i.find(i => i.account == account) || { "account": account, "alias": "bank" }),
             );
