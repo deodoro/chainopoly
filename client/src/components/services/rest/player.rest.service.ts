@@ -5,7 +5,7 @@ import { Player, PlayerService } from "../player.service";
 import { EventsService } from "../events.service";
 import { environment as e } from "../../../environments/environment";
 import { of } from "rxjs";
-import "rxjs/add/operator/map";
+import { map, tap, catchError } from "rxjs/operators"
 import _ from "lodash";
 
 @Injectable({
@@ -43,23 +43,24 @@ export class PlayerRESTService extends PlayerService {
     }
 
     public callGetPlayers(): Observable<Player[]> {
-        return this.Http.get(e._folder("/api/game/players")).map(res =>
-            res.json()
-        );
+        return this.Http.get(e._folder("/api/game/players")).pipe(
+                tap(_ => console.log("get /api/game/players")),
+                map(res => res.json()),
+            );
     }
 
     public unregister(): Observable<boolean> {
-        return this.Http.delete(
-            e._folder(`/api/game/player/${this.address}`)
-        ).map(res => res["result"] == "ok");
+        return this.Http.delete(e._folder(`/api/game/player/${this.address}`))
+            .pipe(map(res => res["result"] == "ok"));
     }
 
     public register(player): Observable<any> {
-        return this.Http.post(e._folder(`/api/game/players`), player)
-            .map(res => res.json())
-            .catch(err => {
-                console.dir(err);
-                return of(err.json());
-            });
+        return this.Http.post(e._folder(`/api/game/players`), player).pipe(
+                map(res => res.json()),
+                catchError(err => {
+                    console.dir(err);
+                    return of(err.json());
+                })
+            );
     }
 }

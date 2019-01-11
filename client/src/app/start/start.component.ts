@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 import { GameService } from "../../components/services/game.service";
 import { PlayerService } from "../../components/services/player.service";
 import { EventsService } from "../../components/services/events.service";
+import { tap } from "rxjs/operators";
 import _ from "lodash";
 
 @Component({
@@ -28,12 +29,14 @@ export class StartComponent {
             account: this.playerService.getAddress(),
             username: this.playerService.getName()
         };
-        this.playerService.getPlayers().subscribe(players => {
-            this.playerCount = players ? players.length : 0;
-            this.participating = !_.isUndefined(
-                _.find(players, i => i.account == this.data.account)
-            );
-        });
+        this.playerService.getPlayers()
+            .pipe(tap(_ => console.log("start.component contructor")))
+            .subscribe(players => {
+                this.playerCount = players ? players.length : 0;
+                this.participating = !_.isUndefined(
+                    _.find(players, i => i.account == this.data.account)
+                );
+            });
         this.evtSubscription = this.eventsService.on({
             newplayer: p => {
                 this.playerCount++;

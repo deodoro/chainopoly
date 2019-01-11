@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { GameService } from "../../components/services/game.service";
 import { PlayerService } from "../../components/services/player.service";
+import { tap } from "rxjs/operators";
 import _ from "lodash";
 
 @Component({
@@ -14,7 +15,7 @@ export class TestpanelComponent {
 
     static parameters = [GameService];
     constructor(private gameService: GameService, private playerService: PlayerService) {
-        this.playerService.getPlayers().subscribe(p => this.players = p);
+        this.playerService.getPlayers().pipe(tap(_ => console.log("testpanel.component"))).subscribe(p => this.players = p);
     }
 
     public register() {

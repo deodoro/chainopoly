@@ -12,6 +12,7 @@ import {
 import { BoardService } from "../../components/services/board.service";
 import { EventsService } from "../../components/services/events.service";
 import { MatTable } from "@angular/material/table";
+import { tap } from "rxjs/operators";
 import _ from "lodash";
 
 @Component({
@@ -46,6 +47,10 @@ export class DashboardComponent implements OnDestroy {
         this.gameService.getPending().subscribe(pending => {
             this.pendingRent = pending.filter(i => i.type == "invoice");
             this.pendingOffer = pending.filter(i => i.type == "offer");
+
+            this.playerService.getPlayerI(this.pendingOffer[0].src.account).subscribe(i => console.dir(`data._to=${JSON.stringify(i)}`));
+            this.playerService.getPlayerI(this.pendingOffer[0].dst.account).subscribe(i => console.dir(`data._from=${JSON.stringify(i)}`));
+
         });
         this.evtSubscription = this.eventsService.on({
             newplayer: player => {
@@ -78,8 +83,10 @@ export class DashboardComponent implements OnDestroy {
                 this.offerTable.renderRows();
             }
         });
+        console.log("dashboard");
         this.playerService
             .getPlayers()
+            .pipe(tap(_ => console.log("from dashboard.component constructor")))
             .subscribe(players => (this.players = players));
     }
 
@@ -116,6 +123,7 @@ export class DashboardComponent implements OnDestroy {
         return Observable.create(observer => {
             this.playerService
                 .getPlayerInfo([data._to, data._from])
+                .pipe(tap(_ => console.log("from makePendingInfo")))
                 .subscribe(p => {
                     this.boardService
                         .getTokenInfo([data.token])

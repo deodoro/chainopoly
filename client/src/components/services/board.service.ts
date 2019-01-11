@@ -1,5 +1,6 @@
 import { Observable } from "rxjs/Observable";
 import { of } from "rxjs";
+import { mapTo, shareReplay, tap, defaultIfEmpty, single, filter, map } from "rxjs/operators";
 import _ from "lodash";
 
 export class Coord {
@@ -26,22 +27,14 @@ export class TokenLookup {
 }
 
 export abstract class BoardService {
-    private cache: Property[] = null;
+    private cache$;
 
     protected abstract callGetProperties(): Observable<Property[]>;
 
     public getProperties(): Observable<Property[]> {
-        if (_.isEmpty(this.cache)) {
-            return Observable.create(observer => {
-                this.callGetProperties().subscribe(values => {
-                    this.cache = values;
-                    observer.next(this.cache);
-                    observer.complete();
-                });
-            });
-        } else {
-            return of(this.cache);
-        }
+        if (!this.cache$)
+            this.cache$ = this.callGetProperties().pipe(shareReplay(1));
+        return this.cache$;
     }
 
     public getTokenInfo(tokens: number[]): Observable<TokenLookup> {
@@ -51,5 +44,9 @@ export abstract class BoardService {
                         observer.complete();
                     })
                 });
+    }
+
+    public getTokenI(token: number): Observable<Property> {
+        return this.getProperties().pipe(map(i => i.find(i => i.token == token)));
     }
 }

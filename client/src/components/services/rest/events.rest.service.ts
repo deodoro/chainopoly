@@ -12,9 +12,9 @@ export class EventsRESTService extends EventsService implements OnDestroy {
     static parameters = [SocketService];
     constructor(private socketService: SocketService) {
         super();
-        console.dir(this.events)
+        // console.dir(this.events)
         this.ws = this.socketService.messages.subscribe((msg: SocketMessage) => {
-            console.dir(this.events);
+            // console.dir(this.events);
             console.log(`from socket -> ${JSON.stringify(msg)}`);
             switch (msg.type) {
                 case "newplayer":

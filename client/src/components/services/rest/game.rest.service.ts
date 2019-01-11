@@ -10,9 +10,8 @@ import {
 import { PlayerService, Player } from "../player.service";
 import { BoardService, Property } from "../board.service";
 import { environment as e } from "../../../environments/environment";
-import { of } from "rxjs";
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/catch";
+import { from, of } from "rxjs";
+import { tap, map, catchError, mergeMap } from "rxjs/operators";
 import * as moment from "moment";
 import _ from "lodash";
 
@@ -59,34 +58,45 @@ export class GameRESTService extends GameService {
     }
 
     public getPending(): Observable<PendingInfo[]> {
-        return Observable.create(observer => {
-            return this.Http.get(this.urlFor("pending"))
-                .map(res => res.json().pending)
-                .subscribe(pending => {
-                    let accounts = _.concat(
-                        pending.map(i => i["_from"]),
-                        pending.map(i => i["_to"])
-                    );
-                    let tokens = _.concat(pending.map(i => i["token"]));
-                    this.playerService.getPlayerInfo(accounts).subscribe(p => {
-                        this.boardService.getTokenInfo(tokens).subscribe(t => {
-                            observer.next(
-                                pending.map(i => {
-                                    return {
-                                        id: i.id,
-                                        type: i.type,
-                                        src: p.find(i["_from"]),
-                                        dst: p.find(i["_to"]),
-                                        property: t.find(i["token"]),
-                                        value: i["value"]
-                                    };
-                                })
-                            );
-                            observer.complete();
-                        });
-                    });
-                });
-        });
+        return this.Http.get(this.urlFor("pending")).pipe(
+                    map(res => res.json().pending),
+                    tap(i => console.dir(i)),
+                    mergeMap(i => from(i)),
+                    // mergeMap(i => from(i).pipe(
+                    //                 tap(i => console.dir(i)),
+                    //                 mergeMap(j => this.playerService.getPlayerI(i._from).pipe(map(j => _.assign(j, {'src': j})))),
+                    //                 mergeMap(j => this.playerService.getPlayerI(i._to).pipe(map(j => _.assign(j, {'dst': j})))),
+                    //                 mergeMap(j => this.boardService.getTokenI(i.token).pipe(map(j => _.assign(j, {'property': j})))),
+                    //               )
+                    //         ),
+                    tap(i => console.dir(i)),
+                );
+
+            //        .map(res => res.json().pending)
+            //        .subscribe(pending => {
+            //     let accounts = _.concat(
+            //         pending.map(i => i["_from"]),
+            //         pending.map(i => i["_to"])
+            //     );
+            //     let tokens = _.concat(pending.map(i => i["token"]));
+            //     this.playerService.getPlayerInfo(accounts).subscribe(p => {
+            //         this.boardService.getTokenInfo(tokens).subscribe(t => {
+            //             observer.next(
+            //                 pending.map(i => {
+            //                     return {
+            //                         id: i.id,
+            //                         type: i.type,
+            //                         src: p.find(i["_from"]),
+            //                         dst: p.find(i["_to"]),
+            //                         property: t.find(i["token"]),
+            //                         value: i["value"]
+            //                     };
+            //                 })
+            //             );
+            //             observer.complete();
+            //         });
+            //     });
+            // });
     }
 
     public getHistory(): Observable<Transaction[]> {
